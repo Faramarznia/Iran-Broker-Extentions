@@ -79,6 +79,30 @@
     { id: 'tether', price: 1.0, chg: 0.02 }, { id: 'solana', price: 198.3, chg: -1.12 },
     { id: 'ripple', price: 2.27, chg: 3.06 }, { id: 'dogecoin', price: 0.382, chg: -0.74 }
   ];
+  const NEWS_SEED = [
+    { title: 'تحلیل طلا: روند صعودی در بازارهای جهانی ادامه دارد', cat: 'طلا', catColor: '#f6a723', time: '۲ ساعت پیش', url: 'https://iranbroker.net/news/' },
+    { title: 'بانک مرکزی اروپا نرخ بهره را ثابت نگه داشت', cat: 'فارکس', catColor: '#6f9bf3', time: '۳ ساعت پیش', url: 'https://iranbroker.net/news/' },
+    { title: 'بیت‌کوین از مقاومت ۷۰ هزار دلاری عبور کرد', cat: 'کریپتو', catColor: '#a78bfa', time: '۵ ساعت پیش', url: 'https://iranbroker.net/news/' },
+    { title: 'قیمت نفت برنت زیر فشار کاهش تقاضای چین', cat: 'نفت', catColor: '#fb3748', time: '۶ ساعت پیش', url: 'https://iranbroker.net/news/' },
+    { title: 'دلار آمریکا در برابر ین ژاپن تضعیف شد', cat: 'فارکس', catColor: '#6f9bf3', time: '۷ ساعت پیش', url: 'https://iranbroker.net/news/' },
+    { title: 'اتریوم پس از به‌روزرسانی شبکه جهش کرد', cat: 'کریپتو', catColor: '#a78bfa', time: '۹ ساعت پیش', url: 'https://iranbroker.net/news/' },
+    { title: 'شاخص بورس تهران با رشد همراه شد', cat: 'بورس', catColor: '#1fc16b', time: '۱۱ ساعت پیش', url: 'https://iranbroker.net/news/' },
+    { title: 'بررسی وضعیت بروکرهای فعال برای ایرانیان', cat: 'بروکر', catColor: '#35d0c0', time: '۱ روز پیش', url: 'https://iranbroker.net/news/' }
+  ];
+  const COMMUNITY = [
+    { name: 'علی رضایی', initial: 'ع', color: '#6f9bf3', time: '۱۵ دقیقه پیش', text: 'آیا کسی با IC Markets تجربه برداشت ریالی داشته؟ کارمزد تبدیل ارز چطوره؟', replies: 4 },
+    { name: 'مریم احمدی', initial: 'م', color: '#f6679f', time: '۴۲ دقیقه پیش', text: 'سیگنال‌های تحلیل طلا برای این هفته خیلی دقیق بودن. ممنون از تیم آموزشی.', replies: 7 },
+    { name: 'کاوه نوری', initial: 'ک', color: '#a78bfa', time: '۱ ساعت پیش', text: 'پراپ فرم FTMO هنوز برای ایرانیان قابل استفاده‌ست؟ یا باید VPN خاصی داشته باشیم؟', replies: 12 },
+    { name: 'سارا محمدی', initial: 'س', color: '#1fc16b', time: '۲ ساعت پیش', text: 'اسپرد EUR/USD در بروکر Exness به نظرم تو اوقات پرنوسان خیلی بالا میره. کسی جایگزین بهتری سراغ داره؟', replies: 9 },
+    { name: 'رضا کریمی', initial: 'ر', color: '#f6a723', time: '۳ ساعت پیش', text: 'آموزش پرایس اکشن رو از سایت دنبال کردم. خیلی کامل و رایگانه. پیشنهاد می‌کنم.', replies: 3 },
+    { name: 'نیما صادقی', initial: 'ن', color: '#35d0c0', time: '۵ ساعت پیش', text: 'برای تبدیل تتر به تومان از کدوم صرافی امن‌تر استفاده می‌کنید؟ نوبیتکس یا بیت‌پین؟', replies: 18 }
+  ];
+  const CAT_COLORS = {
+    'فارکس': '#6f9bf3', 'طلا': '#f6a723', 'کریپتو': '#a78bfa',
+    'نفت': '#fb3748', 'بورس': '#1fc16b', 'بروکر': '#35d0c0',
+    'اقتصاد': '#f6679f', 'بانک': '#a78bfa'
+  };
+
   const ENGINES = {
     google: { label: 'گوگل', icon: 'google', url: function (q) { return 'https://www.google.com/search?q=' + encodeURIComponent(q); } },
     ib: { label: 'ایران بروکر', icon: 'search', url: function (q) { return 'https://iranbroker.net/?s=' + encodeURIComponent(q); } },
@@ -175,6 +199,73 @@
       return '<a href="' + q.url + '"><span class="ql-dot"></span>' + q.label + '</a>';
     }).join('');
   }
+  function renderCommunity() {
+    const el = document.getElementById('sb-comm-list');
+    if (!el) return;
+    el.innerHTML = COMMUNITY.map(function (c) {
+      return '<a class="sb-item" href="https://iranbroker.net/" target="_blank" rel="noopener">' +
+        '<div class="sb-comm-row">' +
+          '<div class="sb-avatar" style="background:' + c.color + '">' + c.initial + '</div>' +
+          '<div class="sb-comm-body">' +
+            '<div style="display:flex;align-items:center;justify-content:space-between;gap:4px">' +
+              '<span class="sb-comm-user">' + c.name + '</span>' +
+              '<span class="sb-time">' + c.time + '</span>' +
+            '</div>' +
+            '<div class="sb-comm-text">' + c.text + '</div>' +
+            '<div class="sb-comm-meta"><span>💬 ' + c.replies + ' پاسخ</span></div>' +
+          '</div>' +
+        '</div>' +
+      '</a>';
+    }).join('');
+  }
+
+  function renderNews(items) {
+    const el = document.getElementById('sb-news-list');
+    if (!el) return;
+    el.innerHTML = items.slice(0, 8).map(function (n) {
+      const color = n.catColor || CAT_COLORS[n.cat] || '#6f9bf3';
+      return '<a class="sb-item" href="' + (n.url || 'https://iranbroker.net/news/') + '" target="_blank" rel="noopener">' +
+        '<span class="sb-cat" style="background:' + hexA(color, 0.15) + ';color:' + color + '">' + n.cat + '</span>' +
+        '<div class="sb-news-title">' + n.title + '</div>' +
+        '<div class="sb-time">' + n.time + '</div>' +
+      '</a>';
+    }).join('');
+  }
+
+  function relTimeFa(dateStr) {
+    const d = new Date(dateStr);
+    if (isNaN(d)) return '';
+    const diff = Math.floor((Date.now() - d) / 1000);
+    if (diff < 60) return 'چند لحظه پیش';
+    if (diff < 3600) return Math.floor(diff / 60) + ' دقیقه پیش';
+    if (diff < 86400) return Math.floor(diff / 3600) + ' ساعت پیش';
+    return Math.floor(diff / 86400) + ' روز پیش';
+  }
+
+  function loadNews() {
+    renderNews(NEWS_SEED);
+    fetch('https://iranbroker.net/feed/')
+      .then(function (res) { return res.text(); })
+      .then(function (text) {
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(text, 'text/xml');
+        const items = Array.prototype.slice.call(doc.querySelectorAll('item'));
+        if (!items.length) return;
+        const parsed = items.slice(0, 8).map(function (item) {
+          const title = (item.querySelector('title') ? item.querySelector('title').textContent : '').replace(/<!\[CDATA\[|\]\]>/g, '').trim();
+          const guidEl = item.querySelector('guid');
+          const url = guidEl ? guidEl.textContent.trim() : 'https://iranbroker.net/news/';
+          const pubDate = item.querySelector('pubDate') ? item.querySelector('pubDate').textContent : '';
+          const catEl = item.querySelector('category');
+          const cat = catEl ? catEl.textContent.replace(/<!\[CDATA\[|\]\]>/g, '').trim() : 'اخبار';
+          const color = CAT_COLORS[cat] || '#6f9bf3';
+          return { title: title, url: url, cat: cat, catColor: color, time: relTimeFa(pubDate) };
+        }).filter(function (n) { return n.title; });
+        if (parsed.length) renderNews(parsed);
+      })
+      .catch(function () {});
+  }
+
   function renderEngines() {
     els.engines.innerHTML = ['google', 'ib', 'tv'].map(function (k) {
       const active = state.activeEngine === k ? ' active' : '';
@@ -603,6 +694,8 @@
     renderCrypto();
     applyShowCrypto();
     renderTime();
+    renderCommunity();
+    loadNews();
 
     // top bar
     els.themeBtn.addEventListener('click', toggleTheme);
