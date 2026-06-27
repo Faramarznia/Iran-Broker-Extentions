@@ -63,30 +63,6 @@
       <!-- ===== SESSION TIMER BAR ===== -->
       <div class="session-bar" id="session-bar" hidden></div>
 
-      <!-- ===== SEARCH (full-width, centered) ===== -->
-      <section class="sec-search" id="sec-search">
-        <!-- Hero info inside search section for compact layout -->
-        <div class="hero-row">
-          <div class="hero-date" id="hero-date">—</div>
-          <div class="clock" id="clock">--:--</div>
-          <div class="hero-greeting" id="hero-greeting">سلام معامله‌گر</div>
-          <div class="hero-session">جلسهٔ فعال: <b id="hero-active">—</b> · <span id="hero-utc">—</span> UTC</div>
-        </div>
-        <div class="search-box" id="search-box">
-          <span class="s-ic" id="search-icon"></span>
-          <input type="text" id="search-input" placeholder="جستجو در گوگل یا ابزارهای ایران بروکر…" autocomplete="off" spellcheck="false" />
-          <span class="scope-label" id="scope-label">گوگل</span>
-          <button class="search-go" id="search-go" title="جستجو" aria-label="جستجو"></button>
-        </div>
-        <ul class="suggest" id="suggest" hidden></ul>
-        <div class="engines" id="engines"></div>
-        <div class="sparkles-strip" aria-hidden="true">
-          <div class="sp-glow-a"></div>
-          <div class="sp-glow-b"></div>
-          <canvas id="sp-canvas"></canvas>
-        </div>
-      </section>
-
       <!-- ===== 3-COLUMN DASHBOARD GRID ===== -->
       <div class="main-grid">
 
@@ -102,26 +78,6 @@
             <div class="im-items" id="im-items">
               <div class="widget-loading">در حال بارگذاری…</div>
             </div>
-          </div>
-
-          <!-- Forex Sessions Ring -->
-          <div class="card ring-card" id="ring-card">
-            <h3>ساعت بازارهای جهانی</h3>
-            <div class="ring-wrap">
-              <svg class="ring-svg" id="ring-svg" viewBox="0 0 200 200">
-                <circle cx="100" cy="100" r="86" fill="none" stroke="var(--border)" stroke-width="1"></circle>
-                <circle cx="100" cy="100" r="40" fill="none" stroke="var(--border)" stroke-width="1"></circle>
-                <g id="ring-arcs"></g>
-                <line id="ring-hand" x1="100" y1="100" x2="100" y2="20" stroke="var(--text)" stroke-width="2" stroke-linecap="round"></line>
-                <circle cx="100" cy="100" r="3.4" fill="var(--text)"></circle>
-                <circle id="ring-tip" cx="100" cy="20" r="3" fill="var(--primary)"></circle>
-              </svg>
-              <div class="ring-center">
-                <span class="num" id="ring-count">—</span>
-                <span class="lbl">بازار باز</span>
-              </div>
-            </div>
-            <div class="session-list" id="session-list"></div>
           </div>
 
           <!-- Tips -->
@@ -146,6 +102,29 @@
         <!-- ── CENTER COLUMN: Tools & Content ── -->
         <div class="col-center">
 
+          <!-- Search + Hero -->
+          <section class="sec-search" id="sec-search">
+            <div class="hero-row">
+              <div class="hero-date" id="hero-date">—</div>
+              <div class="clock" id="clock">--:--</div>
+              <div class="hero-greeting" id="hero-greeting">سلام معامله‌گر</div>
+              <div class="hero-session">جلسهٔ فعال: <b id="hero-active">—</b> · <span id="hero-utc">—</span> UTC</div>
+            </div>
+            <div class="search-box" id="search-box">
+              <span class="s-ic" id="search-icon"></span>
+              <input type="text" id="search-input" placeholder="جستجو در گوگل یا ابزارهای ایران بروکر…" autocomplete="off" spellcheck="false" />
+              <span class="scope-label" id="scope-label">گوگل</span>
+              <button class="search-go" id="search-go" title="جستجو" aria-label="جستجو"></button>
+            </div>
+            <ul class="suggest" id="suggest" hidden></ul>
+            <div class="engines" id="engines"></div>
+            <div class="sparkles-strip" aria-hidden="true">
+              <div class="sp-glow-a"></div>
+              <div class="sp-glow-b"></div>
+              <canvas id="sp-canvas"></canvas>
+            </div>
+          </section>
+
           <!-- Tools Grid -->
           <div class="sec-tools" id="sec-tools">
             <div class="tools-head">
@@ -164,10 +143,50 @@
               </div>
               <a class="feed-more" href="https://iranbroker.net/news/" target="_blank">بیشتر ›</a>
             </div>
+            <div class="feed-cats" id="feed-cats"></div>
             <div class="feed-scroll" id="feed-scroll">
               <div class="widget-loading">در حال بارگذاری…</div>
             </div>
           </section>
+
+          <!-- Bottom Duo: Sessions Ring + Economic Calendar -->
+          <div class="bottom-duo">
+
+            <div class="card ring-card" id="ring-card">
+              <h3 class="duo-title">ساعت بازارهای جهانی</h3>
+              <div class="ring-duo-inner">
+                <div class="ring-wrap">
+                  <svg class="ring-svg" id="ring-svg" viewBox="0 0 200 200">
+                    <circle cx="100" cy="100" r="86" fill="none" stroke="var(--border)" stroke-width="1"></circle>
+                    <circle cx="100" cy="100" r="40" fill="none" stroke="var(--border)" stroke-width="1"></circle>
+                    <g id="ring-arcs"></g>
+                    <line id="ring-hand" x1="100" y1="100" x2="100" y2="20" stroke="var(--text)" stroke-width="2" stroke-linecap="round"></line>
+                    <circle cx="100" cy="100" r="3.4" fill="var(--text)"></circle>
+                    <circle id="ring-tip" cx="100" cy="20" r="3" fill="var(--primary)"></circle>
+                  </svg>
+                  <div class="ring-center">
+                    <span class="num" id="ring-count">—</span>
+                    <span class="lbl">بازار باز</span>
+                  </div>
+                </div>
+                <div class="session-list" id="session-list"></div>
+              </div>
+            </div>
+
+            <div class="card calendar-card" id="calendar-card">
+              <div class="card-head">
+                <div class="h-title">
+                  <span class="cal-icon">📅</span>
+                  <h3>تقویم اقتصادی</h3>
+                </div>
+                <button class="refresh-btn" id="calendar-refresh" title="بروزرسانی" aria-label="بروزرسانی"></button>
+              </div>
+              <div class="calendar-list" id="calendar-list">
+                <div class="widget-loading">در حال بارگذاری…</div>
+              </div>
+            </div>
+
+          </div><!-- /.bottom-duo -->
 
         </div>
 
@@ -213,20 +232,6 @@
               </div>
             </div>
             <div class="community-list" id="community-list">
-              <div class="widget-loading">در حال بارگذاری…</div>
-            </div>
-          </div>
-
-          <!-- Economic Calendar -->
-          <div class="card calendar-card" id="calendar-card">
-            <div class="card-head">
-              <div class="h-title">
-                <span class="cal-icon">📅</span>
-                <h3>تقویم اقتصادی</h3>
-              </div>
-              <button class="refresh-btn" id="calendar-refresh" title="بروزرسانی" aria-label="بروزرسانی"></button>
-            </div>
-            <div class="calendar-list" id="calendar-list">
               <div class="widget-loading">در حال بارگذاری…</div>
             </div>
           </div>

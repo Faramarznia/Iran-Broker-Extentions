@@ -63,6 +63,8 @@ a{color:inherit}
 
 /* ===== Page Column ===== */
 .page-col{position:relative;z-index:2;max-width:1540px;margin:0 auto;padding:18px 22px 48px;display:flex;flex-direction:column;gap:14px}
+/* main-grid now starts directly below topbar — sec-search lives inside col-center */
+.page-col>.main-grid{margin-top:0}
 .icon{display:inline-block;vertical-align:middle;line-height:0}
 .icon svg{display:block}
 
@@ -102,7 +104,7 @@ a{color:inherit}
 .session-bar[hidden]{display:none}
 
 /* ===== Search + Hero Row ===== */
-.sec-search{position:relative}
+.sec-search{position:relative;overflow:visible}
 .hero-row{display:flex;flex-direction:column;align-items:center;text-align:center;gap:2px;margin-bottom:14px}
 .hero-date{font-size:12px;color:var(--primary);font-weight:600;letter-spacing:.3px}
 .clock{font-size:60px;font-weight:800;line-height:1;letter-spacing:-1px;font-variant-numeric:tabular-nums;
@@ -138,11 +140,22 @@ a{color:inherit}
 #sp-canvas{position:absolute;inset:0;width:100%;height:100%}
 
 /* ===== 3-Column Dashboard Grid ===== */
-.main-grid{display:grid;grid-template-columns:236px 1fr 278px;gap:14px;align-items:start}
+.main-grid{display:grid;grid-template-columns:250px 1fr 290px;gap:14px;align-items:start}
 
 .col-left,
 .col-center,
 .col-right{display:flex;flex-direction:column;gap:12px}
+
+.col-left,.col-right{
+  gap:10px;
+  position:sticky;
+  top:0;
+  height:100vh;
+  overflow:hidden;
+}
+
+/* Cards inside sticky sidebars shrink to fit */
+.col-left>*,.col-right>*{flex-shrink:1;min-height:0}
 
 /* ===== Card Base ===== */
 .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px 15px;box-shadow:var(--shadow);display:flex;flex-direction:column}
@@ -177,18 +190,23 @@ a{color:inherit}
 .im-unavailable{text-align:center;color:var(--soft);font-size:11.5px;padding:8px;width:100%;grid-column:1/-1}
 
 /* ===== Forex Sessions Ring ===== */
-.ring-card h3{margin:0 0 6px;font-size:13px;font-weight:700}
-.ring-wrap{position:relative;display:grid;place-items:center;margin:0 auto 4px}
-.ring-svg{width:134px;height:134px}
+.ring-card h3,.ring-card .duo-title{margin:0 0 8px;font-size:12px;font-weight:700}
+.ring-duo-inner{display:flex;align-items:flex-start;gap:10px}
+.ring-wrap{position:relative;display:grid;place-items:center;flex-shrink:0}
+.ring-svg{width:100px;height:100px}
 .ring-center{position:absolute;display:flex;flex-direction:column;align-items:center;line-height:1}
-.ring-center .num{font-size:24px;font-weight:800;font-variant-numeric:tabular-nums}
-.ring-center .lbl{font-size:9px;color:var(--soft);margin-top:2px}
-.session-list{display:flex;flex-direction:column;gap:5px;margin-top:4px}
-.s-row{display:flex;align-items:center;gap:7px}
-.s-row .s-dot{width:7px;height:7px;border-radius:99px;flex-shrink:0}
-.s-row .s-name{font-size:11.5px;font-weight:600}
-.s-row .s-time{margin-right:auto;font-size:9.5px;color:var(--soft);font-variant-numeric:tabular-nums}
-.s-row .s-status{font-size:9.5px;font-weight:600}
+.ring-center .num{font-size:18px;font-weight:800;font-variant-numeric:tabular-nums}
+.ring-center .lbl{font-size:8px;color:var(--soft);margin-top:2px}
+.session-list{display:flex;flex-direction:column;gap:4px;flex:1;min-width:0}
+.s-row{display:flex;align-items:center;gap:6px}
+.s-row .s-dot{width:6px;height:6px;border-radius:99px;flex-shrink:0}
+.s-row .s-name{font-size:10.5px;font-weight:600;white-space:nowrap}
+.s-row .s-time{margin-right:auto;font-size:9px;color:var(--soft);font-variant-numeric:tabular-nums}
+.s-row .s-status{font-size:9px;font-weight:600}
+
+/* ===== Bottom Duo (ring + calendar side by side) ===== */
+.bottom-duo{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.bottom-duo .card{display:flex;flex-direction:column}
 
 /* ===== Tips ===== */
 .tip-card{position:relative;background:linear-gradient(165deg,var(--greenSoft),var(--surface) 55%);border:1px solid var(--border);border-radius:var(--radius);padding:14px 15px;box-shadow:var(--shadow);display:flex;flex-direction:column;overflow:hidden}
@@ -207,37 +225,50 @@ a{color:inherit}
 .quick-links a:hover{color:var(--text);border-color:var(--border2)}
 .quick-links a .ql-dot{width:4px;height:4px;border-radius:99px;background:var(--primary);flex-shrink:0}
 
-/* ===== Tools (center column) ===== */
+/* ===== Tools (center column) — compact ===== */
 .sec-tools{}
-.tools-head{display:flex;align-items:baseline;gap:10px;margin-bottom:10px;padding:0 2px}
-.tools-head h2{margin:0;font-size:13.5px;font-weight:700}
-.tools-head .hint{font-size:11px;color:var(--soft)}
-.tools-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:9px}
-.tools-grid a{position:relative;display:flex;flex-direction:column;align-items:flex-start;gap:9px;padding:12px 11px;background:var(--surface);border:1px solid var(--border);border-radius:14px;text-decoration:none;color:var(--text);overflow:hidden;transition:transform .2s var(--ease),background .2s,border-color .2s}
-.tools-grid a:hover{transform:translateY(-2px);background:var(--surface2);border-color:var(--border2)}
-.tools-grid a .t-ic{display:grid;place-items:center;width:34px;height:34px;border-radius:10px}
-.tools-grid a .t-ic svg{width:18px;height:18px}
-.tools-grid a .t-txt{display:flex;flex-direction:column;gap:1px}
-.tools-grid a .t-label{font-size:12px;font-weight:600}
-.tools-grid a .t-sub{font-size:10px;color:var(--soft)}
+.tools-head{display:flex;align-items:baseline;gap:8px;margin-bottom:7px;padding:0 1px}
+.tools-head h2{margin:0;font-size:12px;font-weight:700;color:var(--sub)}
+.tools-head .hint{font-size:10px;color:var(--soft)}
+.tools-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+.tools-grid a{position:relative;display:flex;align-items:center;gap:7px;padding:7px 8px;background:var(--surface);border:1px solid var(--border);border-radius:10px;text-decoration:none;color:var(--text);overflow:hidden;transition:transform .18s var(--ease),background .18s,border-color .18s}
+.tools-grid a:hover{transform:translateY(-1px);background:var(--surface2);border-color:var(--border2)}
+.tools-grid a .t-ic{display:grid;place-items:center;width:26px;height:26px;border-radius:7px;flex-shrink:0}
+.tools-grid a .t-ic svg{width:14px;height:14px}
+.tools-grid a .t-txt{display:flex;flex-direction:column;gap:0}
+.tools-grid a .t-label{font-size:10.5px;font-weight:600;line-height:1.3}
+.tools-grid a .t-sub{font-size:9px;color:var(--soft)}
 
 /* ===== Content Feed ===== */
-.sec-feed{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px 15px}
-.feed-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
-.feed-header .h-title{display:flex;align-items:center;gap:7px}
-.feed-header h3{margin:0;font-size:13px;font-weight:700}
-.feed-more{font-size:11.5px;color:var(--primary);text-decoration:none;padding:4px 10px;border-radius:8px;background:var(--primarySoft);transition:background .15s}
-.feed-scroll{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border);border-radius:10px;overflow:hidden}
-.feed-item{display:flex;flex-direction:column;gap:5px;padding:11px 12px;background:var(--surface);text-decoration:none;color:inherit;transition:background .18s}
-.feed-item:hover{background:var(--surface2)}
-.feed-item-title{font-size:12px;font-weight:600;line-height:1.55;color:var(--text);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-.feed-item:hover .feed-item-title{color:var(--primary)}
-.feed-item-meta{font-size:10px;color:var(--soft)}
-.feed-empty{color:var(--soft);font-size:12px;padding:20px 0;text-align:center;grid-column:1/-1}
+.sec-feed{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:12px 13px}
+.feed-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.feed-header .h-title{display:flex;align-items:center;gap:6px}
+.feed-header h3{margin:0;font-size:12px;font-weight:700}
+.feed-more{font-size:10.5px;color:var(--primary);text-decoration:none;padding:3px 9px;border-radius:8px;background:var(--primarySoft);transition:background .15s}
+/* Category filter chips */
+.feed-cats{display:flex;gap:4px;flex-wrap:wrap;padding-bottom:8px;border-bottom:1px solid var(--border);margin-bottom:4px}
+.feed-cat-btn{border:1px solid transparent;background:var(--surface2);color:var(--soft);font-size:10px;font-weight:600;padding:2px 9px;border-radius:99px;cursor:pointer;font-family:inherit;transition:color .15s,background .15s,border-color .15s;white-space:nowrap}
+.feed-cat-btn:hover{color:var(--text)}
+.feed-cat-btn.active{background:var(--primarySoft);color:var(--primary);border-color:rgba(111,155,243,.3)}
+.feed-scroll{display:flex;flex-direction:column;gap:0}
+/* Article list item */
+.feed-article{display:flex;align-items:flex-start;gap:9px;padding:8px 2px;border-bottom:1px solid var(--border);text-decoration:none;color:inherit;transition:background .15s;border-radius:6px}
+.feed-article:last-child{border-bottom:none}
+.feed-article:hover{background:var(--surface2)}
+.feed-art-thumb{width:44px;height:44px;border-radius:7px;object-fit:cover;flex-shrink:0;display:block}
+.feed-art-placeholder{width:44px;height:44px;border-radius:7px;flex-shrink:0;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:16px}
+.feed-art-body{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.feed-art-meta{display:flex;align-items:center;gap:5px}
+.feed-art-cat{font-size:9px;font-weight:700;color:var(--primary);background:var(--primarySoft);padding:1px 6px;border-radius:99px;white-space:nowrap}
+.feed-art-time{font-size:9.5px;color:var(--soft);margin-right:auto;white-space:nowrap}
+.feed-art-title{font-size:11.5px;font-weight:600;line-height:1.45;color:var(--text);display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden}
+.feed-article:hover .feed-art-title{color:var(--primary)}
+.feed-art-excerpt{font-size:10px;color:var(--soft);line-height:1.5;display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden}
+.feed-empty{color:var(--soft);font-size:12px;padding:16px 0;text-align:center}
 
 /* ===== Watchlist ===== */
 .watchlist-card{min-height:160px}
-.watchlist-table{flex:1;display:flex;flex-direction:column;gap:1px}
+.watchlist-table{flex:1;display:flex;flex-direction:column;gap:1px;overflow-y:hidden}
 .watchlist-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;gap:5px;color:var(--soft);text-align:center;padding:18px 0}
 .watchlist-empty p{margin:0;font-size:12.5px;color:var(--sub)}
 .watchlist-empty span{font-size:11px}
@@ -267,7 +298,7 @@ a{color:inherit}
 .wr-type{font-size:10px;background:var(--primarySoft);color:var(--primary);padding:2px 7px;border-radius:6px}
 
 /* ===== Crypto ===== */
-.crypto-list{display:flex;flex-direction:column;gap:0;flex:1}
+.crypto-list{display:flex;flex-direction:column;gap:0;flex:1;overflow-y:hidden}
 .c-row{display:flex;align-items:center;gap:8px;padding:6px 5px;border-radius:9px;transition:background .15s}
 .c-row:hover{background:var(--surface2)}
 .c-rank{font-size:10.5px;color:var(--soft);width:12px;font-variant-numeric:tabular-nums}
@@ -282,7 +313,7 @@ a{color:inherit}
 .crypto-foot .err{color:var(--orange)}
 
 /* ===== Community ===== */
-.community-list{display:flex;flex-direction:column;gap:3px;flex:1}
+.community-list{display:flex;flex-direction:column;gap:3px;flex:1;overflow-y:hidden}
 .comm-item{display:flex;align-items:center;gap:8px;padding:7px 5px;border-radius:9px;cursor:pointer;transition:background .15s;text-decoration:none;color:inherit}
 .comm-item:hover{background:var(--surface2)}
 .comm-rank{font-size:10.5px;color:var(--soft);font-weight:700;min-width:14px;text-align:center}
@@ -297,7 +328,7 @@ a{color:inherit}
 
 /* ===== Economic Calendar ===== */
 .calendar-card{display:flex;flex-direction:column;gap:0}
-.calendar-list{display:flex;flex-direction:column;gap:6px;margin-top:4px}
+.calendar-list{display:flex;flex-direction:column;gap:4px;margin-top:4px;overflow-y:hidden}
 .cal-item{display:flex;align-items:center;gap:7px;padding:6px 0;border-bottom:1px solid var(--border)}
 .cal-item:last-child{border-bottom:none}
 .cal-item.past{opacity:.4}
@@ -417,8 +448,7 @@ body:not([data-theme="light"]) .note-drawer{background:rgba(12,16,27,.92);-webki
 body:not([data-theme="light"]) .alert-popover{background:rgba(12,16,27,.92);-webkit-backdrop-filter:blur(20px) saturate(180%);backdrop-filter:blur(20px) saturate(180%)}
 body:not([data-theme="light"]) .iran-market-strip{background:rgba(255,255,255,.03);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border:1px solid rgba(255,255,255,.09)}
 body:not([data-theme="light"]) .sec-feed{background:rgba(255,255,255,.03);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border:1px solid rgba(255,255,255,.09)}
-body:not([data-theme="light"]) .feed-item{background:rgba(255,255,255,.03)}
-body:not([data-theme="light"]) .feed-item:hover{background:rgba(255,255,255,.07)}
+body:not([data-theme="light"]) .feed-article:hover{background:rgba(255,255,255,.05)}
 body:not([data-theme="light"]) .im-item{background:rgba(255,255,255,.03)}
 
 /* ===== Responsive ===== */
@@ -428,10 +458,10 @@ body:not([data-theme="light"]) .im-item{background:rgba(255,255,255,.03)}
 }
 @media (max-width:960px){
   .main-grid{grid-template-columns:1fr 1fr}
-  .col-left{grid-column:1/-1;flex-direction:row;flex-wrap:wrap;gap:10px}
-  .col-left>*{flex:1;min-width:200px}
-  .col-center{grid-column:1/2}
-  .col-right{grid-column:2/3}
+  .col-left{grid-column:1/-1;grid-row:2;flex-direction:row;flex-wrap:wrap;gap:10px}
+  .col-left>*{flex:1;min-width:180px}
+  .col-center{grid-column:1/2;grid-row:1}
+  .col-right{grid-column:2/3;grid-row:1}
 }
 @media (max-width:680px){
   .page-col{padding:14px 12px 44px;gap:11px}
@@ -477,8 +507,12 @@ body[data-layout="fullvp"] .main-grid{
   grid-template-columns:minmax(0,260px) 1fr minmax(0,300px);
 }
 body[data-layout="fullvp"] .col-left,
-body[data-layout="fullvp"] .col-center,
 body[data-layout="fullvp"] .col-right{
+  position:static;
+  height:100%;
+  overflow-y:hidden;
+}
+body[data-layout="fullvp"] .col-center{
   overflow-y:auto;
   min-height:0;
   padding-bottom:12px;
@@ -487,3 +521,117 @@ body[data-layout="fullvp"] .col-left::-webkit-scrollbar,
 body[data-layout="fullvp"] .col-center::-webkit-scrollbar,
 body[data-layout="fullvp"] .col-right::-webkit-scrollbar{width:3px}
 body[data-layout="fullvp"] .sec-feed .feed-scroll{overflow-y:auto;max-height:260px}
+
+/* ===================================================================
+   UI/UX Improvements v2.1 — Layout balance & visual polish
+   =================================================================== */
+
+/* ─── Sidebar height distribution ──────────────────────────────────
+   Without flex-grow, cards take natural height and leave dead space
+   below in the 100vh sticky columns. Assign weighted grow values
+   so each sidebar is filled proportionally.
+────────────────────────────────────────────────────────────────── */
+.col-left .iran-market-strip { flex-grow: 2.5; min-height: 150px }
+.col-left .tip-card          { flex-grow: 2;   min-height: 100px }
+.col-left .quick-links-card  { flex-grow: 1;   min-height: 80px  }
+
+.col-right .watchlist-card   { flex-grow: 3;   min-height: 140px }
+.col-right .crypto-card      { flex-grow: 3;   min-height: 140px }
+.col-right .community-card   { flex-grow: 2;   min-height: 100px }
+
+/* Enable scrolling inside height-constrained sidebar cards */
+.watchlist-table  { overflow-y: auto }
+.crypto-list      { overflow-y: auto }
+.community-list   { overflow-y: auto }
+
+/* Thin 3px scrollbar for card-level scroll areas */
+.watchlist-table::-webkit-scrollbar,
+.crypto-list::-webkit-scrollbar,
+.community-list::-webkit-scrollbar,
+.feed-scroll::-webkit-scrollbar    { width: 3px }
+.watchlist-table::-webkit-scrollbar-thumb,
+.crypto-list::-webkit-scrollbar-thumb,
+.community-list::-webkit-scrollbar-thumb,
+.feed-scroll::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px }
+
+/* ─── Tools grid — icon-forward vertical layout ─────────────────── */
+.tools-grid { gap: 7px }
+.tools-grid a {
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 10px 6px;
+  gap: 5px;
+  border-radius: 12px;
+}
+.tools-grid a .t-ic  { width: 30px; height: 30px; border-radius: 9px }
+.tools-grid a .t-txt { align-items: center }
+.tools-grid a .t-label { font-size: 10px; font-weight: 700; line-height: 1.2 }
+.tools-grid a .t-sub { display: none }
+
+/* ─── Glass card hover — subtle border lift in dark mode ─────────── */
+body:not([data-theme="light"]) .card {
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.055), 0 16px 40px -14px rgba(0,0,0,.5);
+  transition: border-color .22s, box-shadow .22s;
+}
+body:not([data-theme="light"]) .card:hover {
+  border-color: rgba(255,255,255,.14);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.08), 0 20px 50px -16px rgba(0,0,0,.55);
+}
+
+/* ─── Feed improvements ──────────────────────────────────────────── */
+.feed-scroll { overflow-y: auto }
+.feed-article { gap: 10px; padding: 9px 3px }
+.feed-art-thumb, .feed-art-placeholder { width: 48px; height: 48px; border-radius: 8px }
+.feed-art-title  { font-size: 12px; line-height: 1.5; -webkit-line-clamp: 2 }
+.feed-art-meta   { gap: 5px; margin-bottom: 1px }
+.feed-cat-btn    { font-size: 10.5px; padding: 3px 10px }
+
+/* ─── Iran market strip ──────────────────────────────────────────── */
+.im-item  { padding: 9px 11px }
+.im-name  { font-size: 10px }
+.im-price { font-size: 13px }
+
+/* ─── Watchlist ──────────────────────────────────────────────────── */
+.wl-row  { padding: 6px 3px }
+.wl-sym  { font-size: 11.5px }
+.wl-name { font-size: 9.5px }
+
+/* ─── Crypto ─────────────────────────────────────────────────────── */
+.c-row    { padding: 5px 4px }
+.c-sym    { font-size: 12px }
+.c-price  { font-size: 12px }
+
+/* ─── Community ──────────────────────────────────────────────────── */
+.comm-item { padding: 6px 4px }
+.comm-name { font-size: 11.5px }
+.comm-icon { width: 30px; height: 30px }
+
+/* ─── Calendar ───────────────────────────────────────────────────── */
+.cal-item { padding: 6px 0; gap: 6px }
+.cal-name { font-size: 10.5px }
+.calendar-list { overflow-y: auto }
+
+/* ─── Tip card ───────────────────────────────────────────────────── */
+.tip-text { font-size: 12px; line-height: 1.85 }
+
+/* ─── Bottom duo ring ────────────────────────────────────────────── */
+.ring-svg          { width: 92px; height: 92px }
+.ring-center .num  { font-size: 17px }
+.s-row .s-name     { font-size: 10px }
+
+/* ─── Card header typography ─────────────────────────────────────── */
+.card-head h3 { letter-spacing: -0.1px }
+
+/* ─── Quick links ────────────────────────────────────────────────── */
+.quick-links a { font-size: 10.5px; padding: 6px 8px; border-radius: 10px }
+
+/* ─── Search box pill border radius ─────────────────────────────── */
+.search-box { border-radius: 14px }
+
+/* ─── Tools hover glow in dark mode ─────────────────────────────── */
+body:not([data-theme="light"]) .tools-grid a:hover {
+  box-shadow: 0 4px 18px rgba(0,0,0,.35);
+  transform: translateY(-2px);
+}
