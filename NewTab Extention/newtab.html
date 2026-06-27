@@ -6,7 +6,8 @@
   <title>ایران بروکر — تب جدید</title>
   <link rel="stylesheet" href="newtab.css" />
 </head>
-<body data-theme="dark" data-layout="scroll">
+<body data-theme="dark">
+
   <div class="stage-root">
     <canvas id="shader-bg-canvas"></canvas>
     <div class="bg-grid" id="bg-grid"></div>
@@ -14,8 +15,8 @@
     <div class="page-col">
 
       <!-- ===== TOP BAR ===== -->
-      <header class="topbar">
-        <a class="brand" href="https://iranbroker.net/" title="ایران بروکر">
+      <header class="topbar" id="topbar">
+        <a class="brand" href="https://iranbroker.net/" title="ایران بروکر" target="_blank">
           <svg class="wordmark" viewBox="0 0 156 28" height="27" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M14.7568 8.9103C18.3181 5.46578 19.363 4.33887 21.5808 2C22.5617 2.63787 23.6066 3.21196 24.6089 3.8711C22.8816 5.59336 21.3888 7.12425 19.8321 8.71894C21.794 8.71894 22.5404 8.7402 23.7346 8.71894C25.0354 8.7402 26.1869 8.59136 27.4238 9.05914C29.0871 9.67575 30.324 11.1429 30.7931 12.8439C31.3902 14.8213 30.8144 17.0326 29.4923 18.5847C28.3194 19.988 26.5281 20.5196 24.7582 20.6047C21.3249 20.6047 18.2328 20.6047 15.034 20.6047C13.1788 20.6684 11.2595 20.1156 9.85209 18.8824C9.40427 18.4997 9.04174 18.1169 8.55127 17.798C8.3167 18.4997 7.8902 19.1163 7.39973 19.6904C5.94964 21.4339 4.30762 22.986 2.68693 24.5807C1.79129 23.8365 0.916969 23.0924 0 22.412C1.38612 20.9449 2.85753 19.5628 4.26497 18.0957C5.11797 17.2027 6.16289 15.9694 5.52314 14.7575C5.05399 14.2897 4.58485 13.8007 4.1157 13.3116C4.92604 12.5037 5.75771 11.6957 6.54673 10.8664C8.08212 12.3336 9.55354 13.8432 11.025 15.3528C11.814 16.1821 12.7523 16.9688 13.9251 17.1176C15.1407 17.2877 23.7559 17.1176 25.5259 17.1176C26.8907 17.0326 28.1062 15.5442 27.9356 14.1621C27.7863 13.0777 26.8054 12.0997 25.6751 12.0997C24.0331 12.0784 18.9791 12.0571 16.1003 12.0571C15.5458 10.7601 15.3326 10.1648 14.7568 8.9103Z" fill="var(--logo-text)"></path>
             <path d="M85.9179 5.18937C87.0694 5.23189 88.1783 5.18937 89.4151 5.18937C89.4151 10.4412 89.3938 15.9694 89.3938 20.5834C88.221 20.5834 87.0481 20.5834 85.8752 20.5834C85.8965 15.4379 85.8539 10.3136 85.9179 5.18937Z" fill="var(--logo-text)"></path>
@@ -34,25 +35,43 @@
         </a>
 
         <div class="top-actions">
+          <div class="radar-badge" id="radar-badge" title="رادار بروکر من">
+            <span class="radar-dot" id="radar-dot"></span>
+            <span id="radar-label">بروکر من</span>
+          </div>
+          <button class="icon-btn topbar-timer-btn" id="timer-topbar-btn" title="تایمر سشن">
+            <span class="icon" id="timer-topbar-icon"></span>
+            <span class="timer-countdown" id="timer-countdown" hidden></span>
+          </button>
+          <button class="icon-btn topbar-note-btn" id="note-topbar-btn" title="یادداشت سریع" aria-label="یادداشت سریع">
+            <span class="icon" id="note-topbar-icon"></span>
+            <span class="note-dot" id="note-dot" hidden></span>
+          </button>
           <div class="market-pill">
             <span class="dot"></span>
             <span id="market-count">— بازار فعال</span>
           </div>
-          <button class="icon-btn" id="theme-btn" title="تغییر تم" aria-label="تغییر تم"></button>
-          <button class="icon-btn" id="settings-btn" title="تنظیمات" aria-label="تنظیمات"></button>
+          <button class="icon-btn" id="theme-btn" title="تغییر تم" aria-label="تغییر تم">
+            <span class="icon" id="theme-icon"></span>
+          </button>
+          <button class="icon-btn" id="settings-btn" title="تنظیمات" aria-label="تنظیمات">
+            <span class="icon" id="settings-icon"></span>
+          </button>
         </div>
       </header>
 
-      <!-- ===== HERO ===== -->
-      <section class="sec-hero">
-        <div class="hero-date" id="hero-date">—</div>
-        <div class="clock" id="clock">--:--</div>
-        <div class="hero-greeting" id="hero-greeting">سلام معامله‌گر</div>
-        <div class="hero-session">جلسهٔ فعال: <b id="hero-active">—</b> · <span id="hero-utc">—</span> به وقت جهانی</div>
-      </section>
+      <!-- ===== SESSION TIMER BAR ===== -->
+      <div class="session-bar" id="session-bar" hidden></div>
 
-      <!-- ===== SEARCH ===== -->
-      <section class="sec-search">
+      <!-- ===== SEARCH (full-width, centered) ===== -->
+      <section class="sec-search" id="sec-search">
+        <!-- Hero info inside search section for compact layout -->
+        <div class="hero-row">
+          <div class="hero-date" id="hero-date">—</div>
+          <div class="clock" id="clock">--:--</div>
+          <div class="hero-greeting" id="hero-greeting">سلام معامله‌گر</div>
+          <div class="hero-session">جلسهٔ فعال: <b id="hero-active">—</b> · <span id="hero-utc">—</span> UTC</div>
+        </div>
         <div class="search-box" id="search-box">
           <span class="s-ic" id="search-icon"></span>
           <input type="text" id="search-input" placeholder="جستجو در گوگل یا ابزارهای ایران بروکر…" autocomplete="off" spellcheck="false" />
@@ -68,73 +87,255 @@
         </div>
       </section>
 
-      <!-- ===== TOOLS ===== -->
-      <section class="sec-tools">
-        <div class="tools-head">
-          <h2>ابزارهای ایران بروکر</h2>
-          <span class="hint">دسترسی سریع به مقایسه‌ها و داده‌ها</span>
-        </div>
-        <div class="tools-grid" id="tools-grid"></div>
-      </section>
+      <!-- ===== 3-COLUMN DASHBOARD GRID ===== -->
+      <div class="main-grid">
 
-      <!-- ===== BENTO ===== -->
-      <section class="sec-bento">
+        <!-- ── LEFT COLUMN: Context & Sessions ── -->
+        <aside class="col-left">
 
-        <!-- crypto -->
-        <div class="card crypto-card" id="crypto-card">
-          <div class="card-head">
-            <div class="h-title">
-              <span class="dot"></span>
-              <h3>قیمت لحظه‌ای ارز دیجیتال</h3>
+          <!-- Iran Market Rates -->
+          <div class="iran-market-strip card" id="iran-market-strip">
+            <div class="im-header">
+              <span class="im-title">بازار ایران</span>
+              <span class="im-status" id="im-status"></span>
             </div>
-            <button class="refresh-btn" id="crypto-refresh" title="بروزرسانی" aria-label="بروزرسانی"></button>
-          </div>
-          <div class="crypto-list" id="crypto-list"></div>
-          <div class="crypto-foot" id="crypto-foot"></div>
-        </div>
-
-        <!-- forex ring -->
-        <div class="card ring-card">
-          <h3>ساعت بازارهای جهانی</h3>
-          <div class="ring-wrap">
-            <svg class="ring-svg" id="ring-svg" viewBox="0 0 200 200">
-              <circle cx="100" cy="100" r="86" fill="none" stroke="var(--border)" stroke-width="1"></circle>
-              <circle cx="100" cy="100" r="40" fill="none" stroke="var(--border)" stroke-width="1"></circle>
-              <g id="ring-arcs"></g>
-              <line id="ring-hand" x1="100" y1="100" x2="100" y2="20" stroke="var(--text)" stroke-width="2" stroke-linecap="round"></line>
-              <circle cx="100" cy="100" r="3.4" fill="var(--text)"></circle>
-              <circle id="ring-tip" cx="100" cy="20" r="3" fill="var(--primary)"></circle>
-            </svg>
-            <div class="ring-center">
-              <span class="num" id="ring-count">—</span>
-              <span class="lbl">بازار باز</span>
+            <div class="im-items" id="im-items">
+              <div class="widget-loading">در حال بارگذاری…</div>
             </div>
           </div>
-          <div class="session-list" id="session-list"></div>
-        </div>
 
-        <!-- tip -->
-        <div class="tip-card">
-          <span class="bg-ic" id="tip-bg-ic"></span>
-          <div class="card-head">
-            <h3>نکتهٔ امروز</h3>
-            <span class="tag" id="tip-tag">آگاهی</span>
+          <!-- Forex Sessions Ring -->
+          <div class="card ring-card" id="ring-card">
+            <h3>ساعت بازارهای جهانی</h3>
+            <div class="ring-wrap">
+              <svg class="ring-svg" id="ring-svg" viewBox="0 0 200 200">
+                <circle cx="100" cy="100" r="86" fill="none" stroke="var(--border)" stroke-width="1"></circle>
+                <circle cx="100" cy="100" r="40" fill="none" stroke="var(--border)" stroke-width="1"></circle>
+                <g id="ring-arcs"></g>
+                <line id="ring-hand" x1="100" y1="100" x2="100" y2="20" stroke="var(--text)" stroke-width="2" stroke-linecap="round"></line>
+                <circle cx="100" cy="100" r="3.4" fill="var(--text)"></circle>
+                <circle id="ring-tip" cx="100" cy="20" r="3" fill="var(--primary)"></circle>
+              </svg>
+              <div class="ring-center">
+                <span class="num" id="ring-count">—</span>
+                <span class="lbl">بازار باز</span>
+              </div>
+            </div>
+            <div class="session-list" id="session-list"></div>
           </div>
-          <p class="tip-text" id="tip-text">…</p>
-          <button class="tip-next" id="tip-next">نکتهٔ بعدی <span id="tip-next-ic"></span></button>
-        </div>
-      </section>
 
-      <!-- ===== FOOTER ===== -->
-      <footer class="sec-footer">
-        <div class="quick-links" id="quick-links"></div>
-        <div class="trust-badges">
-          <a href="https://iranbroker.net/" title="نماد اعتماد الکترونیکی"><img src="assets/trust/enamad.png" alt="نماد اعتماد الکترونیکی (eNamad)" loading="lazy"></a>
-          <a href="https://iranbroker.net/" title="نشان ملی ثبت رسانه‌های دیجیتال"><img src="assets/trust/samandehi.png" alt="نشان ساماندهی" loading="lazy"></a>
-        </div>
-        <p class="disclaimer">معاملات در بازارهای مالی با ریسک همراه است و ممکن است به از دست رفتن سرمایه منجر شود. ایران بروکر صرفاً مرجع اطلاع‌رسانی و مقایسه است و مسئولیت تصمیم‌های معاملاتی شما را بر عهده ندارد.</p>
-      </footer>
+          <!-- Tips -->
+          <div class="tip-card" id="tip-card">
+            <span class="bg-ic" id="tip-bg-ic"></span>
+            <div class="card-head">
+              <h3>نکتهٔ امروز</h3>
+              <span class="tag" id="tip-tag">آگاهی</span>
+            </div>
+            <p class="tip-text" id="tip-text">…</p>
+            <button class="tip-next" id="tip-next">نکتهٔ بعدی <span id="tip-next-ic"></span></button>
+          </div>
 
+          <!-- Quick Links -->
+          <div class="card quick-links-card" id="quick-links-card">
+            <h3 class="ql-title">دسترسی سریع</h3>
+            <div class="quick-links" id="quick-links"></div>
+          </div>
+
+        </aside>
+
+        <!-- ── CENTER COLUMN: Tools & Content ── -->
+        <div class="col-center">
+
+          <!-- Tools Grid -->
+          <div class="sec-tools" id="sec-tools">
+            <div class="tools-head">
+              <h2>ابزارهای ایران بروکر</h2>
+              <span class="hint">دسترسی سریع</span>
+            </div>
+            <div class="tools-grid" id="tools-grid"></div>
+          </div>
+
+          <!-- Content Feed -->
+          <section class="sec-feed" id="sec-feed">
+            <div class="feed-header">
+              <div class="h-title">
+                <span class="feed-icon">📰</span>
+                <h3>آخرین مطالب ایران بروکر</h3>
+              </div>
+              <a class="feed-more" href="https://iranbroker.net/news/" target="_blank">بیشتر ›</a>
+            </div>
+            <div class="feed-scroll" id="feed-scroll">
+              <div class="widget-loading">در حال بارگذاری…</div>
+            </div>
+          </section>
+
+        </div>
+
+        <!-- ── RIGHT COLUMN: Live Data ── -->
+        <aside class="col-right">
+
+          <!-- Watchlist -->
+          <div class="card watchlist-card" id="watchlist-card">
+            <div class="card-head">
+              <div class="h-title">
+                <span class="dot"></span>
+                <h3>واچ‌لیست من</h3>
+              </div>
+              <button class="icon-btn-sm" id="watchlist-add-btn" title="افزودن دارایی" aria-label="افزودن دارایی">+</button>
+            </div>
+            <div class="watchlist-table" id="watchlist-table">
+              <div class="watchlist-empty" id="watchlist-empty">
+                <p>واچ‌لیست شما خالی است</p>
+                <span>برای افزودن دارایی روی + کلیک کنید</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Crypto Prices -->
+          <div class="card crypto-card" id="crypto-card">
+            <div class="card-head">
+              <div class="h-title">
+                <span class="dot"></span>
+                <h3>قیمت لحظه‌ای ارز دیجیتال</h3>
+              </div>
+              <button class="refresh-btn" id="crypto-refresh" title="بروزرسانی" aria-label="بروزرسانی"></button>
+            </div>
+            <div class="crypto-list" id="crypto-list"></div>
+            <div class="crypto-foot" id="crypto-foot"></div>
+          </div>
+
+          <!-- Community Hot Topics -->
+          <div class="card community-card" id="community-card">
+            <div class="card-head">
+              <div class="h-title">
+                <span class="fire-ic">🔥</span>
+                <h3>داغ‌ترین بحث‌ها</h3>
+              </div>
+            </div>
+            <div class="community-list" id="community-list">
+              <div class="widget-loading">در حال بارگذاری…</div>
+            </div>
+          </div>
+
+          <!-- Economic Calendar -->
+          <div class="card calendar-card" id="calendar-card">
+            <div class="card-head">
+              <div class="h-title">
+                <span class="cal-icon">📅</span>
+                <h3>تقویم اقتصادی</h3>
+              </div>
+              <button class="refresh-btn" id="calendar-refresh" title="بروزرسانی" aria-label="بروزرسانی"></button>
+            </div>
+            <div class="calendar-list" id="calendar-list">
+              <div class="widget-loading">در حال بارگذاری…</div>
+            </div>
+          </div>
+
+        </aside>
+
+      </div><!-- /.main-grid -->
+
+    </div><!-- /.page-col -->
+
+    <!-- ===== WATCHLIST ADD MODAL ===== -->
+    <div class="modal-overlay" id="watchlist-modal" hidden>
+      <div class="modal modal-sm" id="watchlist-panel">
+        <div class="modal-head">
+          <h3>افزودن به واچ‌لیست</h3>
+          <button class="icon-btn" id="watchlist-modal-close" aria-label="بستن"><span class="icon" id="watchlist-close-icon"></span></button>
+        </div>
+        <div class="modal-body">
+          <input type="text" id="watchlist-search-input" placeholder="جستجو: BTC، EURUSD، طلا…" autocomplete="off" />
+          <ul class="watchlist-results" id="watchlist-results"></ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== ALERT POPOVER ===== -->
+    <div class="alert-popover" id="alert-popover" hidden>
+      <div class="alert-pop-head">
+        <span id="alert-pop-label">تعریف هشدار</span>
+        <button id="alert-pop-close" class="icon-btn-xs" aria-label="بستن">✕</button>
+      </div>
+      <div class="alert-pop-body">
+        <select id="alert-pop-dir">
+          <option value="above">بالاتر از</option>
+          <option value="below">پایین‌تر از</option>
+        </select>
+        <input type="number" id="alert-pop-price" placeholder="قیمت هدف" step="any" />
+      </div>
+      <div class="alert-pop-foot">
+        <button id="alert-pop-save" class="btn-primary-sm">ذخیره</button>
+        <button id="alert-pop-clear" class="btn-ghost-sm">حذف هشدار</button>
+      </div>
+    </div>
+
+    <!-- ===== TOAST NOTIFICATIONS ===== -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <!-- ===== CALCULATOR PANEL ===== -->
+    <div class="calc-panel" id="calc-panel" hidden>
+      <div class="calc-head">
+        <h3>ماشین‌حساب معامله‌گری</h3>
+        <button class="icon-btn-xs" id="calc-close" aria-label="بستن">✕</button>
+      </div>
+      <div class="calc-tabs" id="calc-tabs">
+        <button class="calc-tab active" data-tab="lotsize">حجم معامله</button>
+        <button class="calc-tab" data-tab="pipvalue">ارزش پیپ</button>
+        <button class="calc-tab" data-tab="margin">مارجین</button>
+      </div>
+      <div class="calc-body" id="calc-body"></div>
+      <div class="calc-history" id="calc-history"></div>
+    </div>
+    <button class="calc-fab" id="calc-fab" title="ماشین‌حساب معامله‌گری" aria-label="ماشین‌حساب">🧮</button>
+
+    <!-- ===== QUICK NOTE DRAWER ===== -->
+    <div class="note-drawer" id="note-drawer" hidden>
+      <div class="note-drawer-head">
+        <h3>📝 یادداشت سریع</h3>
+        <button class="icon-btn-xs" id="note-drawer-close" aria-label="بستن">✕</button>
+      </div>
+      <textarea id="note-textarea" maxlength="5000" placeholder="سطوح کلیدی امروز، ایده معاملاتی یا قوانین پلنت رو اینجا بنویس…"></textarea>
+      <div class="note-drawer-foot">
+        <span class="note-save-time" id="note-save-time"></span>
+        <button class="btn-ghost-sm" id="note-clear-btn">پاک کردن</button>
+      </div>
+    </div>
+
+    <!-- ===== SESSION TIMER MODAL ===== -->
+    <div class="modal-overlay" id="timer-modal" hidden>
+      <div class="modal modal-sm" id="timer-panel">
+        <div class="modal-head">
+          <h3>⏱️ تایمر سشن معامله‌گری</h3>
+          <button class="icon-btn" id="timer-modal-close" aria-label="بستن"><span class="icon" id="timer-close-icon"></span></button>
+        </div>
+        <div class="modal-body">
+          <label class="set-row">ساعت شروع سشن
+            <input type="time" id="timer-start" />
+          </label>
+          <label class="set-row">ساعت پایان سشن
+            <input type="time" id="timer-end" />
+          </label>
+          <label class="set-row toggle">فعال‌سازی Pomodoro (یادآوری هر ۲۵ دقیقه)
+            <input type="checkbox" id="timer-pomodoro" />
+          </label>
+          <button class="btn-primary" id="timer-save">فعال کردن سشن</button>
+          <button class="btn-ghost" id="timer-stop" hidden>پایان دادن به سشن</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== POMODORO OVERLAY ===== -->
+    <div class="pomodoro-overlay" id="pomodoro-overlay" hidden>
+      <div class="pomodoro-box">
+        <div class="pomodoro-icon">⏸️</div>
+        <p class="pomodoro-q">آیا این معامله طبق پلن است؟</p>
+        <div class="pomodoro-actions">
+          <button class="btn-primary-sm" id="pomo-yes">بله</button>
+          <button class="btn-ghost-sm" id="pomo-no">خیر</button>
+          <button class="btn-ghost-sm" id="pomo-close">بستن</button>
+        </div>
+      </div>
     </div>
 
     <!-- ===== SETTINGS MODAL ===== -->
@@ -142,7 +343,7 @@
       <div class="modal" id="settings-panel">
         <div class="modal-head">
           <h3>تنظیمات تب جدید</h3>
-          <button class="icon-btn" id="settings-close" aria-label="بستن"></button>
+          <button class="icon-btn" id="settings-close" aria-label="بستن"><span class="icon" id="settings-close-icon"></span></button>
         </div>
         <div class="modal-body">
           <label class="set-row">نام شما (برای خوش‌آمدگویی)
@@ -155,12 +356,38 @@
               <option value="tv">تریدینگ‌ویو</option>
             </select>
           </label>
-          <div class="set-row">چیدمان صفحه
-            <div class="seg" id="set-layout">
-              <button data-layout="scroll" class="active">اسکرول (پیش‌فرض)</button>
-              <button data-layout="fit">تمام‌صفحه بدون اسکرول</button>
+          <div class="set-row">
+            <span>حالت نمایش صفحه</span>
+            <div class="seg-group" id="set-layout">
+              <button data-layout="scroll">اسکرول</button>
+              <button data-layout="fit">فشرده</button>
+              <button data-layout="fullvp">تمام‌صفحه</button>
             </div>
           </div>
+          <label class="set-row">ارزهای دیجیتال نمایشی (با کاما جدا کنید)
+            <input type="text" id="set-coins" placeholder="bitcoin,ethereum,tether" />
+          </label>
+          <label class="set-row toggle">نمایش ویجت ارز دیجیتال
+            <input type="checkbox" id="set-crypto" />
+          </label>
+          <label class="set-row toggle">نمایش گرید پس‌زمینه
+            <input type="checkbox" id="set-grid" />
+          </label>
+          <div class="set-section-title">فید محتوا — دسته‌بندی‌ها</div>
+          <div class="set-feed-cats" id="set-feed-cats">
+            <label class="cat-toggle"><input type="checkbox" data-cat="forex" /> 📰 اخبار فارکس</label>
+            <label class="cat-toggle"><input type="checkbox" data-cat="crypto" /> 🪙 ارز دیجیتال</label>
+            <label class="cat-toggle"><input type="checkbox" data-cat="broker" /> 🏦 بروکرها</label>
+            <label class="cat-toggle"><input type="checkbox" data-cat="fraud" /> 🛡️ هشدار کلاهبرداری</label>
+            <label class="cat-toggle"><input type="checkbox" data-cat="education" /> 📚 آموزش</label>
+            <label class="cat-toggle"><input type="checkbox" data-cat="prop" /> 🏆 پراپ‌فرم</label>
+          </div>
+          <div class="set-section-title">بروکر من — رادار اتصال</div>
+          <label class="set-row">انتخاب بروکر
+            <select id="set-broker">
+              <option value="">— انتخاب کنید —</option>
+            </select>
+          </label>
           <div class="set-row">رنگ تأکید
             <div class="swatches" id="set-accent">
               <button data-accent="#185adb" style="background:#185adb" title="آبی"></button>
@@ -169,23 +396,15 @@
               <button data-accent="#e8590c" style="background:#e8590c" title="نارنجی"></button>
             </div>
           </div>
-          <label class="set-row toggle">نمایش گرید پس‌زمینه
-            <input type="checkbox" id="set-grid" checked />
-          </label>
-          <label class="set-row toggle">نمایش ویجت ارز دیجیتال
-            <input type="checkbox" id="set-crypto" checked />
-          </label>
-          <label class="set-row">ارزهای دیجیتال نمایشی (با کاما جدا کنید)
-            <input type="text" id="set-coins" placeholder="bitcoin,ethereum,tether" />
-          </label>
         </div>
         <div class="modal-foot">
           <button class="btn-primary" id="settings-save">انجام شد</button>
         </div>
       </div>
     </div>
-  </div>
 
-  <script src="newtab.js"></script>
+  </div><!-- /.stage-root -->
+
+  <script type="module" src="js/main.js"></script>
 </body>
 </html>
