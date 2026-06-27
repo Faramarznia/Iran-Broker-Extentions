@@ -93,24 +93,16 @@
           <div class="crypto-foot" id="crypto-foot"></div>
         </div>
 
-        <!-- forex ring -->
-        <div class="card ring-card">
-          <h3>ساعت بازارهای جهانی</h3>
-          <div class="ring-wrap">
-            <svg class="ring-svg" id="ring-svg" viewBox="0 0 200 200">
-              <circle cx="100" cy="100" r="86" fill="none" stroke="var(--border)" stroke-width="1"></circle>
-              <circle cx="100" cy="100" r="40" fill="none" stroke="var(--border)" stroke-width="1"></circle>
-              <g id="ring-arcs"></g>
-              <line id="ring-hand" x1="100" y1="100" x2="100" y2="20" stroke="var(--text)" stroke-width="2" stroke-linecap="round"></line>
-              <circle cx="100" cy="100" r="3.4" fill="var(--text)"></circle>
-              <circle id="ring-tip" cx="100" cy="20" r="3" fill="var(--primary)"></circle>
-            </svg>
-            <div class="ring-center">
-              <span class="num" id="ring-count">—</span>
-              <span class="lbl">بازار باز</span>
+        <!-- market timeline -->
+        <div class="card markets-card">
+          <div class="card-head">
+            <div class="h-title">
+              <span class="dot"></span>
+              <h3>ساعات بازار جهانی</h3>
             </div>
+            <span class="markets-utc-badge" id="markets-utc-badge">--:-- UTC</span>
           </div>
-          <div class="session-list" id="session-list"></div>
+          <div class="markets-wrap" id="markets-wrap"></div>
         </div>
 
         <!-- tip -->
@@ -128,11 +120,6 @@
       <!-- ===== FOOTER ===== -->
       <footer class="sec-footer">
         <div class="quick-links" id="quick-links"></div>
-        <div class="trust-badges">
-          <a href="https://iranbroker.net/" title="نماد اعتماد الکترونیکی"><img src="assets/trust/enamad.png" alt="نماد اعتماد الکترونیکی (eNamad)" loading="lazy"></a>
-          <a href="https://iranbroker.net/" title="نشان ملی ثبت رسانه‌های دیجیتال"><img src="assets/trust/samandehi.png" alt="نشان ساماندهی" loading="lazy"></a>
-        </div>
-        <p class="disclaimer">معاملات در بازارهای مالی با ریسک همراه است و ممکن است به از دست رفتن سرمایه منجر شود. ایران بروکر صرفاً مرجع اطلاع‌رسانی و مقایسه است و مسئولیت تصمیم‌های معاملاتی شما را بر عهده ندارد.</p>
       </footer>
 
     </div>

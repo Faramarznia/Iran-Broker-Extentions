@@ -64,10 +64,10 @@
     { tag: 'آموزش', text: 'سودآوری مداوم در فارکس یک‌شبه به‌دست نمی‌آید؛ نیاز به سال‌ها تمرین، تجربه و پشتکار دارد.' }
   ];
   const SESSIONS = [
-    { name: 'سیدنی', open: 21, close: 6, c: '#35d0c0' },
-    { name: 'توکیو', open: 0, close: 9, c: '#a78bfa' },
-    { name: 'لندن', open: 7, close: 16, c: '#6f9bf3' },
-    { name: 'نیویورک', open: 12, close: 21, c: '#f6a723' }
+    { name: 'سیدنی', tz: 'Australia/Sydney', open: 21, close: 6, c: '#35d0c0' },
+    { name: 'توکیو', tz: 'Asia/Tokyo', open: 0, close: 9, c: '#a78bfa' },
+    { name: 'لندن', tz: 'Europe/London', open: 7, close: 16, c: '#6f9bf3' },
+    { name: 'نیویورک', tz: 'America/New_York', open: 12, close: 21, c: '#f6a723' }
   ];
   const COIN_META = {
     bitcoin: { sym: 'BTC', name: 'بیت‌کوین' }, ethereum: { sym: 'ETH', name: 'اتریوم' }, tether: { sym: 'USDT', name: 'تتر' },
@@ -311,6 +311,69 @@
     els.tipText.textContent = t.text;
   }
 
+  /* ----------------------------- Market Sessions Timeline ----------------------------- */
+  function renderMarkets() {
+    if (!els.marketsWrap) return;
+    var now = new Date();
+    var utcH = now.getUTCHours() + now.getUTCMinutes() / 60;
+    var nowPct = (utcH / 24 * 100).toFixed(2);
+
+    var TICKS = [
+      { label: '00:00', pct: '0', tr: 'translateX(0)' },
+      { label: '06:00', pct: '25', tr: 'translateX(-50%)' },
+      { label: '12:00', pct: '50', tr: 'translateX(-50%)' },
+      { label: '18:00', pct: '75', tr: 'translateX(-50%)' }
+    ];
+    var ticksHtml = TICKS.map(function (t) {
+      return '<span class="mkt-tick" style="left:' + t.pct + '%;transform:' + t.tr + '">' + t.label + '</span>';
+    }).join('');
+
+    var rowsHtml = SESSIONS.map(function (s) {
+      var open = isOpen(s, now.getUTCHours());
+      var opacity = open ? '1' : '0.28';
+
+      var localStr = '';
+      try {
+        localStr = new Intl.DateTimeFormat('en-US', {
+          hour: 'numeric', minute: '2-digit', hour12: true, timeZone: s.tz
+        }).format(now).toLowerCase().replace(' ', '');
+      } catch (e) {}
+
+      var segs = '';
+      if (s.open < s.close) {
+        var l = (s.open / 24 * 100).toFixed(2);
+        var w = ((s.close - s.open) / 24 * 100).toFixed(2);
+        segs = '<div class="mkt-seg" style="left:' + l + '%;width:' + w + '%;background:' + s.c + ';opacity:' + opacity + '"></div>';
+      } else {
+        var l1 = (s.open / 24 * 100).toFixed(2);
+        var w1 = ((24 - s.open) / 24 * 100).toFixed(2);
+        var w2 = (s.close / 24 * 100).toFixed(2);
+        segs = '<div class="mkt-seg" style="left:' + l1 + '%;width:' + w1 + '%;background:' + s.c + ';opacity:' + opacity + '"></div>' +
+               '<div class="mkt-seg" style="left:0%;width:' + w2 + '%;background:' + s.c + ';opacity:' + opacity + '"></div>';
+      }
+
+      return '<div class="mkt-row">' +
+        '<div class="mkt-info">' +
+          '<span class="mkt-name">' + s.name + '</span>' +
+          '<span class="mkt-status" style="color:' + (open ? 'var(--green)' : 'var(--soft)') + '">' + (open ? 'باز' : 'بسته') + '</span>' +
+        '</div>' +
+        '<div class="mkt-track" dir="ltr">' +
+          segs +
+          '<div class="mkt-now-line" style="left:' + nowPct + '%"></div>' +
+        '</div>' +
+        '<span class="mkt-ltime" dir="ltr">' + localStr + '</span>' +
+      '</div>';
+    }).join('');
+
+    els.marketsWrap.innerHTML =
+      '<div class="mkt-row mkt-axis">' +
+        '<div class="mkt-info" aria-hidden="true"></div>' +
+        '<div class="mkt-ticks" dir="ltr">' + ticksHtml + '</div>' +
+        '<div class="mkt-ltime" aria-hidden="true"></div>' +
+      '</div>' +
+      rowsHtml;
+  }
+
   /* ----------------------------- Time-dependent render ----------------------------- */
   function renderTime() {
     const now = new Date();
@@ -335,34 +398,10 @@
     const activeSession = openSessions.length ? openSessions.map(function (s) { return s.name; }).join('، ') : 'بازارها بسته';
 
     els.marketCount.textContent = openCount + ' بازار فعال';
-    els.ringCount.textContent = openCount;
     els.heroActive.textContent = activeSession;
     els.heroUtc.textContent = String(uh).padStart(2, '0') + ':' + String(now.getUTCMinutes()).padStart(2, '0');
-
-    // ring arcs
-    els.ringArcs.innerHTML = SESSIONS.map(function (s, i) {
-      const rr = 74 - i * 9;
-      return '<path d="' + arc(100, 100, rr, s.open, s.close) + '" fill="none" stroke="' + s.c + '" stroke-width="7" stroke-linecap="round" opacity="' + (open[i] ? 1 : 0.28) + '"></path>';
-    }).join('');
-
-    // hand
-    const utcF = uh + now.getUTCMinutes() / 60;
-    const hand = polar(100, 100, 80, (utcF / 24) * 360);
-    els.ringHand.setAttribute('x2', hand[0].toFixed(2));
-    els.ringHand.setAttribute('y2', hand[1].toFixed(2));
-    els.ringTip.setAttribute('cx', hand[0].toFixed(2));
-    els.ringTip.setAttribute('cy', hand[1].toFixed(2));
-
-    // session list
-    els.sessionList.innerHTML = SESSIONS.map(function (s, i) {
-      const op = open[i];
-      return '<div class="s-row">' +
-        '<span class="s-dot" style="background:' + s.c + ';opacity:' + (op ? 1 : 0.28) + '"></span>' +
-        '<span class="s-name">' + s.name + '</span>' +
-        '<span class="s-time">' + String(s.open).padStart(2, '0') + '–' + String(s.close).padStart(2, '0') + ' UTC</span>' +
-        '<span class="s-status" style="color:' + (op ? 'var(--green)' : 'var(--soft)') + '">' + (op ? 'باز' : 'بسته') + '</span>' +
-        '</div>';
-    }).join('');
+    if (els.marketsUtcBadge) els.marketsUtcBadge.textContent = String(uh).padStart(2, '0') + ':' + String(now.getUTCMinutes()).padStart(2, '0') + ' UTC';
+    renderMarkets();
   }
 
   /* ----------------------------- Theme / layout / grid ----------------------------- */
@@ -422,6 +461,7 @@
       '      color[j]+=lw*float(i*i)/abs(fract(t-0.01*float(j)+float(i)*0.01)*5.-length(uv)+mod(uv.x+uv.y,0.2));',
       '    }',
       '  }',
+      '  color=color/(color+vec3(0.9));',
       '  gl_FragColor=vec4(color[0],color[1],color[2],1.);',
       '}'
     ].join('');
@@ -536,8 +576,8 @@
       'hero-date', 'clock', 'hero-greeting', 'hero-active', 'hero-utc',
       'search-box', 'search-icon', 'search-input', 'scope-label', 'search-go', 'suggest', 'engines',
       'tools-grid', 'crypto-card', 'crypto-list', 'crypto-foot', 'crypto-refresh',
-      'ring-svg', 'ring-arcs', 'ring-hand', 'ring-tip', 'ring-count', 'session-list',
       'tip-bg-ic', 'tip-tag', 'tip-text', 'tip-next', 'tip-next-ic',
+      'markets-wrap', 'markets-utc-badge',
       'quick-links', 'settings-modal', 'settings-panel', 'settings-close', 'settings-save',
       'set-name', 'set-engine', 'set-layout', 'set-accent', 'set-grid', 'set-crypto', 'set-coins'
     ].forEach(function (id) {
