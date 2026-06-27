@@ -2,3 +2,5 @@
 *.DS_Store
 node_modules/
 .thumbnail
+.auto-commit.log
+.auto-commit.pid
