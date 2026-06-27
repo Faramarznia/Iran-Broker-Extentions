@@ -492,7 +492,7 @@
       return {
         x: Math.random() * W,
         y: randomY ? Math.random() * H : H + 2,
-        r: Math.random() * 0.55 + 0.15,
+        r: Math.random() * 1.0 + 0.4,
         phase: Math.random() * Math.PI * 2,
         freq: 0.012 + Math.random() * 0.022,
         maxOp: 0.25 + Math.random() * 0.75,
