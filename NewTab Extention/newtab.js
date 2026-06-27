@@ -400,6 +400,64 @@
     });
   }
 
+  /* ----------------------------- Sparkles ----------------------------- */
+  function initSparkles() {
+    const canvas = document.getElementById('sp-canvas');
+    if (!canvas || !canvas.getContext) return;
+    const ctx = canvas.getContext('2d');
+    let W = 0, H = 0, particles = [], rafId;
+
+    function resize() {
+      W = canvas.parentElement.offsetWidth;
+      H = canvas.parentElement.offsetHeight;
+      canvas.width = W;
+      canvas.height = H;
+      particles = [];
+      const count = Math.min(Math.floor(W / 3.5), 300);
+      for (let i = 0; i < count; i++) particles.push(newParticle(true));
+    }
+
+    function newParticle(randomY) {
+      return {
+        x: Math.random() * W,
+        y: randomY ? Math.random() * H : H + 2,
+        r: Math.random() * 0.55 + 0.15,
+        phase: Math.random() * Math.PI * 2,
+        freq: 0.012 + Math.random() * 0.022,
+        maxOp: 0.25 + Math.random() * 0.75,
+        vx: (Math.random() - 0.5) * 0.28,
+        vy: -(0.05 + Math.random() * 0.18)
+      };
+    }
+
+    function tick() {
+      ctx.clearRect(0, 0, W, H);
+      var isLight = document.body.getAttribute('data-theme') === 'light';
+      var rc = isLight ? 24 : 255, gc = isLight ? 90 : 255, bc = isLight ? 219 : 255;
+      for (var i = 0; i < particles.length; i++) {
+        var p = particles[i];
+        p.phase += p.freq;
+        p.x += p.vx;
+        p.y += p.vy;
+        if (p.y < -4 || p.x < -6 || p.x > W + 6) { particles[i] = newParticle(false); continue; }
+        var op = p.maxOp * ((Math.sin(p.phase) + 1) / 2);
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(' + rc + ',' + gc + ',' + bc + ',' + op.toFixed(2) + ')';
+        ctx.fill();
+      }
+      rafId = requestAnimationFrame(tick);
+    }
+
+    resize();
+    tick();
+    window.addEventListener('resize', resize);
+    document.addEventListener('visibilitychange', function () {
+      if (document.hidden) { cancelAnimationFrame(rafId); }
+      else { rafId = requestAnimationFrame(tick); }
+    });
+  }
+
   /* ----------------------------- Wire up ----------------------------- */
   function cacheEls() {
     [
@@ -480,6 +538,8 @@
 
     // focus search for quick typing
     els.searchInput.focus();
+
+    initSparkles();
   }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
