@@ -35,30 +35,90 @@ function parseRSS(xmlStr) {
       const date = item.querySelector('pubDate')?.textContent?.trim() || '';
       const enc = item.querySelector('enclosure');
       const thumb = enc ? enc.getAttribute('url') : null;
-      if (title && url) result.push({ title, url, date, thumb });
+
+      // Excerpt from description
+      const descRaw = item.querySelector('description')?.textContent?.trim() || '';
+      const excerpt = descRaw.replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim().slice(0, 85);
+
+      // Categories
+      const cats = [];
+      item.querySelectorAll('category').forEach(c => {
+        const ct = c.textContent.trim().toLowerCase();
+        if (ct.includes('فارکس') || ct.includes('forex')) cats.push('forex');
+        else if (ct.includes('ارز دیجیتال') || ct.includes('کریپتو') || ct.includes('crypto') || ct.includes('bitcoin')) cats.push('crypto');
+        else if (ct.includes('بروکر') || ct.includes('broker')) cats.push('broker');
+        else if (ct.includes('کلاهبرداری') || ct.includes('fraud')) cats.push('fraud');
+        else if (ct.includes('آموزش') || ct.includes('education')) cats.push('education');
+        else if (ct.includes('پراپ') || ct.includes('prop')) cats.push('prop');
+      });
+
+      if (title && url) result.push({ title, url, date, thumb, excerpt, cats });
     });
-    return result.slice(0, 10);
+    return result.slice(0, 12);
   } catch (e) {
     return [];
   }
 }
 
-function renderFeed(items) {
+let _feedItems = [];
+let _activeCat = 'all';
+
+function renderFeedCats(store) {
+  const el = document.getElementById('feed-cats');
+  if (!el) return;
+  const selected = store.get().feedCategories || [];
+  const tabs = [{ key: 'all', label: 'همه' }].concat(
+    selected.filter(k => CAT_LABELS[k]).map(k => ({ key: k, label: CAT_LABELS[k] }))
+  );
+  el.innerHTML = tabs.map(t =>
+    '<button class="feed-cat-btn' + (_activeCat === t.key ? ' active' : '') + '" data-cat="' + t.key + '">' + t.label + '</button>'
+  ).join('');
+  el.querySelectorAll('.feed-cat-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      _activeCat = btn.dataset.cat;
+      renderFeedList();
+      el.querySelectorAll('.feed-cat-btn').forEach(b => b.classList.toggle('active', b.dataset.cat === _activeCat));
+    });
+  });
+}
+
+function renderFeedList() {
   const container = document.getElementById('feed-scroll');
   if (!container) return;
-
-  if (!items || !items.length) {
+  const items = _feedItems;
+  if (!items.length) {
     container.innerHTML = '<div class="feed-empty">خطا در دریافت مطالب — <a href="https://iranbroker.net/news/" target="_blank">مستقیم باز کن</a></div>';
     return;
   }
-
-  container.innerHTML = items.slice(0, 10).map(item => {
+  const filtered = _activeCat === 'all' ? items : items.filter(i => i.cats && i.cats.includes(_activeCat));
+  const shown = (filtered.length ? filtered : items).slice(0, 8);
+  container.innerHTML = shown.map(item => {
     const timeStr = item.date ? relativeTime(item.date) : '';
-    return '<a class="feed-item" href="' + item.url + '" target="_blank">' +
-      '<span class="feed-item-title">' + item.title + '</span>' +
-      (timeStr ? '<span class="feed-item-meta">' + timeStr + '</span>' : '') +
+    const cat = item.cats && item.cats[0] ? CAT_LABELS[item.cats[0]] : '';
+    const thumbHtml = item.thumb
+      ? '<img class="feed-art-thumb" src="' + item.thumb + '" alt="" loading="lazy">'
+      : '<div class="feed-art-placeholder">📰</div>';
+    return '<a class="feed-article" href="' + item.url + '" target="_blank">' +
+      thumbHtml +
+      '<div class="feed-art-body">' +
+        '<div class="feed-art-meta">' +
+          (cat ? '<span class="feed-art-cat">' + cat + '</span>' : '') +
+          (timeStr ? '<span class="feed-art-time">' + timeStr + '</span>' : '') +
+        '</div>' +
+        '<div class="feed-art-title">' + item.title + '</div>' +
+        (item.excerpt ? '<div class="feed-art-excerpt">' + item.excerpt + '</div>' : '') +
+      '</div>' +
     '</a>';
   }).join('');
+  container.querySelectorAll('img').forEach(img => {
+    img.addEventListener('error', () => { img.style.display = 'none'; });
+  });
+}
+
+function renderFeed(items, store) {
+  _feedItems = items || [];
+  if (store) renderFeedCats(store);
+  renderFeedList();
 }
 
 async function fetchFeed(store) {
@@ -90,10 +150,10 @@ async function fetchFeed(store) {
 
   if (items && items.length) {
     store.set({ feedCache: { data: items, timestamp: Date.now() } });
-    renderFeed(items);
+    renderFeed(items, store);
   } else {
     const cached = store.get().feedCache;
-    renderFeed(cached && cached.data ? cached.data : STATIC_FEED);
+    renderFeed(cached && cached.data ? cached.data : STATIC_FEED, store);
   }
 }
 
