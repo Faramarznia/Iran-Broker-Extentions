@@ -29,7 +29,9 @@
     trophy: '<path fill="currentColor" d="M13 16.938V19h5v2H6v-2h5v-2.062A8.001 8.001 0 0 1 4 9V3h16v6a8.001 8.001 0 0 1-7 7.938zM6 5v4a6 6 0 1 0 12 0V5H6zM1 5h2v4H1V5zm20 0h2v4h-2V5z"/>',
     newspaper: '<path fill="currentColor" d="M20 3v16a2 2 0 0 1-2 2H5a3 3 0 0 1-3-3V5h2v13a1 1 0 0 0 2 0V3h14zM7 7v6h8V7H7zm2 2h4v2H9V9zm-2 6h8v2H7v-2z"/>',
     graduation: '<path fill="currentColor" d="M12 2l11 6-11 6L3.545 9.385 3 9.09V14H1V8l11-6zm6.16 9.674L19 12v3.5c0 1.933-3.134 3.5-7 3.5s-7-1.567-7-3.5V12l.84-.326L12 14.276l6.16-2.602z"/>',
-    link: '<path fill="currentColor" d="M18.364 15.536L16.95 14.12l1.414-1.414a5 5 0 1 0-7.071-7.071L9.879 7.05 8.464 5.636 9.88 4.222a7 7 0 0 1 9.9 9.9l-1.415 1.414zm-2.828 2.828l-1.415 1.414a7 7 0 0 1-9.9-9.9l1.415-1.414L7.05 9.88l-1.414 1.414a5 5 0 1 0 7.071 7.071l1.414-1.414 1.415 1.414zm-.708-10.607l1.415 1.415-7.072 7.07-1.414-1.414 7.071-7.07z"/>'
+    link: '<path fill="currentColor" d="M18.364 15.536L16.95 14.12l1.414-1.414a5 5 0 1 0-7.071-7.071L9.879 7.05 8.464 5.636 9.88 4.222a7 7 0 0 1 9.9 9.9l-1.415 1.414zm-2.828 2.828l-1.415 1.414a7 7 0 0 1-9.9-9.9l1.415-1.414L7.05 9.88l-1.414 1.414a5 5 0 1 0 7.071 7.071l1.414-1.414 1.415 1.414zm-.708-10.607l1.415 1.415-7.072 7.07-1.414-1.414 7.071-7.07z"/>',
+    pencil: '<path fill="currentColor" d="M15.728 9.686l-1.414-1.414L5 17.586V19h1.414l9.314-9.314zm1.414-1.414l1.414-1.414-1.414-1.414-1.414 1.414 1.414 1.414zM7.242 21H3v-4.243L16.435 3.322a1 1 0 0 1 1.414 0l2.829 2.829a1 1 0 0 1 0 1.414L7.243 21z"/>',
+    grip: '<g fill="currentColor"><circle cx="9" cy="5" r="1.5"/><circle cx="15" cy="5" r="1.5"/><circle cx="9" cy="12" r="1.5"/><circle cx="15" cy="12" r="1.5"/><circle cx="9" cy="19" r="1.5"/><circle cx="15" cy="19" r="1.5"/></g>'
   };
   function svg(name) {
     return '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">' + (ICONS[name] || '') + '</svg>';
@@ -371,7 +373,7 @@
     if (els.themeBtn) els.themeBtn.innerHTML = '<span class="icon">' + svg(state.theme === 'light' ? 'moon' : 'sun') + '</span>';
     applyAccent();
   }
-  function applyLayout() { document.body.setAttribute('data-layout', state.layout === 'fit' ? 'fit' : 'scroll'); }
+  function applyLayout() { var l = state.layout; document.body.setAttribute('data-layout', (l === 'fit' || l === 'fullvp') ? l : 'scroll'); }
   function applyGrid() { els.bgGrid.hidden = !state.showGrid; }
   function applyShowCrypto() { els.cryptoCard.style.display = state.showCrypto ? '' : 'none'; }
 
@@ -492,7 +494,7 @@
       return {
         x: Math.random() * W,
         y: randomY ? Math.random() * H : H + 2,
-        r: Math.random() * 0.55 + 0.15,
+        r: Math.random() * 1.0 + 0.4,
         phase: Math.random() * Math.PI * 2,
         freq: 0.012 + Math.random() * 0.022,
         maxOp: 0.25 + Math.random() * 0.75,
@@ -616,4 +618,462 @@
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
   else init();
+
+  /* ===================================================================
+     Feature Edit Mode — widget visibility, ordering, card resize
+     =================================================================== */
+
+  var WS_KEY = 'ib_ws_v1';
+
+  var WS_DEFS = [
+    { id: 'sec-hero',    label: 'ساعت و تاریخ',        group: 'main' },
+    { id: 'sec-search',  label: 'جستجو',               group: 'main' },
+    { id: 'sec-tools',   label: 'ابزارهای ایران بروکر', group: 'main' },
+    { id: 'sec-bento',   label: 'بخش ویجت‌ها',         group: 'main', noToggle: true },
+    { id: 'sec-footer',  label: 'فوتر',                group: 'main' },
+    { id: 'crypto-card', label: 'قیمت ارز دیجیتال',    group: 'bento', resizable: true },
+    { id: 'ring-card',   label: 'ساعت بازارهای جهانی', group: 'bento', resizable: true },
+    { id: 'tip-card',    label: 'نکته روز',             group: 'bento', resizable: true }
+  ];
+
+  var ws = {
+    visible: {},
+    mainOrder: ['sec-hero', 'sec-search', 'sec-tools', 'sec-bento', 'sec-footer'],
+    bentoOrder: ['crypto-card', 'ring-card', 'tip-card'],
+    sizes: {}
+  };
+
+  function wsInit() {
+    WS_DEFS.forEach(function (d) { ws.visible[d.id] = true; });
+    try {
+      var s = JSON.parse(localStorage.getItem(WS_KEY) || '{}');
+      if (s.visible) {
+        var k; for (k in s.visible) { if (Object.prototype.hasOwnProperty.call(s.visible, k)) ws.visible[k] = s.visible[k]; }
+      }
+      if (s.mainOrder && s.mainOrder.length === ws.mainOrder.length) ws.mainOrder = s.mainOrder;
+      if (s.bentoOrder && s.bentoOrder.length === ws.bentoOrder.length) ws.bentoOrder = s.bentoOrder;
+      if (s.sizes) ws.sizes = s.sizes;
+    } catch (e) {}
+  }
+
+  function wsPersist() {
+    try { localStorage.setItem(WS_KEY, JSON.stringify({ visible: ws.visible, mainOrder: ws.mainOrder, bentoOrder: ws.bentoOrder, sizes: ws.sizes })); } catch (e) {}
+  }
+
+  function wsApply() {
+    var pageCol = document.querySelector('.page-col');
+    var topbar = document.querySelector('header.topbar');
+
+    // Reorder main sections inside page-col
+    if (pageCol) {
+      ws.mainOrder.forEach(function (id) {
+        var el = document.getElementById(id);
+        if (el && el.parentElement === pageCol) pageCol.appendChild(el);
+      });
+      if (topbar && topbar.parentElement === pageCol) pageCol.insertBefore(topbar, pageCol.firstChild);
+    }
+
+    // Reorder bento cards inside sec-bento
+    var bento = document.getElementById('sec-bento');
+    if (bento) {
+      ws.bentoOrder.forEach(function (id) {
+        var el = document.getElementById(id);
+        if (el && el.parentElement === bento) bento.appendChild(el);
+      });
+    }
+
+    // Apply visibility
+    WS_DEFS.forEach(function (d) {
+      if (d.noToggle) return;
+      var el = document.getElementById(d.id);
+      if (el) el.style.display = ws.visible[d.id] !== false ? '' : 'none';
+    });
+
+    // Auto-hide bento section if all cards hidden
+    if (bento) {
+      var anyBento = ws.bentoOrder.some(function (id) { return ws.visible[id] !== false; });
+      bento.style.display = anyBento ? '' : 'none';
+    }
+
+    // Apply card sizes
+    ws.bentoOrder.forEach(function (id) {
+      var el = document.getElementById(id);
+      if (!el) return;
+      var sz = ws.sizes[id] || {};
+      el.style.gridColumn = sz.colSpan && sz.colSpan > 1 ? 'span ' + sz.colSpan : '';
+      el.style.minHeight = sz.h ? sz.h + 'px' : '';
+    });
+  }
+
+  /* ---- Edit panel ---- */
+  var editActive = false;
+
+  function toggleEditMode() {
+    editActive = !editActive;
+    document.body.classList.toggle('edit-active', editActive);
+    var panel = document.getElementById('edit-panel');
+    var btn = document.getElementById('edit-btn');
+    if (editActive) {
+      panel.hidden = false;
+      renderEP();
+      if (btn) btn.innerHTML = svg('close');
+    } else {
+      panel.hidden = true;
+      if (btn) btn.innerHTML = svg('pencil');
+    }
+  }
+
+  function renderEP() {
+    var body = document.getElementById('ep-body');
+    if (!body) return;
+    var html = '';
+
+    html += '<div class="ep-group-label">بخش‌های اصلی</div>';
+    ws.mainOrder.forEach(function (id) {
+      var def = null;
+      WS_DEFS.forEach(function (d) { if (d.id === id) def = d; });
+      if (!def) return;
+      var on = ws.visible[id] !== false;
+      html += '<div class="ep-row" data-wid="' + id + '" data-grp="main">' +
+        '<span class="ep-grip">' + svg('grip') + '</span>' +
+        '<div class="ep-row-content"><span class="ep-label">' + def.label + '</span></div>' +
+        (def.noToggle ? '<span style="width:28px"></span>' : '<button class="ep-toggle' + (on ? ' on' : '') + '" data-toggle="' + id + '"></button>') +
+        '</div>';
+    });
+
+    html += '<div class="ep-group-label" style="margin-top:4px">ویجت‌های داده</div>';
+    ws.bentoOrder.forEach(function (id) {
+      var def = null;
+      WS_DEFS.forEach(function (d) { if (d.id === id) def = d; });
+      if (!def) return;
+      var on = ws.visible[id] !== false;
+      var sz = ws.sizes[id] || {};
+      var col = sz.colSpan || 1;
+      html += '<div class="ep-row" data-wid="' + id + '" data-grp="bento">' +
+        '<span class="ep-grip">' + svg('grip') + '</span>' +
+        '<div class="ep-row-content">' +
+          '<span class="ep-label">' + def.label + '</span>' +
+          '<div class="ep-size-row">' +
+            '<span class="ep-size-lbl">عرض:</span>' +
+            [1, 2, 3].map(function (c) {
+              return '<button class="ep-size-btn' + (col === c ? ' sz-active' : '') + '" data-sid="' + id + '" data-col="' + c + '">' + ['۱', '۲', '۳'][c - 1] + '</button>';
+            }).join('') +
+          '</div>' +
+        '</div>' +
+        '<button class="ep-toggle' + (on ? ' on' : '') + '" data-toggle="' + id + '"></button>' +
+        '</div>';
+    });
+
+    body.innerHTML = html;
+
+    // Toggle visibility
+    Array.prototype.forEach.call(body.querySelectorAll('[data-toggle]'), function (btn) {
+      btn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        var id = btn.getAttribute('data-toggle');
+        ws.visible[id] = !btn.classList.contains('on');
+        btn.classList.toggle('on', ws.visible[id]);
+        wsApply();
+        wsPersist();
+      });
+    });
+
+    // Size buttons
+    Array.prototype.forEach.call(body.querySelectorAll('[data-sid]'), function (btn) {
+      btn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        var id = btn.getAttribute('data-sid');
+        var col = parseInt(btn.getAttribute('data-col'));
+        setColSpan(id, col);
+        var row = btn.parentElement;
+        while (row && !row.classList.contains('ep-size-row')) row = row.parentElement;
+        if (row) Array.prototype.forEach.call(row.querySelectorAll('.ep-size-btn'), function (b) {
+          b.classList.toggle('sz-active', parseInt(b.getAttribute('data-col')) === col);
+        });
+      });
+    });
+
+    initPanelDnD(body);
+  }
+
+  function initPanelDnD(container) {
+    var rows = container.querySelectorAll('.ep-row');
+    var dragSrc = null;
+
+    Array.prototype.forEach.call(rows, function (row) {
+      var grip = row.querySelector('.ep-grip');
+      if (!grip) return;
+
+      grip.addEventListener('mousedown', function () { row.setAttribute('draggable', 'true'); });
+
+      row.addEventListener('dragstart', function (e) {
+        dragSrc = row;
+        e.dataTransfer.effectAllowed = 'move';
+        setTimeout(function () { row.classList.add('dragging-row'); }, 0);
+      });
+      row.addEventListener('dragend', function () {
+        row.removeAttribute('draggable');
+        row.classList.remove('dragging-row');
+        Array.prototype.forEach.call(container.querySelectorAll('.drag-over-row'), function (el) {
+          el.classList.remove('drag-over-row');
+        });
+        dragSrc = null;
+      });
+      row.addEventListener('dragover', function (e) {
+        e.preventDefault();
+        if (!dragSrc || dragSrc === row || dragSrc.getAttribute('data-grp') !== row.getAttribute('data-grp')) return;
+        row.classList.add('drag-over-row');
+      });
+      row.addEventListener('dragleave', function () { row.classList.remove('drag-over-row'); });
+      row.addEventListener('drop', function (e) {
+        e.preventDefault();
+        row.classList.remove('drag-over-row');
+        if (!dragSrc || dragSrc === row) return;
+        var grp = dragSrc.getAttribute('data-grp');
+        if (row.getAttribute('data-grp') !== grp) return;
+        var srcId = dragSrc.getAttribute('data-wid');
+        var dstId = row.getAttribute('data-wid');
+        var order = grp === 'main' ? ws.mainOrder : ws.bentoOrder;
+        var si = order.indexOf(srcId), di = order.indexOf(dstId);
+        if (si < 0 || di < 0) return;
+        order.splice(si, 1);
+        order.splice(di, 0, srcId);
+        wsApply();
+        wsPersist();
+        renderEP();
+      });
+    });
+  }
+
+  /* ---- In-page section drag bars ---- */
+  function initSectionDnD() {
+    var mainIds = ['sec-hero', 'sec-search', 'sec-tools', 'sec-bento', 'sec-footer'];
+    var bentoIds = ['crypto-card', 'ring-card', 'tip-card'];
+    var dragSrcId = null;
+    var dragGrp = null;
+
+    function setupSection(id, grp) {
+      var el = document.getElementById(id);
+      if (!el) return;
+
+      // Inject drag bar at top of each section
+      if (!el.querySelector('.sec-drag-bar')) {
+        var bar = document.createElement('div');
+        bar.className = 'sec-drag-bar';
+        bar.innerHTML = '<span></span><span></span><span></span>';
+        el.insertBefore(bar, el.firstChild);
+      }
+      var bar = el.querySelector('.sec-drag-bar');
+
+      bar.addEventListener('mousedown', function () { el.setAttribute('draggable', 'true'); });
+
+      el.addEventListener('dragstart', function (e) {
+        if (!document.body.classList.contains('edit-active')) { el.removeAttribute('draggable'); return; }
+        dragSrcId = id;
+        dragGrp = grp;
+        e.dataTransfer.effectAllowed = 'move';
+        setTimeout(function () { el.classList.add('section-dragging'); }, 0);
+      });
+      el.addEventListener('dragend', function () {
+        el.removeAttribute('draggable');
+        el.classList.remove('section-dragging');
+        var cls = grp === 'main' ? 'drag-over-section' : 'drag-over-card';
+        Array.prototype.forEach.call(document.querySelectorAll('.' + cls), function (x) { x.classList.remove(cls); });
+        dragSrcId = null;
+        dragGrp = null;
+      });
+      el.addEventListener('dragover', function (e) {
+        if (!document.body.classList.contains('edit-active') || !dragSrcId || dragSrcId === id || dragGrp !== grp) return;
+        e.preventDefault();
+        var cls = grp === 'main' ? 'drag-over-section' : 'drag-over-card';
+        el.classList.add(cls);
+      });
+      el.addEventListener('dragleave', function () {
+        el.classList.remove('drag-over-section');
+        el.classList.remove('drag-over-card');
+      });
+      el.addEventListener('drop', function (e) {
+        e.preventDefault();
+        el.classList.remove('drag-over-section');
+        el.classList.remove('drag-over-card');
+        if (!dragSrcId || dragSrcId === id || dragGrp !== grp) return;
+        var order = grp === 'main' ? ws.mainOrder : ws.bentoOrder;
+        var si = order.indexOf(dragSrcId), di = order.indexOf(id);
+        if (si < 0 || di < 0) return;
+        order.splice(si, 1);
+        order.splice(di, 0, dragSrcId);
+        wsApply();
+        wsPersist();
+        if (editActive) renderEP();
+      });
+    }
+
+    mainIds.forEach(function (id) { setupSection(id, 'main'); });
+    bentoIds.forEach(function (id) { setupSection(id, 'bento'); });
+  }
+
+  /* ---- Card resize: height (bottom handle) + width (left-edge drag) + size badge ---- */
+
+  var CARD_SIZE_LABELS = ['ک', 'م', 'ب'];
+  var CARD_SIZE_TITLES = ['یک ستون', 'دو ستون', 'تمام عرض'];
+
+  function colSpanOf(id) {
+    return (ws.sizes[id] && ws.sizes[id].colSpan) || 1;
+  }
+
+  function setColSpan(id, col) {
+    if (!ws.sizes[id]) ws.sizes[id] = {};
+    ws.sizes[id].colSpan = col;
+    wsApply();
+    wsPersist();
+    refreshCardBadge(id);
+    if (editActive) renderEP();
+  }
+
+  function refreshCardBadge(id) {
+    var card = document.getElementById(id);
+    if (!card) return;
+    var badge = card.querySelector('.card-size-badge');
+    if (!badge) return;
+    var cur = colSpanOf(id);
+    Array.prototype.forEach.call(badge.querySelectorAll('.csb-btn'), function (btn) {
+      btn.classList.toggle('csb-on', parseInt(btn.getAttribute('data-col')) === cur);
+    });
+  }
+
+  function initCardResize() {
+    ws.bentoOrder.forEach(function (id) {
+      var card = document.getElementById(id);
+      if (!card) return;
+
+      /* -- Size badge (S/M/L) -- */
+      if (!card.querySelector('.card-size-badge')) {
+        var badge = document.createElement('div');
+        badge.className = 'card-size-badge';
+        CARD_SIZE_LABELS.forEach(function (lbl, i) {
+          var btn = document.createElement('button');
+          btn.className = 'csb-btn';
+          btn.textContent = lbl;
+          btn.title = CARD_SIZE_TITLES[i];
+          btn.setAttribute('data-col', i + 1);
+          btn.addEventListener('click', function (e) {
+            e.stopPropagation();
+            setColSpan(id, i + 1);
+          });
+          badge.appendChild(btn);
+        });
+        card.appendChild(badge);
+        refreshCardBadge(id);
+      }
+
+      /* -- Height handle (bottom drag) -- */
+      if (!card.querySelector('.card-resize-hdl')) {
+        var hHdl = document.createElement('div');
+        hHdl.className = 'card-resize-hdl';
+        card.appendChild(hHdl);
+
+        hHdl.addEventListener('mousedown', function (e) {
+          if (!editActive) return;
+          e.preventDefault();
+          var startY = e.clientY;
+          var startH = card.offsetHeight;
+          card.classList.add('card-h-dragging');
+
+          function onMove(ev) {
+            var newH = Math.max(140, startH + (ev.clientY - startY));
+            card.style.minHeight = newH + 'px';
+          }
+          function onUp(ev) {
+            card.classList.remove('card-h-dragging');
+            var finalH = Math.max(140, startH + (ev.clientY - startY));
+            if (!ws.sizes[id]) ws.sizes[id] = {};
+            ws.sizes[id].h = finalH;
+            wsPersist();
+            document.removeEventListener('mousemove', onMove);
+            document.removeEventListener('mouseup', onUp);
+          }
+          document.addEventListener('mousemove', onMove);
+          document.addEventListener('mouseup', onUp);
+        });
+      }
+
+      /* -- Width handle (left-edge drag, snaps to column grid) -- */
+      if (!card.querySelector('.card-w-hdl')) {
+        var wHdl = document.createElement('div');
+        wHdl.className = 'card-w-hdl';
+        card.appendChild(wHdl);
+
+        wHdl.addEventListener('mousedown', function (e) {
+          if (!editActive) return;
+          e.preventDefault();
+          e.stopPropagation();
+
+          var bento = document.getElementById('sec-bento');
+          var bentoW = bento ? bento.offsetWidth : 0;
+          var gap = 16;
+          /* equal 3-column grid: col width = (total - 2 gaps) / 3 */
+          var colW = (bentoW - gap * 2) / 3;
+          var startX = e.clientX;
+          var startSpan = colSpanOf(id);
+          var liveSpan = startSpan;
+
+          card.classList.add('card-w-dragging');
+          document.body.style.cursor = 'ew-resize';
+
+          function onMove(ev) {
+            /* RTL: dragging left (smaller clientX) = expanding */
+            var dx = startX - ev.clientX;
+            var extra = Math.round(dx / colW);
+            var newSpan = Math.min(3, Math.max(1, startSpan + extra));
+            if (newSpan !== liveSpan) {
+              liveSpan = newSpan;
+              /* live preview without committing */
+              card.style.gridColumn = newSpan > 1 ? 'span ' + newSpan : '';
+            }
+          }
+
+          function onUp() {
+            card.classList.remove('card-w-dragging');
+            document.body.style.cursor = '';
+            setColSpan(id, liveSpan);
+            document.removeEventListener('mousemove', onMove);
+            document.removeEventListener('mouseup', onUp);
+          }
+
+          document.addEventListener('mousemove', onMove);
+          document.addEventListener('mouseup', onUp);
+        });
+      }
+    });
+  }
+
+  /* ---- Init ---- */
+  function initEditMode() {
+    wsInit();
+    wsApply();
+
+    var editBtn = document.getElementById('edit-btn');
+    var epClose = document.getElementById('ep-close');
+    var epDone = document.getElementById('ep-done');
+
+    if (editBtn) {
+      editBtn.innerHTML = svg('pencil');
+      editBtn.addEventListener('click', toggleEditMode);
+    }
+    if (epClose) {
+      epClose.innerHTML = svg('close');
+      epClose.addEventListener('click', toggleEditMode);
+    }
+    if (epDone) epDone.addEventListener('click', toggleEditMode);
+
+    initCardResize();
+    initSectionDnD();
+
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && editActive) toggleEditMode();
+    });
+  }
+
+  initEditMode();
+
 })();
