@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@4.6.0/fonts/remixicon.css">
+<style>
+@font-face{font-family:'Estedad';src:url('assets/fonts/Estedad-Thin.woff2') format('woff2');font-weight:100;font-display:swap}
+@font-face{font-family:'Estedad';src:url('assets/fonts/Estedad-Light.woff2') format('woff2');font-weight:300;font-display:swap}
+@font-face{font-family:'Estedad';src:url('assets/fonts/Estedad-Regular.woff2') format('woff2');font-weight:400;font-display:swap}
+@font-face{font-family:'Estedad';src:url('assets/fonts/Estedad-SemiBold.woff2') format('woff2');font-weight:600;font-display:swap}
+@font-face{font-family:'Estedad';src:url('assets/fonts/Estedad-Bold.woff2') format('woff2');font-weight:700;font-display:swap}
+@font-face{font-family:'Estedad';src:url('assets/fonts/Estedad-ExtraBold.woff2') format('woff2');font-weight:800;font-display:swap}
+:root{
+--bg:#090b12;--bg2:#0e121b;--surface:rgba(255,255,255,.04);--surface2:rgba(255,255,255,.07);--surfaceSolid:#141926;
+--border:rgba(255,255,255,.08);--border2:rgba(255,255,255,.14);
+--text:#f5f7fa;--sub:#9aa1b1;--soft:#6a7180;--logo-text:#f5f7fa;--logo-mark:#2f6fe0;
+--primary:#6f9bf3;--primaryStrong:#185adb;--primarySoft:rgba(111,155,243,.14);
+--green:#1fc16b;--greenSoft:rgba(31,193,107,.13);--red:#fb3748;--redSoft:rgba(251,55,72,.12);
+--teal:#35d0c0;--purple:#a78bfa;--orange:#f6a723;--pink:#f6679f;
+--shadow:0 18px 46px -16px rgba(0,0,0,.6);
+--glow:radial-gradient(1000px 520px at 84% -12%,rgba(111,155,243,.18),transparent 60%),radial-gradient(760px 520px at 4% 108%,rgba(31,193,107,.09),transparent 56%);
+--grid:rgba(255,255,255,.025);
+}
+body[data-theme="light"]{
+--bg:#eaeef5;--bg2:#f5f7fa;--surface:#ffffff;--surface2:#f5f7fa;--surfaceSolid:#ffffff;
+--border:#e1e4ea;--border2:#d2d7e0;
+--text:#0e121b;--sub:#525866;--soft:#868c98;--logo-text:#0e121b;--logo-mark:#185adb;
+--primary:#185adb;--primaryStrong:#185adb;--primarySoft:rgba(24,90,219,.08);
+--greenSoft:rgba(31,193,107,.12);--redSoft:rgba(251,55,72,.10);
+--shadow:0 18px 36px -18px rgba(14,18,27,.18);
+--glow:radial-gradient(1000px 520px at 84% -16%,rgba(24,90,219,.07),transparent 62%),radial-gradient(760px 520px at 4% 108%,rgba(31,193,107,.05),transparent 56%);
+--grid:rgba(14,18,27,.03);
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{background:var(--bg);color:var(--text);font-family:'Estedad',system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+::selection{background:var(--primarySoft);color:var(--text)}
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:99px;border:3px solid transparent;background-clip:padding-box}
+input,button,select{font-family:inherit}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+@keyframes sheen{to{background-position:200% center}}
+@keyframes ring-spin{to{transform:rotate(360deg)}}
+/* ===== Fit (no-scroll) layout ===== */
+body[data-layout="fit"] .stage-root{height:100vh}
+body[data-layout="fit"] .page-col{height:100%;max-width:1460px!important;padding-top:16px!important;padding-bottom:18px!important;gap:11px!important}
+body[data-layout="fit"] .sec-hero{margin-top:0!important;gap:0!important}
+body[data-layout="fit"] .clock{font-size:42px!important}
+body[data-layout="fit"] .sec-search{margin-top:0!important}
+body[data-layout="fit"] .tools-head{margin-bottom:9px!important}
+body[data-layout="fit"] .tools-grid{gap:10px!important}
+body[data-layout="fit"] .tools-grid a{flex-direction:row!important;align-items:center!important;gap:11px!important;padding:8px 12px!important}
+body[data-layout="fit"] .tools-grid a>div:first-child{width:34px!important;height:34px!important}
+body[data-layout="fit"] .tools-grid a>div:first-child i{font-size:18px!important}
+body[data-layout="fit"] .tools-grid a span{white-space:nowrap}
+body[data-layout="fit"] .sec-bento{flex:1 1 0;min-height:0}
+body[data-layout="fit"] .sec-bento .crypto-list .c-row,body[data-layout="fit"] .crypto-list>div{padding-top:6px!important;padding-bottom:6px!important}
+body[data-layout="fit"] .sec-bento{flex:1 1 0;min-height:0}
+body[data-layout="fit"] .sec-bento>div{overflow:hidden}
+body[data-layout="fit"] .crypto-list{overflow:hidden}
+body[data-layout="fit"] .ring-svg{width:150px!important;height:150px!important}
+body[data-layout="fit"] .sec-footer{gap:8px!important}
+body[data-layout="fit"] .sec-footer>div:first-child a{padding:6px 13px!important}
+body[data-layout="fit"] .sec-footer>div:last-child{padding-top:8px!important;gap:7px!important}
+body[data-layout="fit"] .trust-badges{margin-top:0!important}
+body[data-layout="fit"] .trust-badges img{height:34px!important}
+body[data-layout="fit"] .disclaimer{font-size:10px!important;line-height:1.5!important}
+</style>
+</helmet>
+<div dir="rtl" data-screen-label="NewTab" class="stage-root" style="position:relative;min-height:100vh;background:var(--glow);overflow:hidden">
+<sc-if value="{{ showGrid }}" hint-placeholder-val="{{ true }}"><div style="position:fixed;inset:0;background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:46px 46px;pointer-events:none;mask-image:radial-gradient(900px 700px at 50% 18%,#000,transparent 80%);-webkit-mask-image:radial-gradient(900px 700px at 50% 18%,#000,transparent 80%)"></div></sc-if>
+
+<div class="page-col" style="position:relative;z-index:2;max-width:1120px;margin:0 auto;padding:26px 30px 54px;display:flex;flex-direction:column;gap:26px">
+
+  <!-- TOP BAR -->
+  <header style="display:flex;align-items:center;justify-content:space-between;gap:18px">
+    <a href="https://iranbroker.net/" title="ایران بروکر" style="display:flex;flex-direction:column;gap:6px;text-decoration:none">
+      <svg viewBox="0 0 156 28" height="27" fill="none" xmlns="http://www.w3.org/2000/svg" style="display:block">
+        <path d="M14.7568 8.9103C18.3181 5.46578 19.363 4.33887 21.5808 2C22.5617 2.63787 23.6066 3.21196 24.6089 3.8711C22.8816 5.59336 21.3888 7.12425 19.8321 8.71894C21.794 8.71894 22.5404 8.7402 23.7346 8.71894C25.0354 8.7402 26.1869 8.59136 27.4238 9.05914C29.0871 9.67575 30.324 11.1429 30.7931 12.8439C31.3902 14.8213 30.8144 17.0326 29.4923 18.5847C28.3194 19.988 26.5281 20.5196 24.7582 20.6047C21.3249 20.6047 18.2328 20.6047 15.034 20.6047C13.1788 20.6684 11.2595 20.1156 9.85209 18.8824C9.40427 18.4997 9.04174 18.1169 8.55127 17.798C8.3167 18.4997 7.8902 19.1163 7.39973 19.6904C5.94964 21.4339 4.30762 22.986 2.68693 24.5807C1.79129 23.8365 0.916969 23.0924 0 22.412C1.38612 20.9449 2.85753 19.5628 4.26497 18.0957C5.11797 17.2027 6.16289 15.9694 5.52314 14.7575C5.05399 14.2897 4.58485 13.8007 4.1157 13.3116C4.92604 12.5037 5.75771 11.6957 6.54673 10.8664C8.08212 12.3336 9.55354 13.8432 11.025 15.3528C11.814 16.1821 12.7523 16.9688 13.9251 17.1176C15.1407 17.2877 23.7559 17.1176 25.5259 17.1176C26.8907 17.0326 28.1062 15.5442 27.9356 14.1621C27.7863 13.0777 26.8054 12.0997 25.6751 12.0997C24.0331 12.0784 18.9791 12.0571 16.1003 12.0571C15.5458 10.7601 15.3326 10.1648 14.7568 8.9103Z" fill="var(--logo-text)"></path>
+        <path d="M85.9179 5.18937C87.0694 5.23189 88.1783 5.18937 89.4151 5.18937C89.4151 10.4412 89.3938 15.9694 89.3938 20.5834C88.221 20.5834 87.0481 20.5834 85.8752 20.5834C85.8965 15.4379 85.8539 10.3136 85.9179 5.18937Z" fill="var(--logo-text)"></path>
+        <path d="M113.214 5.18937C114.365 5.18937 115.517 5.18937 116.668 5.18937C116.668 10.4625 116.69 15.0339 116.69 20.5834C115.517 20.5834 114.323 20.5834 113.15 20.5834C113.192 15.4379 113.214 10.4199 113.214 5.18937Z" fill="var(--logo-text)"></path>
+        <path d="M71.2464 6.20997C72.4832 6.20997 73.72 6.20997 74.9569 6.20997C74.9356 7.35814 74.9356 8.48505 74.9569 9.63322C73.72 9.65449 72.4832 9.63322 71.2464 9.65449C71.2464 8.50631 71.2677 7.35814 71.2464 6.20997Z" fill="var(--logo-text)"></path>
+        <path d="M32.3498 14.5661C32.2645 10.9728 36.5935 8.10233 39.7495 9.29302C42.7563 10.1648 44.6116 12.8226 43.8226 16.4372C43.5667 17.7555 41.4129 20.2219 39.8135 21.7528C38.8752 22.7096 37.9583 23.7515 36.9986 24.687C36.1243 23.9216 35.186 23.1987 34.2904 22.4545C36.4015 20.5196 38.3421 18.4146 40.2187 16.2458C41.2423 14.9701 40.6878 12.7588 39.0458 12.3548C37.4678 11.8233 35.6552 13.2904 35.8897 14.9063C36.4229 15.4379 37.2972 16.4372 37.8516 16.9475C37.0839 17.7555 36.7214 18.0744 35.4846 19.3502C34.2051 18.1595 32.3498 16.501 32.3498 14.5661Z" fill="var(--logo-text)"></path>
+        <path d="M80.0962 9.97342C81.2904 9.95216 82.4846 9.97342 83.6788 9.95216C83.7214 11.1216 83.6788 12.3123 83.7001 13.503C83.7001 17.6066 83.2949 20.392 81.0771 21.9654C78.966 23.5389 73.6561 24.113 70.5853 22.2844C68.922 21.2 67.7917 19.3289 67.6211 17.3728C67.4079 15.2678 67.6211 13.099 67.5572 10.994C68.73 11.0153 69.9242 10.994 71.0971 10.994C71.0971 12.9076 71.0758 14.8213 71.0971 16.7136C71.0971 17.7342 71.5662 18.7973 72.4406 19.3714C73.6987 20.307 75.3621 20.1156 76.8335 20.0731C78.1769 20.0518 79.4351 19.1375 79.8403 17.8618C80.0535 16.9262 80.0962 15.9482 80.0749 14.9914C80.1175 13.3329 80.1388 11.6532 80.0962 9.97342Z" fill="var(--logo-text)"></path>
+        <path d="M60.9038 10.8239C62.098 10.8027 63.2922 10.8239 64.4864 10.8239C64.4224 12.1635 64.7423 15.1827 63.5907 17.0751C62.6524 18.7973 60.7332 19.9668 58.8353 20.3708C56.8734 20.7535 54.7409 20.6259 52.9496 19.7116C52.054 19.2651 51.3289 18.5635 50.5826 17.9043C50.1987 19.01 49.3244 19.8179 48.8979 20.3495C47.4478 22.1568 46.4456 23.0924 44.7822 24.7296C43.8652 24.0279 42.9909 23.2625 42.0953 22.5608C43.524 21.0937 45.0168 19.6904 46.4242 18.202C47.2559 17.309 48.3221 15.8844 47.5331 14.8213C47.1279 14.3535 46.6588 13.9282 46.211 13.4817C47.0213 12.6525 47.853 11.8445 48.6847 11.0153C50.412 12.695 52.054 14.4385 53.76 16.1395C54.9115 17.2452 56.6388 17.1814 58.1316 17.0113C59.3258 16.8625 60.328 15.9482 60.7119 14.8213C60.9678 13.5243 60.9251 12.1635 60.9038 10.8239Z" fill="var(--logo-text)"></path>
+        <path d="M107.52 10.8239C108.714 10.8027 109.908 10.8239 111.103 10.8239C111.039 12.1635 111.358 15.1827 110.207 17.0751C109.29 18.7973 107.349 19.9668 105.451 20.3708C103.49 20.7535 101.357 20.6259 99.5658 19.7116C98.6701 19.2651 97.9451 18.5635 97.1987 17.9043C96.8149 19.01 95.9406 19.8179 95.5141 20.3495C94.064 22.1568 93.0617 23.0924 91.3984 24.7296C90.4814 24.0279 89.6071 23.2625 88.7114 22.5608C90.1402 21.0937 91.6329 19.6904 93.0404 18.202C93.872 17.309 94.9383 15.8844 94.1493 14.8213C93.7441 14.3535 93.2749 13.9282 92.8271 13.4817C93.6375 12.6525 94.4691 11.8445 95.3008 11.0153C97.0281 12.695 98.6701 14.4385 100.376 16.1395C101.528 17.2452 103.255 17.1814 104.748 17.0113C105.942 16.8625 106.944 15.9482 107.328 14.8213C107.584 13.5243 107.541 12.1635 107.52 10.8239Z" fill="var(--logo-text)"></path>
+        <path d="M60.9038 22.6033C62.1193 22.6033 63.3562 22.6033 64.5717 22.6033C64.5717 23.7302 64.5504 24.8571 64.5717 25.9841C63.3348 26.0053 62.1193 26.0053 60.8825 25.9841C60.9251 24.8571 60.9251 23.7302 60.9038 22.6033Z" fill="var(--logo-text)"></path>
+        <path d="M102.828 22.6033C105.579 22.6033 108.33 22.6033 111.081 22.6033C111.081 23.7302 111.06 24.8571 111.081 25.9841C108.33 26.0053 105.579 25.9841 102.828 25.9841C102.828 24.8571 102.828 23.7302 102.828 22.6033Z" fill="var(--logo-text)"></path>
+        <path d="M137.502 0.350075C140.334 -0.328325 143.349 0.000596404 145.997 1.15182C145.59 2.0358 145.162 2.94033 144.734 3.8243C142.351 2.79643 139.621 2.67308 137.156 3.45427C134.793 4.2149 132.776 5.88006 131.391 7.93582C129.7 10.485 129.273 13.7742 130.006 16.7345C130.678 19.4686 132.532 21.8122 134.854 23.3129C137.34 24.8958 140.456 25.2658 143.288 24.5874C147.83 23.4362 151.294 19.078 151.497 14.3703C152.455 14.4731 153.412 14.5142 154.37 14.617C154.227 16.7139 153.697 18.7902 152.638 20.6198C150.744 24.1763 147.138 26.7049 143.247 27.5477C139.132 28.4728 134.671 27.1571 131.493 24.423C131.249 24.1763 130.984 24.1763 130.658 24.5669C129.619 25.7181 128.539 26.8282 127.521 28C126.808 27.3422 126.095 26.6638 125.382 25.9854C126.543 24.7313 127.704 23.4568 128.886 22.2028C129.171 21.8533 129.089 21.5655 128.906 21.3188C127.541 19.1191 126.808 16.5289 126.747 13.9386C126.808 10.9372 127.786 7.95637 129.558 5.55114C131.452 2.91977 134.386 1.13126 137.502 0.350075Z" fill="var(--logo-mark)"></path>
+        <path d="M149.705 3.84486C151.375 3.45427 152.964 3.12535 154.716 2.8581C155.612 2.75531 156.02 3.22813 155.999 3.84486C155.938 5.79783 155.816 7.19574 155.632 8.90202C155.551 9.80656 154.675 10.2588 154.044 9.76544C153.473 9.49819 152.862 8.49087 152.455 8.75812C152.088 8.9637 151.864 9.33373 151.579 9.64209C149.419 12.1912 147.219 14.6993 145.04 17.2278C144.51 17.8446 143.553 17.9062 142.962 17.3512C141.638 16.0972 140.395 14.7404 139.071 13.4658C138.888 13.2602 138.623 13.3836 138.48 13.548C137.319 14.7198 136.158 15.8916 134.997 17.0634C134.325 16.3644 133.652 15.6449 132.939 14.9871C134.447 13.4247 135.995 11.9034 137.502 10.3616C137.849 9.99157 138.338 9.64209 138.806 9.64209C139.295 9.60098 139.703 9.9299 140.028 10.2588C141.169 11.41 142.31 12.5818 143.451 13.7125C143.593 13.9181 143.879 14.1236 144.082 13.8564C146.16 11.5539 148.177 9.14871 150.214 6.76404C150.54 6.37344 149.236 5.61281 149.012 5.28389C148.625 4.76995 149.053 3.94765 149.705 3.84486Z" fill="var(--logo-mark)"></path>
+      </svg>
+      <span style="font-size:11.5px;color:var(--sub)">پلی به دنیای مالی</span>
+    </a>
+
+    <div style="display:flex;align-items:center;gap:9px">
+      <div style="display:flex;align-items:center;gap:8px;padding:7px 13px;border-radius:99px;background:var(--surface);border:1px solid var(--border)">
+        <span style="width:7px;height:7px;border-radius:99px;background:var(--green);box-shadow:0 0 0 3px var(--greenSoft);animation:pulse 2.4s ease-in-out infinite"></span>
+        <span style="font-size:12px;color:var(--sub)">{{ openCount }} بازار فعال</span>
+      </div>
+      <button onClick="{{ toggleTheme }}" title="تغییر تم" style="display:grid;place-items:center;width:40px;height:40px;border-radius:12px;background:var(--surface);border:1px solid var(--border);color:var(--sub);cursor:pointer">
+        <i class="{{ themeIcon }}" style="font-size:19px"></i>
+      </button>
+      <button onClick="{{ toggleSettings }}" title="تنظیمات" style="display:grid;place-items:center;width:40px;height:40px;border-radius:12px;background:var(--surface);border:1px solid var(--border);color:var(--sub);cursor:pointer">
+        <i class="ri-equalizer-2-line" style="font-size:19px"></i>
+      </button>
+    </div>
+  </header>
+
+  <!-- HERO -->
+  <section class="sec-hero" style="display:flex;flex-direction:column;align-items:center;text-align:center;gap:4px;margin-top:8px">
+    <div style="font-size:13px;color:var(--primary);font-weight:600;letter-spacing:.4px">{{ dateStr }}</div>
+    <div class="clock" style="font-size:74px;font-weight:800;line-height:1;letter-spacing:-1px;font-variant-numeric:tabular-nums;background:linear-gradient(110deg,var(--text) 30%,var(--primary));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;background-size:200% auto;animation:sheen 7s linear infinite">{{ clock }}</div>
+    <div style="font-size:19px;font-weight:600;margin-top:6px">{{ greeting }}</div>
+    <div style="font-size:12.5px;color:var(--soft);margin-top:2px">جلسهٔ فعال: <span style="color:var(--sub)">{{ activeSession }}</span> · {{ utcStr }} به وقت جهانی</div>
+  </section>
+
+  <!-- SEARCH -->
+  <section class="sec-search" style="position:relative;max-width:660px;width:100%;margin:0 auto">
+    <div style="display:flex;align-items:center;gap:10px;background:var(--surface2);border:1.5px solid var(--border);border-radius:99px;padding:7px 9px 7px 18px;box-shadow:var(--shadow)">
+      <i class="ri-search-line" style="font-size:20px;color:var(--soft)"></i>
+      <input value="{{ query }}" onInput="{{ onInput }}" onKeyDown="{{ onKey }}" placeholder="جستجو در گوگل یا ابزارهای ایران بروکر…" autocomplete="off" spellcheck="false" style="flex:1;border:none;background:transparent;color:var(--text);font-size:16px;padding:11px 2px;outline:none">
+      <span style="font-size:12px;color:var(--primary);background:var(--primarySoft);border:1px solid var(--border);padding:5px 11px;border-radius:99px;white-space:nowrap">{{ scopeLabel }}</span>
+      <button onClick="{{ submitSearch }}" title="جستجو" style="display:grid;place-items:center;width:42px;height:42px;border-radius:99px;border:none;cursor:pointer;background:linear-gradient(140deg,var(--primaryStrong),#1142a8);color:#fff">
+        <i class="ri-arrow-left-line" style="font-size:19px"></i>
+      </button>
+    </div>
+
+    <sc-if value="{{ suggestOpen }}" hint-placeholder-val="{{ false }}">
+      <ul style="list-style:none;margin:8px 0 0;padding:6px;position:absolute;left:0;right:0;z-index:30;background:var(--surfaceSolid);border:1px solid var(--border);border-radius:16px;box-shadow:var(--shadow);overflow:hidden">
+        <sc-for list="{{ suggestions }}" as="s" hint-placeholder-count="3">
+          <li onClick="{{ s.onSelect }}" style="display:flex;align-items:center;gap:11px;padding:11px 13px;border-radius:11px;cursor:pointer;font-size:14px;background:{{ s.bg }}">
+            <i class="{{ s.icon }}" style="font-size:17px;color:var(--primary)"></i>
+            <span style="flex:1">{{ s.label }}<span style="color:var(--soft);font-size:11.5px">{{ s.subText }}</span></span>
+            <span style="font-size:11px;color:var(--sub);background:var(--surface);padding:2px 9px;border-radius:8px">{{ s.tag }}</span>
+          </li>
+        </sc-for>
+      </ul>
+    </sc-if>
+
+    <div style="display:flex;gap:7px;justify-content:center;margin-top:13px">
+      <sc-for list="{{ engines }}" as="e" hint-placeholder-count="3">
+        <button onClick="{{ e.onClick }}" style="display:flex;align-items:center;gap:6px;border:1px solid {{ e.border }};background:{{ e.bg }};color:{{ e.color }};font-size:12.5px;font-weight:600;padding:7px 16px;border-radius:99px;cursor:pointer">
+          <i class="{{ e.icon }}" style="font-size:15px"></i>{{ e.label }}
+        </button>
+      </sc-for>
+    </div>
+  </section>
+
+  <!-- TOOLS -->
+  <section class="sec-tools">
+    <div class="tools-head" style="display:flex;align-items:baseline;gap:11px;margin-bottom:14px;padding:0 2px">
+      <h2 style="margin:0;font-size:15px;font-weight:700">ابزارهای ایران بروکر</h2>
+      <span style="font-size:11.5px;color:var(--soft)">دسترسی سریع به مقایسه‌ها و داده‌ها</span>
+    </div>
+    <div class="tools-grid" style="display:grid;grid-template-columns:repeat(5,1fr);gap:12px">
+      <sc-for list="{{ tools }}" as="t" hint-placeholder-count="10">
+        <a href="{{ t.href }}" style="position:relative;display:flex;flex-direction:column;align-items:flex-start;gap:11px;padding:15px 14px;background:var(--surface);border:1px solid var(--border);border-radius:16px;text-decoration:none;color:var(--text);overflow:hidden;transition:transform .2s ease,background .2s ease,border-color .2s ease" style-hover="transform:translateY(-4px);background:var(--surface2);border-color:var(--border2)">
+          <div style="display:grid;place-items:center;width:40px;height:40px;border-radius:11px;background:{{ t.bg }};color:{{ t.color }}">
+            <i class="{{ t.icon }}" style="font-size:21px"></i>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:1px">
+            <span style="font-size:13px;font-weight:600">{{ t.label }}</span>
+            <span style="font-size:11px;color:var(--soft)">{{ t.sub }}</span>
+          </div>
+        </a>
+      </sc-for>
+    </div>
+  </section>
+
+  <!-- BENTO -->
+  <section class="sec-bento" style="display:grid;grid-template-columns:1.25fr 1fr 1fr;gap:16px">
+
+    <!-- CRYPTO -->
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:17px 18px;box-shadow:var(--shadow);display:flex;flex-direction:column">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+        <div style="display:flex;align-items:center;gap:8px">
+          <span style="width:7px;height:7px;border-radius:99px;background:var(--green);box-shadow:0 0 0 3px var(--greenSoft);animation:pulse 2.4s ease-in-out infinite"></span>
+          <h3 style="margin:0;font-size:14px;font-weight:700">قیمت لحظه‌ای ارز دیجیتال</h3>
+        </div>
+        <button onClick="{{ refreshCrypto }}" title="بروزرسانی" style="display:grid;place-items:center;width:30px;height:30px;border-radius:9px;border:1px solid var(--border);background:var(--surface2);color:var(--sub);cursor:pointer">
+          <i class="ri-refresh-line" style="font-size:16px;animation:{{ refreshSpin }}"></i>
+        </button>
+      </div>
+      <div class="crypto-list" style="display:flex;flex-direction:column;gap:1px;flex:1">
+        <sc-for list="{{ cryptoList }}" as="c" hint-placeholder-count="6">
+          <div style="display:flex;align-items:center;gap:11px;padding:8px 7px;border-radius:11px;transition:background .15s" style-hover="background:var(--surface2)">
+            <span style="font-size:11px;color:var(--soft);width:12px;font-variant-numeric:tabular-nums">{{ c.rank }}</span>
+            <div style="display:flex;flex-direction:column;line-height:1.25;min-width:54px">
+              <span style="font-weight:700;font-size:13px">{{ c.sym }}</span>
+              <span style="font-size:10.5px;color:var(--soft)">{{ c.name }}</span>
+            </div>
+            <svg viewBox="0 0 64 22" width="56" height="20" preserveAspectRatio="none" style="flex:1;opacity:.9"><polyline points="{{ c.sparkPts }}" fill="none" stroke="{{ c.sparkColor }}" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></polyline></svg>
+            <div style="display:flex;flex-direction:column;align-items:flex-start;gap:2px;min-width:78px">
+              <span style="font-size:13px;font-weight:700;font-variant-numeric:tabular-nums">{{ c.priceStr }}</span>
+              <span style="font-size:10.5px;font-weight:600;font-variant-numeric:tabular-nums;color:{{ c.chgColor }};background:{{ c.chgBg }};padding:1px 7px;border-radius:7px">{{ c.chgStr }}</span>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+      <div style="font-size:10.5px;color:var(--soft);margin-top:11px;text-align:center;border-top:1px solid var(--border);padding-top:10px">
+        <sc-if value="{{ cryptoErr }}" hint-placeholder-val="{{ false }}"><span style="color:var(--orange)">دریافت زنده ممکن نشد — نمایش آخرین داده</span></sc-if>
+        <sc-if value="{{ cryptoTime }}" hint-placeholder-val=""><span>به‌روزرسانی {{ cryptoTime }} · داده از CoinGecko</span></sc-if>
+      </div>
+    </div>
+
+    <!-- FOREX RING -->
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:17px 18px;box-shadow:var(--shadow);display:flex;flex-direction:column">
+      <h3 style="margin:0 0 6px;font-size:14px;font-weight:700">ساعت بازارهای جهانی</h3>
+      <div style="position:relative;display:grid;place-items:center;margin:2px auto 6px">
+        <svg class="ring-svg" viewBox="0 0 200 200" width="172" height="172">
+          <circle cx="100" cy="100" r="86" fill="none" stroke="var(--border)" stroke-width="1"></circle>
+          <circle cx="100" cy="100" r="40" fill="none" stroke="var(--border)" stroke-width="1"></circle>
+          <sc-for list="{{ ringSessions }}" as="s" hint-placeholder-count="4">
+            <path d="{{ s.d }}" fill="none" stroke="{{ s.color }}" stroke-width="7" stroke-linecap="round" opacity="{{ s.opacity }}"></path>
+          </sc-for>
+          <line x1="100" y1="100" x2="{{ handX }}" y2="{{ handY }}" stroke="var(--text)" stroke-width="2" stroke-linecap="round"></line>
+          <circle cx="100" cy="100" r="3.4" fill="var(--text)"></circle>
+          <circle cx="{{ handX }}" cy="{{ handY }}" r="3" fill="var(--primary)"></circle>
+        </svg>
+        <div style="position:absolute;display:flex;flex-direction:column;align-items:center;line-height:1">
+          <span style="font-size:30px;font-weight:800;font-variant-numeric:tabular-nums">{{ openCount }}</span>
+          <span style="font-size:10.5px;color:var(--soft);margin-top:3px">بازار باز</span>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:7px;margin-top:4px">
+        <sc-for list="{{ ringSessions }}" as="s" hint-placeholder-count="4">
+          <div style="display:flex;align-items:center;gap:8px">
+            <span style="width:8px;height:8px;border-radius:99px;background:{{ s.color }};opacity:{{ s.opacity }}"></span>
+            <span style="font-size:12.5px;font-weight:600">{{ s.name }}</span>
+            <span style="margin-right:auto;font-size:10.5px;color:var(--soft);font-variant-numeric:tabular-nums">{{ s.timeStr }}</span>
+            <span style="font-size:10px;font-weight:600;color:{{ s.statusColor }}">{{ s.statusText }}</span>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+
+    <!-- TIP -->
+    <div style="position:relative;background:linear-gradient(165deg,var(--greenSoft),var(--surface) 55%);border:1px solid var(--border);border-radius:18px;padding:17px 18px;box-shadow:var(--shadow);display:flex;flex-direction:column;overflow:hidden">
+      <i class="ri-shield-check-line" style="position:absolute;left:-10px;bottom:-14px;font-size:96px;color:var(--green);opacity:.07"></i>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+        <h3 style="margin:0;font-size:14px;font-weight:700">نکتهٔ امروز</h3>
+        <span style="font-size:10px;font-weight:600;color:var(--green);background:var(--greenSoft);padding:3px 10px;border-radius:99px">{{ tip.tag }}</span>
+      </div>
+      <p style="margin:0;font-size:13.5px;line-height:2;color:var(--sub);flex:1">{{ tip.text }}</p>
+      <button onClick="{{ nextTip }}" style="display:flex;align-items:center;gap:6px;align-self:flex-start;margin-top:14px;background:var(--surface2);border:1px solid var(--border);cursor:pointer;color:var(--primary);font-family:inherit;font-size:12.5px;font-weight:600;padding:8px 14px;border-radius:99px">
+        نکتهٔ بعدی <i class="ri-arrow-left-line" style="font-size:15px"></i>
+      </button>
+    </div>
+  </section>
+
+  <!-- QUICK LINKS + TRUST -->
+  <footer class="sec-footer" style="display:flex;flex-direction:column;align-items:center;gap:18px;margin-top:2px">
+    <div style="display:flex;flex-wrap:wrap;gap:9px;justify-content:center">
+      <sc-for list="{{ quick }}" as="q" hint-placeholder-count="5">
+        <a href="{{ q.href }}" style="display:flex;align-items:center;gap:7px;padding:8px 15px;border-radius:99px;background:var(--surface);border:1px solid var(--border);color:var(--sub);text-decoration:none;font-size:12.5px;transition:color .2s,background .2s" style-hover="color:var(--text);background:var(--surface2)">
+          <span style="width:5px;height:5px;border-radius:99px;background:var(--primary)"></span>{{ q.label }}
+        </a>
+      </sc-for>
+    </div>
+    
+  </footer>
+
+</div>
+
+<sc-if value="{{ settingsOpen }}" hint-placeholder-val="{{ false }}">
+  <div onClick="{{ closeSettings }}" style="position:fixed;inset:0;z-index:80;background:rgba(5,8,16,.6);backdrop-filter:blur(7px);display:grid;place-items:center">
+    <div onClick="{{ stop }}" style="width:min(440px,92vw);background:var(--surfaceSolid);border:1px solid var(--border);border-radius:20px;box-shadow:var(--shadow);overflow:hidden">
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:18px 20px;border-bottom:1px solid var(--border)">
+        <h3 style="margin:0;font-size:16px;font-weight:700">تنظیمات تب جدید</h3>
+        <button onClick="{{ closeSettings }}" style="display:grid;place-items:center;width:32px;height:32px;border-radius:9px;border:1px solid var(--border);background:var(--surface);color:var(--sub);cursor:pointer"><i class="ri-close-line" style="font-size:18px"></i></button>
+      </div>
+      <div style="padding:18px 20px;display:flex;flex-direction:column;gap:16px">
+        <label style="display:flex;flex-direction:column;gap:7px;font-size:13px;color:var(--sub)">نام شما (برای خوش‌آمدگویی)
+          <input value="{{ name }}" onInput="{{ onName }}" placeholder="مثلاً مهدی" maxlength="20" style="padding:11px 13px;border-radius:11px;border:1px solid var(--border);background:var(--surface);color:var(--text);font-size:14px;outline:none">
+        </label>
+        <label style="display:flex;flex-direction:column;gap:7px;font-size:13px;color:var(--sub)">موتور جستجوی پیش‌فرض
+          <select value="{{ engine }}" onChange="{{ onEngine }}" style="padding:11px 13px;border-radius:11px;border:1px solid var(--border);background:var(--surface);color:var(--text);font-size:14px;outline:none">
+            <option value="google">گوگل</option>
+            <option value="ib">ایران بروکر</option>
+            <option value="tv">تریدینگ‌ویو</option>
+          </select>
+        </label>
+        <label style="display:flex;align-items:center;justify-content:space-between;font-size:13px;color:var(--sub)">نمایش ویجت ارز دیجیتال
+          <input type="checkbox" checked="{{ showCrypto }}" onChange="{{ onToggleCrypto }}" style="width:18px;height:18px;accent-color:var(--primaryStrong);cursor:pointer">
+        </label>
+        <label style="display:flex;flex-direction:column;gap:7px;font-size:13px;color:var(--sub)">ارزهای دیجیتال نمایشی (با کاما)
+          <input value="{{ coins }}" onInput="{{ onCoins }}" placeholder="bitcoin,ethereum,tether" style="padding:11px 13px;border-radius:11px;border:1px solid var(--border);background:var(--surface);color:var(--text);font-size:13px;outline:none">
+        </label>
+      </div>
+      <div style="display:flex;justify-content:flex-end;padding:14px 20px;border-top:1px solid var(--border)">
+        <button onClick="{{ closeSettings }}" style="background:linear-gradient(140deg,var(--primaryStrong),#1142a8);color:#fff;border:none;padding:10px 24px;border-radius:11px;font-size:14px;font-weight:600;cursor:pointer">انجام شد</button>
+      </div>
+    </div>
+  </div>
+</sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1120,&quot;height&quot;:900},&quot;layout&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;default&quot;:&quot;تمام‌صفحه بدون اسکرول&quot;,&quot;options&quot;:[&quot;اسکرول (پیش‌فرض)&quot;,&quot;تمام‌صفحه بدون اسکرول&quot;],&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;چیدمان&quot;},&quot;accent&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#185adb&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;options&quot;:[&quot;#185adb&quot;,&quot;#1f9d55&quot;,&quot;#7c4dff&quot;,&quot;#e8590c&quot;],&quot;section&quot;:&quot;ظاهر&quot;},&quot;defaultTheme&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;default&quot;:&quot;dark&quot;,&quot;options&quot;:[&quot;dark&quot;,&quot;light&quot;],&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;ظاهر&quot;},&quot;showGrid&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;ظاهر&quot;}}">
+class Component extends DCLogic {
+  state = {
+    now: new Date(), theme: 'dark', name: '', engine: 'google',
+    coins: 'bitcoin,ethereum,tether,solana,ripple,dogecoin',
+    showCrypto: true, query: '', activeEngine: 'google', sugIdx: -1,
+    tipIndex: 0, crypto: null, cryptoErr: false, cryptoTime: '',
+    refreshing: false, settingsOpen: false,
+  };
+
+  TOOLS = [
+    { label: 'لیست بروکرها', sub: 'فارکس', url: 'https://iranbroker.net/forex-brokers/', icon: 'ri-bank-line', c: '#6f9bf3' },
+    { label: 'مقایسه اسپرد', sub: 'لحظه‌ای', url: 'https://iranbroker.net/spread-comparison/', icon: 'ri-bar-chart-grouped-line', c: '#1fc16b' },
+    { label: 'تقویم اقتصادی', sub: 'رویدادها', url: 'https://iranbroker.net/economic-calendar/', icon: 'ri-calendar-event-line', c: '#f6a723' },
+    { label: 'قیمت ارز دیجیتال', sub: 'زنده', url: 'https://iranbroker.net/cryptocurrency-prices/', icon: 'ri-coin-line', c: '#a78bfa' },
+    { label: 'صرافی‌ها', sub: 'کریپتو', url: 'https://iranbroker.net/crypto-exchanges/', icon: 'ri-swap-box-line', c: '#35d0c0' },
+    { label: 'پراپ فرم‌ها', sub: 'سرمایه', url: 'https://iranbroker.net/prop-firms/', icon: 'ri-trophy-line', c: '#f6679f' },
+    { label: 'تحلیل بازار', sub: 'روزانه', url: 'https://iranbroker.net/market-analysis/', icon: 'ri-line-chart-line', c: '#6f9bf3' },
+    { label: 'اخبار', sub: 'بازار', url: 'https://iranbroker.net/news/', icon: 'ri-newspaper-line', c: '#fb3748' },
+    { label: 'هشدار کلاهبرداری', sub: 'آگاهی', url: 'https://iranbroker.net/fraud-alert/', icon: 'ri-shield-check-line', c: '#f6a723' },
+    { label: 'آموزش فارکس', sub: 'رایگان', url: 'https://iranbroker.net/forex-education/', icon: 'ri-graduation-cap-line', c: '#a78bfa' },
+  ];
+  QUICK = [
+    { label: 'صفحه اصلی', url: 'https://iranbroker.net/' },
+    { label: 'ورود اعضا', url: 'https://iranbroker.net/login/' },
+    { label: 'صندوق‌های طلا', url: 'https://iranbroker.net/gold-funds/' },
+    { label: 'بروکرهای بورس', url: 'https://iranbroker.net/stock-brokers/' },
+    { label: 'تماس با ما', url: 'https://iranbroker.net/contact-us/' },
+  ];
+  TIPS = [
+    { tag: 'آگاهی از کلاهبرداری', text: 'هیچ نهاد مالی معتبری «سود تضمینی» بالای ۷۰٪ نمی‌دهد. چنین وعده‌هایی توجیه اقتصادی ندارند و معمولاً چیزی پشتشان پنهان است.' },
+    { tag: 'انتخاب بروکر', text: 'قبل از افتتاح حساب، رگوله بروکر را بررسی کنید. رگوله‌های معتبر مثل FCA، ASIC و CySEC سطح حفاظت بالاتری دارند.' },
+    { tag: 'مدیریت ریسک', text: 'هیچ‌گاه بیش از ۱ تا ۲ درصد سرمایه‌تان را روی یک معامله ریسک نکنید. حفظ سرمایه مقدم بر کسب سود است.' },
+    { tag: 'اسپرد', text: 'اسپرد پایین همیشه یعنی هزینهٔ کمتر نیست؛ حساب‌های ECN اسپرد نزدیک صفر دارند اما کمیسیون جداگانه می‌گیرند.' },
+    { tag: 'پراپ فرم', text: 'پراپ‌فرم معتبر هرگز برای «برداشت سود» هزینهٔ اضافه نمی‌خواهد. مراقب درخواست‌های پرداخت مشکوک باشید.' },
+    { tag: 'آموزش', text: 'سودآوری مداوم در فارکس یک‌شبه به‌دست نمی‌آید؛ نیاز به سال‌ها تمرین، تجربه و پشتکار دارد.' },
+  ];
+  SESSIONS = [
+    { name: 'سیدنی', open: 21, close: 6, c: '#35d0c0' },
+    { name: 'توکیو', open: 0, close: 9, c: '#a78bfa' },
+    { name: 'لندن', open: 7, close: 16, c: '#6f9bf3' },
+    { name: 'نیویورک', open: 12, close: 21, c: '#f6a723' },
+  ];
+  COIN_META = {
+    bitcoin:{sym:'BTC',name:'بیت‌کوین'}, ethereum:{sym:'ETH',name:'اتریوم'}, tether:{sym:'USDT',name:'تتر'},
+    solana:{sym:'SOL',name:'سولانا'}, ripple:{sym:'XRP',name:'ریپل'}, dogecoin:{sym:'DOGE',name:'دوج‌کوین'},
+    binancecoin:{sym:'BNB',name:'بایننس‌کوین'}, cardano:{sym:'ADA',name:'کاردانو'}, tron:{sym:'TRX',name:'ترون'},
+  };
+  SEED = [
+    { id:'bitcoin', price:96480, chg:1.84 }, { id:'ethereum', price:3342, chg:2.41 },
+    { id:'tether', price:1.0, chg:0.02 }, { id:'solana', price:198.3, chg:-1.12 },
+    { id:'ripple', price:2.27, chg:3.06 }, { id:'dogecoin', price:0.382, chg:-0.74 },
+  ];
+  ENGINES = {
+    google:{ label:'گوگل', icon:'ri-google-fill', url:q=>`https://www.google.com/search?q=${encodeURIComponent(q)}` },
+    ib:{ label:'ایران بروکر', icon:'ri-search-2-line', url:q=>`https://iranbroker.net/?s=${encodeURIComponent(q)}` },
+    tv:{ label:'تریدینگ‌ویو', icon:'ri-line-chart-line', url:q=>`https://www.tradingview.com/symbols/${encodeURIComponent(q.toUpperCase())}/` },
+  };
+
+  componentDidMount() {
+    let saved = {};
+    try { saved = JSON.parse(localStorage.getItem('ib_newtab_v2') || '{}'); } catch (e) {}
+    const merged = { ...saved };
+    const startTheme = merged.theme || this.props.defaultTheme || 'dark';
+    this.setState(s => ({ ...s, ...merged, theme: startTheme, activeEngine: merged.engine || s.engine, crypto: this.SEED }));
+    document.body.setAttribute('data-theme', startTheme);
+    document.body.setAttribute('data-layout', /تمام/.test(this.props.layout || '') ? 'fit' : 'scroll');
+    this.applyAccent();
+    this._t = setInterval(() => this.setState({ now: new Date() }), 1000 * 20);
+    if ((merged.showCrypto ?? true)) setTimeout(() => this.loadCrypto(), 400);
+    this._c = setInterval(() => { if (this.state.showCrypto) this.loadCrypto(); }, 90000);
+  }
+  componentWillUnmount() { clearInterval(this._t); clearInterval(this._c); }
+  componentDidUpdate(prev, _ps) { if (prev.theme !== this.state.theme) document.body.setAttribute('data-theme', this.state.theme); document.body.setAttribute('data-layout', /تمام/.test(this.props.layout || '') ? 'fit' : 'scroll'); this.applyAccent(); }
+
+  lighten(hex, amt) {
+    const n = parseInt(hex.slice(1), 16); const r = (n>>16)&255, g = (n>>8)&255, b = n&255;
+    const m = v => Math.round(v + (255 - v) * amt);
+    return `rgb(${m(r)},${m(g)},${m(b)})`;
+  }
+  applyAccent() {
+    const a = this.props.accent; if (!a || a[0] !== '#') return;
+    document.body.style.setProperty('--primaryStrong', a);
+    document.body.style.setProperty('--primary', this.state.theme === 'light' ? a : this.lighten(a, 0.32));
+    document.body.style.setProperty('--primarySoft', this.hexA(a, 0.14));
+  }
+
+  persist() {
+    const { theme, name, engine, coins, showCrypto, tipIndex } = this.state;
+    try { localStorage.setItem('ib_newtab_v2', JSON.stringify({ theme, name, engine, coins, showCrypto, tipIndex })); } catch (e) {}
+  }
+
+  /* ----- search ----- */
+  setEngine(k) { this.setState({ activeEngine: k, sugIdx: -1 }); }
+  submitSearch() {
+    const q = (this.state.query || '').trim(); if (!q) return;
+    window.location.href = this.ENGINES[this.state.activeEngine].url(q);
+  }
+  matches() {
+    const q = (this.state.query || '').trim().toLowerCase();
+    if (!q) return [];
+    const pool = [
+      ...this.TOOLS.map(t => ({ label: t.label, sub: t.sub, url: t.url, tag: 'ابزار', icon: t.icon })),
+      ...this.QUICK.map(l => ({ label: l.label, sub: '', url: l.url, tag: 'لینک', icon: 'ri-link' })),
+    ];
+    return pool.filter(p => p.label.toLowerCase().includes(q) || (p.sub && p.sub.toLowerCase().includes(q))).slice(0, 5);
+  }
+  onKey(e) {
+    const m = this.matches();
+    if (e.key === 'Enter') {
+      if (this.state.sugIdx >= 0 && m[this.state.sugIdx]) window.location.href = m[this.state.sugIdx].url;
+      else this.submitSearch();
+    } else if (e.key === 'ArrowDown') { e.preventDefault(); this.setState(s => ({ sugIdx: Math.min(s.sugIdx + 1, m.length - 1) })); }
+    else if (e.key === 'ArrowUp') { e.preventDefault(); this.setState(s => ({ sugIdx: Math.max(s.sugIdx - 1, -1) })); }
+    else if (e.key === 'Tab') { e.preventDefault(); const o = ['google','ib','tv']; this.setEngine(o[(o.indexOf(this.state.activeEngine) + 1) % 3]); }
+    else if (e.key === 'Escape') { this.setState({ query: '' }); }
+  }
+
+  /* ----- theme / settings ----- */
+  toggleTheme() { this.setState(s => ({ theme: s.theme === 'light' ? 'dark' : 'light' }), () => this.persist()); }
+
+  /* ----- tips ----- */
+  nextTip() { this.setState(s => ({ tipIndex: (s.tipIndex + 1) % this.TIPS.length }), () => this.persist()); }
+
+  /* ----- forex ring geometry ----- */
+  polar(cx, cy, r, deg) { const a = (deg - 90) * Math.PI / 180; return [cx + r * Math.cos(a), cy + r * Math.sin(a)]; }
+  arc(cx, cy, r, sH, eH) {
+    let s = sH, e = eH; if (e <= s) e += 24;
+    const a0 = (s / 24) * 360, a1 = (e / 24) * 360;
+    const [x0, y0] = this.polar(cx, cy, r, a0), [x1, y1] = this.polar(cx, cy, r, a1);
+    const large = (a1 - a0) > 180 ? 1 : 0;
+    return `M ${x0.toFixed(2)} ${y0.toFixed(2)} A ${r} ${r} 0 ${large} 1 ${x1.toFixed(2)} ${y1.toFixed(2)}`;
+  }
+  isOpen(s, h) { return s.open < s.close ? (h >= s.open && h < s.close) : (h >= s.open || h < s.close); }
+
+  /* ----- crypto ----- */
+  async loadCrypto() {
+    const ids = this.state.coins.split(',').map(s => s.trim()).filter(Boolean).slice(0, 6);
+    if (!ids.length) return;
+    this.setState({ refreshing: true });
+    const url = `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${ids.join(',')}&order=market_cap_desc&sparkline=true&price_change_percentage=24h`;
+    try {
+      const res = await fetch(url);
+      if (!res.ok) throw new Error('http');
+      const data = await res.json();
+      if (!Array.isArray(data) || !data.length) throw new Error('empty');
+      const rows = data.map(c => ({
+        id: c.id, price: c.current_price, chg: c.price_change_percentage_24h ?? 0,
+        spark: (c.sparkline_in_7d && c.sparkline_in_7d.price) ? c.sparkline_in_7d.price : null,
+      }));
+      this.setState({ crypto: rows, cryptoErr: false, refreshing: false,
+        cryptoTime: new Date().toLocaleTimeString('fa-IR', { hour: '2-digit', minute: '2-digit' }) });
+    } catch (e) {
+      this.setState(s => ({ cryptoErr: !s.crypto, refreshing: false }));
+    }
+  }
+  refreshCrypto() { this.loadCrypto(); }
+
+  fmtPrice(p) {
+    if (p >= 1000) return '$' + p.toLocaleString('en-US', { maximumFractionDigits: 0 });
+    if (p >= 1) return '$' + p.toLocaleString('en-US', { maximumFractionDigits: 2 });
+    return '$' + p.toLocaleString('en-US', { maximumFractionDigits: 4 });
+  }
+  sparkPts(coin) {
+    let arr = coin.spark;
+    if (!arr || arr.length < 4) {
+      // deterministic synthetic spark from chg + id
+      let seed = 0; for (const ch of coin.id) seed += ch.charCodeAt(0);
+      arr = []; const n = 24; const trend = (coin.chg || 0) / 100;
+      for (let i = 0; i < n; i++) arr.push(1 + trend * (i / n) + Math.sin(i * 0.7 + seed) * 0.012 + Math.sin(i * 1.9 + seed) * 0.006);
+    } else { arr = arr.slice(-24); }
+    const min = Math.min(...arr), max = Math.max(...arr), rng = (max - min) || 1;
+    const W = 64, H = 22;
+    return arr.map((v, i) => `${(W - (i / (arr.length - 1)) * W).toFixed(1)},${(H - ((v - min) / rng) * H).toFixed(1)}`).join(' ');
+  }
+
+  renderVals() {
+    const now = this.state.now;
+    const hh = String(now.getHours()).padStart(2, '0');
+    const mm = String(now.getMinutes()).padStart(2, '0');
+    let dateStr;
+    try { dateStr = new Intl.DateTimeFormat('fa-IR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }).format(now); }
+    catch (e) { dateStr = now.toLocaleDateString('fa-IR'); }
+    const h = now.getHours();
+    let g = h >= 5 && h < 12 ? 'صبح‌تان بخیر' : h >= 12 && h < 17 ? 'ظهر بخیر' : h >= 17 && h < 21 ? 'عصرتان بخیر' : 'شب‌تان بخیر';
+    const greeting = `${g}${this.state.name ? '، ' + this.state.name : ' معامله‌گر'}`;
+
+    // sessions
+    const utcF = now.getUTCHours() + now.getUTCMinutes() / 60;
+    const ringSessions = this.SESSIONS.map((s, i) => {
+      const open = this.isOpen(s, now.getUTCHours());
+      const r = 70 - (i % 2) * 0; // same ring, offset by index below
+      const rr = 74 - i * 9;
+      return { name: s.name, color: s.c, open,
+        d: this.arc(100, 100, rr, s.open, s.close), r: rr,
+        opacity: open ? 1 : 0.28, statusColor: open ? 'var(--green)' : 'var(--soft)',
+        timeStr: `${String(s.open).padStart(2,'0')}–${String(s.close).padStart(2,'0')} UTC`,
+        statusText: open ? 'باز' : 'بسته' };
+    });
+    const openSessions = this.SESSIONS.filter(s => this.isOpen(s, now.getUTCHours()));
+    const openCount = openSessions.length;
+    const activeSession = openSessions.length ? openSessions.map(s => s.name).join('، ') : 'بازارها بسته';
+    const nowAngle = (utcF / 24) * 360;
+    const [handX, handY] = this.polar(100, 100, 80, nowAngle);
+    const utcStr = `${String(now.getUTCHours()).padStart(2,'0')}:${String(now.getUTCMinutes()).padStart(2,'0')}`;
+
+    // search
+    const scopeLabel = this.ENGINES[this.state.activeEngine].label;
+    const engines = ['google','ib','tv'].map(k => {
+      const active = this.state.activeEngine === k;
+      return { key: k, label: this.ENGINES[k].label, icon: this.ENGINES[k].icon, onClick: () => this.setEngine(k),
+        bg: active ? 'var(--primarySoft)' : 'var(--surface)',
+        color: active ? 'var(--primary)' : 'var(--sub)',
+        border: active ? 'var(--border2)' : 'var(--border)' };
+    });
+    const m = this.matches();
+    const suggestions = m.map((s, i) => ({
+      label: s.label, subText: s.sub ? ' · ' + s.sub : '', tag: s.tag, icon: s.icon,
+      bg: i === this.state.sugIdx ? 'var(--surface2)' : 'transparent',
+      onSelect: () => { window.location.href = s.url; },
+    }));
+
+    // tools
+    const tools = this.TOOLS.map(t => ({ label: t.label, sub: t.sub, href: t.url, icon: t.icon, color: t.c,
+      bg: this.hexA(t.c, 0.13), glow: this.hexA(t.c, 0.22) }));
+    const quick = this.QUICK.map(q => ({ label: q.label, href: q.url }));
+
+    // crypto
+    const clist = (this.state.crypto || this.SEED).map((c, i) => {
+      const meta = this.COIN_META[c.id] || { sym: c.id.toUpperCase(), name: c.id };
+      const up = (c.chg || 0) >= 0;
+      return { rank: i + 1, sym: meta.sym, name: meta.name, priceStr: this.fmtPrice(c.price),
+        up, chgStr: (up ? '▲ ' : '▼ ') + Math.abs(c.chg || 0).toFixed(2) + '٪',
+        chgColor: up ? 'var(--green)' : 'var(--red)', chgBg: up ? 'var(--greenSoft)' : 'var(--redSoft)',
+        sparkPts: this.sparkPts(c), sparkColor: up ? 'var(--green)' : 'var(--red)' };
+    });
+
+    const tip = this.TIPS[this.state.tipIndex % this.TIPS.length];
+
+    return {
+      clock: `${hh}:${mm}`, dateStr, greeting, openCount, activeSession, utcStr,
+      themeIcon: this.state.theme === 'light' ? 'ri-moon-line' : 'ri-sun-line',
+      query: this.state.query, onInput: e => this.setState({ query: e.target.value, sugIdx: -1 }),
+      onKey: e => this.onKey(e), submitSearch: () => this.submitSearch(), scopeLabel, engines,
+      suggestOpen: suggestions.length > 0, suggestions,
+      tools, quick, cryptoList: clist, cryptoErr: this.state.cryptoErr,
+      cryptoTime: this.state.cryptoTime, showCrypto: this.state.showCrypto,
+      refreshCrypto: () => this.refreshCrypto(), refreshSpin: this.state.refreshing ? 'spin .8s linear' : 'none',
+      ringSessions, nowAngle, handX: handX.toFixed(2), handY: handY.toFixed(2),
+      tip, nextTip: () => this.nextTip(), showGrid: this.props.showGrid ?? true,
+      toggleTheme: () => this.toggleTheme(),
+      settingsOpen: this.state.settingsOpen, toggleSettings: () => this.setState(s => ({ settingsOpen: !s.settingsOpen })),
+      closeSettings: () => this.setState({ settingsOpen: false }), stop: e => e.stopPropagation(),
+      name: this.state.name, engine: this.state.engine, coins: this.state.coins,
+      onName: e => this.setState({ name: e.target.value }, () => this.persist()),
+      onEngine: e => this.setState({ engine: e.target.value, activeEngine: e.target.value }, () => this.persist()),
+      onCoins: e => this.setState({ coins: e.target.value }, () => this.persist()),
+      onToggleCrypto: e => { const v = e.target.checked; this.setState({ showCrypto: v }, () => { this.persist(); if (v) this.loadCrypto(); }); },
+    };
+  }
+
+  hexA(hex, a) { const n = parseInt(hex.slice(1), 16); return `rgba(${(n>>16)&255},${(n>>8)&255},${n&255},${a})`; }
+}
+</script>
+</body>
+</html>
