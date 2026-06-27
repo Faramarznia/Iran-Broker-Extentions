@@ -400,6 +400,77 @@
     });
   }
 
+  /* ----------------------------- Shader background ----------------------------- */
+  function initShaderBg() {
+    var canvas = document.getElementById('shader-bg-canvas');
+    if (!canvas) return;
+    var gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+    if (!gl) { canvas.style.display = 'none'; return; }
+
+    var vertSrc = 'attribute vec2 a_pos;void main(){gl_Position=vec4(a_pos,0.,1.);}';
+    var fragSrc = [
+      'precision highp float;',
+      'uniform vec2 resolution;',
+      'uniform float time;',
+      'void main(void){',
+      '  vec2 uv=(gl_FragCoord.xy*2.-resolution.xy)/min(resolution.x,resolution.y);',
+      '  float t=time*0.05;',
+      '  float lw=0.002;',
+      '  vec3 color=vec3(0.);',
+      '  for(int j=0;j<3;j++){',
+      '    for(int i=0;i<5;i++){',
+      '      color[j]+=lw*float(i*i)/abs(fract(t-0.01*float(j)+float(i)*0.01)*5.-length(uv)+mod(uv.x+uv.y,0.2));',
+      '    }',
+      '  }',
+      '  gl_FragColor=vec4(color[0],color[1],color[2],1.);',
+      '}'
+    ].join('');
+
+    function mkShader(type, src) {
+      var s = gl.createShader(type);
+      gl.shaderSource(s, src);
+      gl.compileShader(s);
+      return s;
+    }
+    var prog = gl.createProgram();
+    gl.attachShader(prog, mkShader(gl.VERTEX_SHADER, vertSrc));
+    gl.attachShader(prog, mkShader(gl.FRAGMENT_SHADER, fragSrc));
+    gl.linkProgram(prog);
+    gl.useProgram(prog);
+
+    var buf = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1, 1,-1, -1,1, 1,-1, 1,1, -1,1]), gl.STATIC_DRAW);
+    var posLoc = gl.getAttribLocation(prog, 'a_pos');
+    gl.enableVertexAttribArray(posLoc);
+    gl.vertexAttribPointer(posLoc, 2, gl.FLOAT, false, 0, 0);
+
+    var timeLoc = gl.getUniformLocation(prog, 'time');
+    var resLoc = gl.getUniformLocation(prog, 'resolution');
+    var t = 0, rafId;
+
+    function resize() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      gl.viewport(0, 0, canvas.width, canvas.height);
+    }
+    function draw() {
+      t += 0.05;
+      gl.uniform1f(timeLoc, t);
+      gl.uniform2f(resLoc, canvas.width, canvas.height);
+      gl.drawArrays(gl.TRIANGLES, 0, 6);
+      rafId = requestAnimationFrame(draw);
+    }
+
+    resize();
+    draw();
+    window.addEventListener('resize', resize);
+    document.addEventListener('visibilitychange', function () {
+      if (document.hidden) cancelAnimationFrame(rafId);
+      else { rafId = requestAnimationFrame(draw); }
+    });
+  }
+
   /* ----------------------------- Sparkles ----------------------------- */
   function initSparkles() {
     const canvas = document.getElementById('sp-canvas');
@@ -540,6 +611,7 @@
     els.searchInput.focus();
 
     initSparkles();
+    initShaderBg();
   }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
