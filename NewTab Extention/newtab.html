@@ -11,6 +11,25 @@
     <canvas id="shader-bg-canvas"></canvas>
     <div class="bg-grid" id="bg-grid"></div>
 
+    <div class="layout-wrap">
+
+    <!-- Sidebar: News (left) -->
+    <aside class="sidebar sidebar-news">
+      <div class="sb-head">
+        <div class="sb-head-info">
+          <span class="sb-title">اخبار بازار</span>
+          <span class="sb-dot"></span>
+        </div>
+        <button class="sb-toggle" id="sb-news-toggle" aria-label="جمع کردن">
+          <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M10 12L6 8l4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+      </div>
+      <div class="sb-list" id="sb-news-list"></div>
+      <div class="sb-footer">
+        <a class="sb-more" href="https://iranbroker.net/news/" target="_blank" rel="noopener">همه اخبار</a>
+      </div>
+    </aside>
+
     <div class="page-col">
 
       <!-- ===== TOP BAR ===== -->
@@ -124,29 +143,24 @@
 
     </div>
 
-    <!-- Sidebar: News (left) -->
-    <aside class="sidebar sidebar-news">
-      <div class="sb-head">
-        <span class="sb-title">اخبار بازار</span>
-        <span class="sb-dot"></span>
-      </div>
-      <div class="sb-list" id="sb-news-list"></div>
-      <div class="sb-footer">
-        <a class="sb-more" href="https://iranbroker.net/news/" target="_blank" rel="noopener">همه اخبار</a>
-      </div>
-    </aside>
-
     <!-- Sidebar: Community (right) -->
     <aside class="sidebar sidebar-community">
       <div class="sb-head">
-        <span class="sb-dot"></span>
-        <span class="sb-title">جامعه ایران بروکر</span>
+        <div class="sb-head-info">
+          <span class="sb-dot"></span>
+          <span class="sb-title">جامعه ایران بروکر</span>
+        </div>
+        <button class="sb-toggle" id="sb-comm-toggle" aria-label="جمع کردن">
+          <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M10 12L6 8l4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
       </div>
       <div class="sb-list" id="sb-comm-list"></div>
       <div class="sb-footer">
         <a class="sb-more" href="https://iranbroker.net/" target="_blank" rel="noopener">مشارکت در گفتگو</a>
       </div>
     </aside>
+
+    </div><!-- /layout-wrap -->
 
     <!-- ===== SETTINGS MODAL ===== -->
     <div class="modal-overlay" id="settings-modal" hidden>

@@ -266,6 +266,20 @@
       .catch(function () {});
   }
 
+  function initSidebars() {
+    [['sidebar-news', 'ib_sb_news'], ['sidebar-community', 'ib_sb_comm']].forEach(function (pair) {
+      var sb = document.querySelector('.' + pair[0]);
+      if (!sb) return;
+      var btn = sb.querySelector('.sb-toggle');
+      if (!btn) return;
+      try { if (localStorage.getItem(pair[1]) === '1') sb.classList.add('collapsed'); } catch (e) {}
+      btn.addEventListener('click', function () {
+        sb.classList.toggle('collapsed');
+        try { localStorage.setItem(pair[1], sb.classList.contains('collapsed') ? '1' : '0'); } catch (e) {}
+      });
+    });
+  }
+
   function renderEngines() {
     els.engines.innerHTML = ['google', 'ib', 'tv'].map(function (k) {
       const active = state.activeEngine === k ? ' active' : '';
@@ -696,6 +710,7 @@
     renderTime();
     renderCommunity();
     loadNews();
+    initSidebars();
 
     // top bar
     els.themeBtn.addEventListener('click', toggleTheme);
