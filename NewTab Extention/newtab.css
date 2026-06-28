@@ -207,7 +207,7 @@ a {
   position: relative;
   z-index: 2;
   display: flex;
-  align-items: flex-start;
+  align-items: flex-end;
   gap: 32px;
   height: 100vh;
   width: 100%;
@@ -1024,6 +1024,7 @@ a {
   position: sticky;
   top: 32px;
   height: calc(100vh - 64px);
+  /* height: 50%; */
   overflow-y: auto;
   overflow-x: hidden;
   border-radius: 16px;

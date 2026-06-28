@@ -121,8 +121,8 @@
 
   const ENGINES = {
     google: { label: 'گوگل', icon: 'google', url: function (q) { return 'https://www.google.com/search?q=' + encodeURIComponent(q); } },
-    ib: { label: 'ایران بروکر', icon: 'search', url: function (q) { return 'https://iranbroker.net/?s=' + encodeURIComponent(q); } },
-    tv: { label: 'تریدینگ‌ویو', icon: 'lineChart', url: function (q) { return 'https://www.tradingview.com/symbols/' + encodeURIComponent(q.toUpperCase()) + '/'; } }
+    ib: { label: 'ایران بروکر', icon: 'search', logo: '<svg viewBox="124.5 -1 33 30" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M137.502 0.350075C140.334 -0.328325 143.349 0.000596404 145.997 1.15182C145.59 2.0358 145.162 2.94033 144.734 3.8243C142.351 2.79643 139.621 2.67308 137.156 3.45427C134.793 4.2149 132.776 5.88006 131.391 7.93582C129.7 10.485 129.273 13.7742 130.006 16.7345C130.678 19.4686 132.532 21.8122 134.854 23.3129C137.34 24.8958 140.456 25.2658 143.288 24.5874C147.83 23.4362 151.294 19.078 151.497 14.3703C152.455 14.4731 153.412 14.5142 154.37 14.617C154.227 16.7139 153.697 18.7902 152.638 20.6198C150.744 24.1763 147.138 26.7049 143.247 27.5477C139.132 28.4728 134.671 27.1571 131.493 24.423C131.249 24.1763 130.984 24.1763 130.658 24.5669C129.619 25.7181 128.539 26.8282 127.521 28C126.808 27.3422 126.095 26.6638 125.382 25.9854C126.543 24.7313 127.704 23.4568 128.886 22.2028C129.171 21.8533 129.089 21.5655 128.906 21.3188C127.541 19.1191 126.808 16.5289 126.747 13.9386C126.808 10.9372 127.786 7.95637 129.558 5.55114C131.452 2.91977 134.386 1.13126 137.502 0.350075Z" fill="var(--logo-mark)"/><path d="M149.705 3.84486C151.375 3.45427 152.964 3.12535 154.716 2.8581C155.612 2.75531 156.02 3.22813 155.999 3.84486C155.938 5.79783 155.816 7.19574 155.632 8.90202C155.551 9.80656 154.675 10.2588 154.044 9.76544C153.473 9.49819 152.862 8.49087 152.455 8.75812C152.088 8.9637 151.864 9.33373 151.579 9.64209C149.419 12.1912 147.219 14.6993 145.04 17.2278C144.51 17.8446 143.553 17.9062 142.962 17.3512C141.638 16.0972 140.395 14.7404 139.071 13.4658C138.888 13.2602 138.623 13.3836 138.48 13.548C137.319 14.7198 136.158 15.8916 134.997 17.0634C134.325 16.3644 133.652 15.6449 132.939 14.9871C134.447 13.4247 135.995 11.9034 137.502 10.3616C137.849 9.99157 138.338 9.64209 138.806 9.64209C139.295 9.60098 139.703 9.9299 140.028 10.2588C141.169 11.41 142.31 12.5818 143.451 13.7125C143.593 13.9181 143.879 14.1236 144.082 13.8564C146.16 11.5539 148.177 9.14871 150.214 6.76404C150.54 6.37344 149.236 5.61281 149.012 5.28389C148.625 4.76995 149.053 3.94765 149.705 3.84486Z" fill="var(--logo-mark)"/></svg>', url: function (q) { return 'https://iranbroker.net/?s=' + encodeURIComponent(q); } },
+    tv: { label: 'تریدینگ‌ویو', icon: 'lineChart', logo: '<svg viewBox="24 55 140 74" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M115.055 72.5C115.055 79.8638 109.086 85.8333 101.722 85.8333C94.3583 85.8333 88.3888 79.8638 88.3888 72.5C88.3888 65.1362 94.3583 59.1667 101.722 59.1667C109.086 59.1667 115.055 65.1362 115.055 72.5ZM81.9999 59.7778H28.6667L28.6665 86.4444H55.3332V125.556H81.9999V59.7778ZM128.755 59.7778H159.333L131.778 125.556H101.111L128.755 59.7778Z" fill="currentColor"/></svg>', url: function (q) { return 'https://www.tradingview.com/symbols/' + encodeURIComponent(q.toUpperCase()) + '/'; } }
   };
 
   /* ----------------------------- State ----------------------------- */
@@ -314,7 +314,8 @@
   function renderEngines() {
     els.engines.innerHTML = ['google', 'ib', 'tv'].map(function (k) {
       const active = state.activeEngine === k ? ' active' : '';
-      return '<button data-engine="' + k + '" class="' + active.trim() + '">' + svg(ENGINES[k].icon) + ENGINES[k].label + '</button>';
+      const icon = ENGINES[k].logo || svg(ENGINES[k].icon);
+      return '<button data-engine="' + k + '" class="' + active.trim() + '">' + icon + ENGINES[k].label + '</button>';
     }).join('');
     bindEngineButtons();
   }
@@ -667,8 +668,11 @@
       'precision highp float;',
       'uniform vec2 resolution;',
       'uniform float time;',
+      'uniform vec2 clickPos;',
+      'uniform float clickAge;',
       'void main(void){',
-      '  vec2 uv=(gl_FragCoord.xy*2.-resolution.xy)/min(resolution.x,resolution.y);',
+      '  float minRes=min(resolution.x,resolution.y);',
+      '  vec2 uv=(gl_FragCoord.xy*2.-resolution.xy)/minRes;',
       '  float t=time*0.05;',
       '  float lw=0.002;',
       '  vec3 color=vec3(0.);',
@@ -677,6 +681,12 @@
       '      color[j]+=lw*float(i*i)/abs(fract(t-0.01*float(j)+float(i)*0.01)*5.-length(uv)+mod(uv.x+uv.y,0.2));',
       '    }',
       '  }',
+      '  vec2 clickUv=(clickPos*2.-1.)*resolution/minRes;',
+      '  float cd=length(uv-clickUv);',
+      '  float fade=max(0.,1.-clickAge*0.72);',
+      '  float edge=0.006/(abs(cd-clickAge*1.3)+0.003)*fade;',
+      '  float ripple=sin(cd*22.-clickAge*11.)*exp(-cd*2.8)*fade*0.28;',
+      '  color+=vec3(0.4,0.65,1.0)*(edge+max(0.,ripple));',
       '  color=color/(color+vec3(0.9));',
       '  gl_FragColor=vec4(color[0],color[1],color[2],1.);',
       '}'
@@ -701,9 +711,19 @@
     gl.enableVertexAttribArray(posLoc);
     gl.vertexAttribPointer(posLoc, 2, gl.FLOAT, false, 0, 0);
 
-    var timeLoc = gl.getUniformLocation(prog, 'time');
-    var resLoc = gl.getUniformLocation(prog, 'resolution');
+    var timeLoc     = gl.getUniformLocation(prog, 'time');
+    var resLoc      = gl.getUniformLocation(prog, 'resolution');
+    var clickPosLoc = gl.getUniformLocation(prog, 'clickPos');
+    var clickAgeLoc = gl.getUniformLocation(prog, 'clickAge');
+
+    var click = { x: -5, y: -5, age: 99 };
     var t = 0, rafId;
+
+    window.addEventListener('click', function (e) {
+      click.x = e.clientX / window.innerWidth;
+      click.y = 1.0 - e.clientY / window.innerHeight;
+      click.age = 0;
+    });
 
     function resize() {
       canvas.width = window.innerWidth;
@@ -712,8 +732,11 @@
     }
     function draw() {
       t += 0.05;
+      if (click.age < 1.4) click.age += 0.022;
       gl.uniform1f(timeLoc, t);
       gl.uniform2f(resLoc, canvas.width, canvas.height);
+      gl.uniform2f(clickPosLoc, click.x, click.y);
+      gl.uniform1f(clickAgeLoc, click.age);
       gl.drawArrays(gl.TRIANGLES, 0, 6);
       rafId = requestAnimationFrame(draw);
     }
@@ -750,6 +773,13 @@
     if (!canvas || !canvas.getContext) return;
     const ctx = canvas.getContext('2d');
     let W = 0, H = 0, particles = [], rafId;
+    var mx = -999, my = -999;
+
+    window.addEventListener('mousemove', function (e) {
+      var rect = canvas.getBoundingClientRect();
+      mx = e.clientX - rect.left;
+      my = e.clientY - rect.top;
+    });
 
     function resize() {
       W = canvas.parentElement.offsetWidth;
@@ -778,13 +808,24 @@
       ctx.clearRect(0, 0, W, H);
       var isLight = document.body.getAttribute('data-theme') === 'light';
       var rc = isLight ? 24 : 255, gc = isLight ? 90 : 255, bc = isLight ? 219 : 255;
+      var R = 80;
       for (var i = 0; i < particles.length; i++) {
         var p = particles[i];
         p.phase += p.freq;
+
+        var dx = p.x - mx, dy = p.y - my;
+        var d = Math.sqrt(dx * dx + dy * dy);
+        if (d < R && d > 0.1) {
+          var f = (1 - d / R) * 2.8;
+          p.x += (dx / d) * f;
+          p.y += (dy / d) * f;
+        }
+
         p.x += p.vx;
         p.y += p.vy;
         if (p.y < -4 || p.x < -6 || p.x > W + 6) { particles[i] = newParticle(false); continue; }
         var op = p.maxOp * ((Math.sin(p.phase) + 1) / 2);
+        if (d < R) op = Math.min(1, op + (1 - d / R) * 0.6);
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
         ctx.fillStyle = 'rgba(' + rc + ',' + gc + ',' + bc + ',' + op.toFixed(2) + ')';
