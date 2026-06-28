@@ -339,24 +339,169 @@
       </div>
     </div>
 
-    <!-- ===== FOCUS MODE OVERLAY ===== -->
-    <div class="focus-overlay" id="focus-overlay" hidden>
-      <button class="focus-exit" id="focus-exit" aria-label="خروج از حالت تمرکز"></button>
-      <div class="focus-body">
-        <div class="focus-phase-label" id="focus-phase">تمرکز</div>
-        <div class="focus-timer" id="focus-timer">25:00</div>
-        <div class="focus-session-info" id="focus-session-info">سشن ۱ از ۴</div>
-        <div class="focus-dots" id="focus-dots"></div>
-        <div class="focus-actions">
-          <button class="focus-btn focus-btn-secondary" id="focus-reset">ریست</button>
-          <button class="focus-btn focus-btn-primary" id="focus-start">شروع</button>
-          <button class="focus-btn focus-btn-secondary" id="focus-skip">رد کردن</button>
+    <!-- ===== FOCUS MODE CONTAINER ===== -->
+    <div id="focus-container" hidden>
+
+      <!-- State 1: Setup -->
+      <div id="focus-setup" class="focus-state" hidden>
+        <div class="fc-modal">
+          <button class="fc-close-x" id="setup-close" aria-label="بستن">
+            <svg viewBox="0 0 20 20" fill="none"><path d="M5 5l10 10M15 5L5 15" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+          </button>
+          <div class="fc-modal-head">
+            <span class="fc-modal-emoji">🧘</span>
+            <h2>آماده‌ای تمرکز کنی؟</h2>
+          </div>
+
+          <div class="fc-mode-cards">
+            <button class="fc-mode-card selected" id="mode-pomodoro" data-mode="pomodoro">
+              <span class="fc-mc-icon">🍅</span>
+              <span class="fc-mc-title">پومودورو</span>
+              <span class="fc-mc-desc">چرخه کار + استراحت</span>
+              <div class="fc-mc-config" onclick="event.stopPropagation()">
+                <label>کار <input id="pom-work-input" type="number" value="25" min="5" max="60" />م</label>
+                <label>استراحت <input id="pom-short-input" type="number" value="5" min="1" max="30" />م</label>
+                <label>بلند <input id="pom-long-input" type="number" value="15" min="5" max="60" />م</label>
+              </div>
+            </button>
+            <button class="fc-mode-card" id="mode-custom" data-mode="custom">
+              <span class="fc-mc-icon">⏱️</span>
+              <span class="fc-mc-title">زمان دلخواه</span>
+              <div class="fc-preset-chips" onclick="event.stopPropagation()">
+                <span class="preset-chip" data-mins="15">۱۵م</span>
+                <span class="preset-chip" data-mins="30">۳۰م</span>
+                <span class="preset-chip" data-mins="45">۴۵م</span>
+                <span class="preset-chip" data-mins="60">۱ساعت</span>
+                <span class="preset-chip" data-mins="120">۲ساعت</span>
+              </div>
+              <div class="fc-mc-config" onclick="event.stopPropagation()">
+                <label>مدت <input id="custom-mins-input" type="number" value="45" min="1" max="180" />م</label>
+              </div>
+            </button>
+            <button class="fc-mode-card" id="mode-session" data-mode="session">
+              <span class="fc-mc-icon">📈</span>
+              <span class="fc-mc-title">سشن معاملاتی</span>
+              <div class="fc-mc-config" onclick="event.stopPropagation()">
+                <label>از <input id="sess-start-input" type="time" value="15:00" /></label>
+                <label>تا <input id="sess-end-input" type="time" value="17:00" /></label>
+              </div>
+            </button>
+          </div>
+
+          <div class="fc-sound-setup">
+            <span class="fc-sound-lbl">🎵 صدای محیطی</span>
+            <div class="fc-sound-chips">
+              <button class="sc-setup sound-chip" data-sound="rain">🌧 باران</button>
+              <button class="sc-setup sound-chip" data-sound="ocean">🌊 دریا</button>
+              <button class="sc-setup sound-chip" data-sound="forest">🌿 جنگل</button>
+              <button class="sc-setup sound-chip active" data-sound="none">🔇 بی‌صدا</button>
+            </div>
+            <input class="fc-vol-slider" type="range" id="setup-volume" min="0" max="100" value="60" aria-label="ولوم" />
+          </div>
+
+          <button class="fc-start-btn" id="start-focus-btn">شروع تمرکز ←</button>
         </div>
-        <p class="focus-hint">Space برای شروع/مکث · Esc برای خروج</p>
       </div>
-    </div>
+
+      <!-- State 2: Quote -->
+      <div id="focus-quote-screen" class="focus-state" hidden>
+        <div class="fc-quote-inner">
+          <p class="fc-quote-text" id="fq-text"></p>
+          <span class="fc-quote-author" id="fq-author"></span>
+          <span class="fc-quote-hint">برای رد کردن کلیک کنید</span>
+        </div>
+      </div>
+
+      <!-- State 3: Timer -->
+      <div id="focus-timer-screen" class="focus-state" hidden>
+        <button class="fc-close-x fc-close-timer" id="focus-close" title="بستن (Esc)" aria-label="بستن">
+          <svg viewBox="0 0 20 20" fill="none"><path d="M5 5l10 10M15 5L5 15" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        </button>
+
+        <div class="fc-sound-bar">
+          <div class="fc-sound-chips-sm">
+            <button class="sc-timer sound-chip-sm" data-sound="rain" title="باران">🌧</button>
+            <button class="sc-timer sound-chip-sm" data-sound="ocean" title="دریا">🌊</button>
+            <button class="sc-timer sound-chip-sm" data-sound="forest" title="جنگل">🌿</button>
+            <button class="sc-timer sound-chip-sm active" data-sound="none" title="بی‌صدا">🔇</button>
+          </div>
+          <input class="fc-vol-slider" type="range" id="focus-volume" min="0" max="100" value="60" aria-label="ولوم" />
+        </div>
+
+        <div class="fc-ring-wrap">
+          <svg id="focus-ring-svg" viewBox="0 0 440 440" aria-hidden="true">
+            <circle id="focus-ring-track" cx="220" cy="220" r="178" />
+            <circle id="focus-ring-progress" cx="220" cy="220" r="178" />
+            <circle id="focus-ring-dot" cx="220" cy="42" r="5" />
+          </svg>
+          <div class="fc-center">
+            <span class="fc-mode-label" id="focus-mode-label">تمرکز</span>
+            <div class="fc-countdown" id="focus-countdown">25:00</div>
+            <div class="fc-round-indicator" id="focus-round-indicator" hidden></div>
+            <div class="fc-extend-chips" id="fc-extend-chips">
+              <button class="extend-chip" data-add="5">+۵</button>
+              <button class="extend-chip" data-add="15">+۱۵</button>
+              <button class="extend-chip" data-add="30">+۳۰</button>
+              <button class="extend-chip" data-add="60">+۶۰</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="fc-controls">
+          <button class="fc-ctrl fc-ctrl-sec" id="focus-reset-btn" title="ریست" aria-label="ریست">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M5.463 4.433A9.961 9.961 0 0 1 12 2c5.523 0 10 4.477 10 10 0 2.136-.67 4.116-1.81 5.74L17 12h3A8 8 0 0 0 6.46 6.228l-.997-1.795zm13.074 15.134A9.961 9.961 0 0 1 12 22C6.477 22 2 17.523 2 12c0-2.136.67-4.116 1.81-5.74L7 12H4a8 8 0 0 0 13.54 5.772l.997 1.795z"/></svg>
+          </button>
+          <button class="fc-ctrl fc-ctrl-main" id="focus-toggle" aria-label="توقف/ادامه">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+          </button>
+          <button class="fc-ctrl fc-ctrl-sec" id="focus-skip-btn" title="رد کردن" aria-label="رد کردن" hidden>
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 18l8.5-6L6 6v12zm2-8.14L11.03 12 8 14.14V9.86zM16 6h2v12h-2z"/></svg>
+          </button>
+        </div>
+        <p class="fc-kbd-hint">Space توقف/ادامه · Esc خروج</p>
+      </div>
+
+      <!-- State 4: Break -->
+      <div id="focus-break-screen" class="focus-state" hidden>
+        <div class="fc-break-inner">
+          <div class="fc-breathe-ring"></div>
+          <span class="fc-break-emoji">🎉</span>
+          <h3 id="focus-break-title">دور اول تموم شد!</h3>
+          <p id="focus-break-sub">۵ دقیقه استراحت</p>
+          <div class="fc-break-progress">
+            <div class="fc-break-fill" id="focus-break-fill"></div>
+          </div>
+          <span class="fc-break-time" id="focus-break-time">05:00</span>
+          <div class="fc-break-tip">
+            <span>💡</span>
+            <span id="focus-break-tip"></span>
+          </div>
+          <button class="fc-skip-break-btn" id="focus-skip-break">رد کردن استراحت</button>
+        </div>
+      </div>
+
+      <!-- State 5: End -->
+      <div id="focus-end-screen" class="focus-state" hidden>
+        <div class="fc-end-inner">
+          <span class="fc-end-emoji">✨</span>
+          <h2 class="fc-end-title">آفرین!</h2>
+          <div class="fc-end-stats">
+            <div class="fc-stat-row"><span>مدت تمرکز</span><span id="es-duration">—</span></div>
+            <div class="fc-stat-row"><span>توقف‌ها</span><span id="es-pauses">—</span></div>
+            <div class="fc-stat-row"><span>وضعیت</span><span id="es-status">—</span></div>
+            <div class="fc-stat-row"><span>روزهای متوالی</span><span id="es-streak">—</span></div>
+          </div>
+          <div class="fc-end-actions">
+            <button class="fc-end-btn-sec" id="focus-restart-btn">شروع مجدد</button>
+            <button class="fc-end-btn-pri" id="focus-done-btn">بستن</button>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /focus-container -->
   </div>
 
   <script src="newtab.js"></script>
+  <script src="js/focus.js"></script>
 </body>
 </html>

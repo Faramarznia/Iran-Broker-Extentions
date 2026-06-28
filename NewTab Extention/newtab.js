@@ -333,7 +333,6 @@
     els.tipBgIc.innerHTML = svg('shieldCheck');
     els.tipNextIc.innerHTML = '<span class="icon">' + svg('arrowLeft') + '</span>';
     els.settingsClose.innerHTML = '<span class="icon">' + svg('close') + '</span>';
-    if (els.focusExit) els.focusExit.innerHTML = svg('close');
   }
 
   /* ----------------------------- Search ----------------------------- */
@@ -510,120 +509,6 @@
         '<div class="mkt-ltime" aria-hidden="true"></div>' +
       '</div>' +
       rowsHtml;
-  }
-
-  /* ----------------------------- Focus / Pomodoro ----------------------------- */
-  var POMO_WORK = 25 * 60;
-  var POMO_SHORT = 5 * 60;
-  var POMO_LONG = 15 * 60;
-  var POMO_SESSIONS = 4;
-
-  var pomoState = {
-    phase: 'work',
-    remaining: POMO_WORK,
-    running: false,
-    sessions: 0,
-    interval: null
-  };
-
-  function pomoFormat(s) {
-    var m = Math.floor(s / 60);
-    var sec = s % 60;
-    return String(m).padStart(2, '0') + ':' + String(sec).padStart(2, '0');
-  }
-
-  function pomoRender() {
-    if (!els.focusTimer) return;
-    els.focusTimer.textContent = pomoFormat(pomoState.remaining);
-
-    var phases = { work: 'تمرکز', short: 'استراحت کوتاه', long: 'استراحت بلند' };
-    els.focusPhase.textContent = phases[pomoState.phase];
-    els.focusPhase.className = 'focus-phase-label' +
-      (pomoState.phase === 'short' ? ' break' : '') +
-      (pomoState.phase === 'long' ? ' long-break' : '');
-
-    els.focusStart.textContent = pomoState.running ? 'مکث' : 'شروع';
-
-    var sessionInCycle = (pomoState.sessions % POMO_SESSIONS) + 1;
-    els.focusSessionInfo.textContent = 'سشن ' + toFaNum(pomoState.phase === 'work' ? sessionInCycle : (pomoState.sessions % POMO_SESSIONS)) + ' از ' + toFaNum(POMO_SESSIONS);
-
-    if (els.focusDots) {
-      els.focusDots.innerHTML = '';
-      for (var i = 0; i < POMO_SESSIONS; i++) {
-        var d = document.createElement('div');
-        var done = i < (pomoState.sessions % POMO_SESSIONS);
-        var active = pomoState.phase === 'work' && i === (pomoState.sessions % POMO_SESSIONS);
-        d.className = 'focus-dot' + (done ? ' done' : '') + (active ? ' active' : '');
-        els.focusDots.appendChild(d);
-      }
-    }
-  }
-
-  function toFaNum(n) {
-    return String(n).replace(/\d/g, function(d) { return '۰۱۲۳۴۵۶۷۸۹'[d]; });
-  }
-
-  function pomoAdvance() {
-    if (pomoState.phase === 'work') {
-      pomoState.sessions++;
-      var isLong = (pomoState.sessions % POMO_SESSIONS === 0);
-      pomoState.phase = isLong ? 'long' : 'short';
-      pomoState.remaining = isLong ? POMO_LONG : POMO_SHORT;
-    } else {
-      pomoState.phase = 'work';
-      pomoState.remaining = POMO_WORK;
-    }
-  }
-
-  function pomoTick() {
-    pomoState.remaining--;
-    if (pomoState.remaining <= 0) {
-      pomoAdvance();
-      els.focusTimer.classList.add('pulse-once');
-      setTimeout(function() { if (els.focusTimer) els.focusTimer.classList.remove('pulse-once'); }, 500);
-    }
-    pomoRender();
-  }
-
-  function pomoToggle() {
-    if (pomoState.running) {
-      clearInterval(pomoState.interval);
-      pomoState.running = false;
-    } else {
-      pomoState.running = true;
-      pomoState.interval = setInterval(pomoTick, 1000);
-    }
-    pomoRender();
-  }
-
-  function pomoReset() {
-    clearInterval(pomoState.interval);
-    pomoState.running = false;
-    pomoState.phase = 'work';
-    pomoState.remaining = POMO_WORK;
-    pomoState.sessions = 0;
-    pomoRender();
-  }
-
-  function pomoSkip() {
-    clearInterval(pomoState.interval);
-    pomoState.running = false;
-    pomoAdvance();
-    pomoRender();
-  }
-
-  function openFocusMode() {
-    if (!els.focusOverlay) return;
-    els.focusOverlay.hidden = false;
-    pomoRender();
-  }
-
-  function closeFocusMode() {
-    if (!els.focusOverlay) return;
-    els.focusOverlay.hidden = true;
-    clearInterval(pomoState.interval);
-    pomoState.running = false;
-    pomoRender();
   }
 
   /* ----------------------------- Time-dependent render ----------------------------- */
@@ -928,9 +813,7 @@
       'markets-wrap', 'markets-utc-badge',
       'quick-links', 'settings-modal', 'settings-panel', 'settings-close', 'settings-save',
       'set-name', 'set-engine', 'set-layout', 'set-accent', 'set-grid', 'set-crypto', 'set-coins',
-      'set-theme-mode', 'bg-picker', 'bg-opt-default', 'bg-gallery', 'bg-upload',
-      'focus-overlay', 'focus-exit', 'focus-phase', 'focus-timer', 'focus-session-info',
-      'focus-dots', 'focus-start', 'focus-reset', 'focus-skip'
+      'set-theme-mode', 'bg-picker', 'bg-opt-default', 'bg-gallery', 'bg-upload'
     ].forEach(function (id) {
       const camel = id.replace(/-([a-z])/g, function (_, c) { return c.toUpperCase(); });
       els[camel] = $(id);
@@ -963,13 +846,6 @@
     // top bar
     els.themeBtn.addEventListener('click', toggleTheme);
     els.settingsBtn.addEventListener('click', openSettings);
-    els.focusBtn.addEventListener('click', openFocusMode);
-
-    // focus mode
-    els.focusExit.addEventListener('click', closeFocusMode);
-    els.focusStart.addEventListener('click', pomoToggle);
-    els.focusReset.addEventListener('click', pomoReset);
-    els.focusSkip.addEventListener('click', pomoSkip);
 
     // search
     els.searchInput.addEventListener('input', function (e) { state.query = e.target.value; state.sugIdx = -1; renderSuggest(); });
@@ -1051,10 +927,6 @@
     }
 
     document.addEventListener('keydown', function (e) {
-      if (!els.focusOverlay.hidden) {
-        if (e.key === 'Escape') { closeFocusMode(); return; }
-        if (e.key === ' ') { e.preventDefault(); pomoToggle(); return; }
-      }
       if (e.key === 'Escape' && !els.settingsModal.hidden) closeSettings();
     });
 

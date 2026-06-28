@@ -12,6 +12,7 @@
 @font-face{font-family:'Estedad';src:url('assets/fonts/Estedad-ExtraBold.woff2') format('woff2');font-weight:800;font-display:swap}
 
 :root{
+  --fc-color:#60a5fa;
   --bg:#090b12;--bg2:#0e121b;--surface:rgba(255,255,255,.04);--surface2:rgba(255,255,255,.07);--surfaceSolid:#141926;
   --border:rgba(255,255,255,.08);--border2:rgba(255,255,255,.14);
   --text:#f5f7fa;--sub:#9aa1b1;--soft:#6a7180;--logo-text:#f5f7fa;--logo-mark:#2f6fe0;
@@ -492,28 +493,171 @@ body:not([data-theme="light"]) .s-input:focus,body:not([data-theme="light"]) .s-
 .modal-foot{padding:14px 20px;border-top:1px solid var(--border);flex-shrink:0;display:flex;align-items:center;justify-content:space-between}
 .mf-ver{font-size:11px;color:var(--soft);font-weight:600;opacity:.7}
 
-/* ===== Focus Mode ===== */
-.focus-overlay{position:fixed;inset:0;z-index:100;background:rgba(9,11,18,.95);backdrop-filter:blur(16px) saturate(180%);-webkit-backdrop-filter:blur(16px) saturate(180%);display:flex;flex-direction:column;align-items:center;justify-content:center;animation:focusIn .22s cubic-bezier(.4,0,.2,1)}
-.focus-overlay[hidden]{display:none}
-@keyframes focusIn{from{opacity:0;transform:scale(.97)}to{opacity:1;transform:none}}
-.focus-exit{position:absolute;top:28px;left:28px;display:grid;place-items:center;width:40px;height:40px;border-radius:12px;background:var(--surface);border:1px solid var(--border);color:var(--sub);cursor:pointer;transition:color .2s,background .2s,border-color .2s}
-.focus-exit:hover{color:var(--text);background:var(--surface2);border-color:var(--border2)}
-.focus-exit svg{width:18px;height:18px;display:block}
-.focus-body{display:flex;flex-direction:column;align-items:center;gap:20px}
-.focus-phase-label{font-size:12px;font-weight:700;color:var(--primary);background:var(--primarySoft);border:1px solid rgba(111,155,243,.22);padding:5px 20px;border-radius:99px;letter-spacing:.5px;transition:color .3s,background .3s,border-color .3s}
-.focus-phase-label.break{color:var(--green);background:var(--greenSoft);border-color:rgba(31,193,107,.25)}
-.focus-phase-label.long-break{color:var(--teal);background:rgba(53,208,192,.12);border-color:rgba(53,208,192,.25)}
-.focus-timer{font-size:108px;font-weight:800;letter-spacing:-4px;line-height:1;font-variant-numeric:tabular-nums;direction:ltr;background:linear-gradient(110deg,var(--text) 30%,var(--primary));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;background-size:200% auto;animation:sheen 7s linear infinite;transition:color .3s}
-.focus-timer.pulse-once{animation:sheen 7s linear infinite,timerPulse .45s ease}
-@keyframes timerPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.04)}}
-.focus-session-info{font-size:12px;color:var(--soft);font-weight:600;margin-top:-8px}
-.focus-dots{display:flex;gap:10px;align-items:center}
-.focus-dot{width:10px;height:10px;border-radius:50%;background:var(--border2);transition:background .35s,box-shadow .35s}
-.focus-dot.done{background:var(--primary)}
-.focus-dot.active{background:var(--green);box-shadow:0 0 0 3px var(--greenSoft);animation:pulse 2s ease-in-out infinite}
-.focus-actions{display:flex;gap:12px;align-items:center;margin-top:4px}
-.focus-btn{padding:11px 26px;border-radius:99px;border:1px solid var(--border);background:var(--surface);color:var(--sub);font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;transition:color .2s,background .2s,border-color .2s}
-.focus-btn:hover{background:var(--surface2);color:var(--text);border-color:var(--border2)}
-.focus-btn-primary{padding:14px 52px;background:linear-gradient(140deg,var(--primaryStrong),#1142a8);color:#fff;border:none;font-size:16px;box-shadow:0 4px 22px rgba(24,90,219,.4)}
-.focus-btn-primary:hover{opacity:.9;color:#fff;background:linear-gradient(140deg,var(--primaryStrong),#1142a8)}
-.focus-hint{font-size:11.5px;color:var(--soft);margin:0;direction:ltr;opacity:.65}
+/* =====================================================================
+   FOCUS MODE — Complete Styles
+   ===================================================================== */
+
+/* ── Focus btn in topbar ── */
+#focus-btn{position:relative}
+#focus-btn.focus-btn-active{border-color:var(--green) !important;color:var(--green) !important}
+#focus-btn.focus-btn-active::after{content:'';position:absolute;inset:-2px;border-radius:inherit;border:2px solid var(--green);animation:pulse 2.4s ease-in-out infinite;pointer-events:none}
+.fb-badge{position:absolute;top:-7px;right:-7px;background:var(--green);color:#fff;font-size:9px;font-weight:700;padding:2px 6px;border-radius:99px;white-space:nowrap;line-height:1.4}
+
+/* ── Main container ── */
+#focus-container{position:fixed;inset:0;z-index:200;display:flex;align-items:center;justify-content:center;background:rgba(8,11,22,.82);backdrop-filter:blur(40px) saturate(0.55);-webkit-backdrop-filter:blur(40px) saturate(0.55);opacity:0;transition:opacity .35s ease;pointer-events:none}
+#focus-container[hidden]{display:none !important}
+#focus-container.fc-visible{opacity:1;pointer-events:auto}
+.layout-wrap.focus-bg-dim{filter:blur(2px) brightness(.6);pointer-events:none;transition:filter .4s ease}
+
+/* ── Shared state panel ── */
+.focus-state{width:100%;height:100%;display:flex;align-items:center;justify-content:center}
+
+/* ── Close X button ── */
+.fc-close-x{position:absolute;top:24px;right:24px;display:grid;place-items:center;width:40px;height:40px;border-radius:12px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);color:rgba(255,255,255,.55);cursor:pointer;transition:color .2s,background .2s,transform .25s ease;z-index:10}
+.fc-close-x:hover{color:#fff;background:rgba(251,55,72,.25);border-color:rgba(251,55,72,.45);transform:rotate(90deg)}
+.fc-close-x svg{width:16px;height:16px}
+
+/* ── Volume slider shared ── */
+.fc-vol-slider{-webkit-appearance:none;appearance:none;height:3px;border-radius:99px;background:rgba(255,255,255,.15);outline:none;cursor:pointer;width:110px}
+.fc-vol-slider::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;border-radius:50%;background:#fff;cursor:pointer;box-shadow:0 1px 4px rgba(0,0,0,.4)}
+
+/* ─────────────────────────────────────────
+   STATE 1 — SETUP MODAL
+───────────────────────────────────────── */
+.fc-modal{position:relative;background:rgba(12,16,28,.92);border:1px solid rgba(255,255,255,.10);border-radius:24px;padding:32px 28px 26px;width:min(600px,92vw);max-height:90vh;overflow-y:auto;display:flex;flex-direction:column;gap:22px;box-shadow:0 32px 80px rgba(0,0,10,.7);animation:fcModalIn .28s cubic-bezier(.22,1,.36,1)}
+@keyframes fcModalIn{from{opacity:0;transform:translateY(16px) scale(.97)}to{opacity:1;transform:none}}
+.fc-modal-head{display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center}
+.fc-modal-emoji{font-size:32px;line-height:1}
+.fc-modal-head h2{margin:0;font-size:20px;font-weight:700;color:#fff}
+
+/* Mode cards */
+.fc-mode-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.fc-mode-card{display:flex;flex-direction:column;align-items:center;gap:8px;padding:18px 14px 16px;border-radius:18px;border:1.5px solid rgba(255,255,255,.08);background:rgba(255,255,255,.04);cursor:pointer;text-align:center;transition:border-color .2s,background .2s,transform .18s;font-family:inherit;color:#fff}
+.fc-mode-card:hover{border-color:rgba(255,255,255,.18);background:rgba(255,255,255,.07);transform:translateY(-2px)}
+.fc-mode-card.selected{border-color:var(--fc-color,#60a5fa);background:rgba(96,165,250,.10);box-shadow:0 0 0 3px rgba(96,165,250,.14)}
+.fc-mc-icon{font-size:26px;line-height:1}
+.fc-mc-title{font-size:13px;font-weight:700;color:#fff}
+.fc-mc-desc{font-size:11px;color:rgba(255,255,255,.45)}
+.fc-mc-config{display:flex;flex-direction:column;gap:6px;width:100%;margin-top:4px}
+.fc-mc-config label{display:flex;align-items:center;justify-content:center;gap:6px;font-size:11.5px;color:rgba(255,255,255,.55);font-family:inherit}
+.fc-mc-config input[type=number]{width:44px;padding:4px 6px;border-radius:7px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.08);color:#fff;font-size:12px;text-align:center;font-family:inherit;outline:none}
+.fc-mc-config input[type=time]{padding:4px 8px;border-radius:7px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.08);color:#fff;font-size:12px;font-family:inherit;outline:none}
+
+/* Preset chips */
+.fc-preset-chips{display:flex;flex-wrap:wrap;gap:5px;justify-content:center}
+.preset-chip{padding:3px 10px;border-radius:99px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);color:rgba(255,255,255,.65);font-size:11px;cursor:pointer;transition:background .15s,color .15s}
+.preset-chip:hover{background:rgba(255,255,255,.15);color:#fff}
+
+/* Sound setup */
+.fc-sound-setup{display:flex;flex-direction:column;gap:10px;padding:14px 16px;border-radius:14px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07)}
+.fc-sound-lbl{font-size:11.5px;font-weight:700;color:rgba(255,255,255,.5);text-align:center}
+.fc-sound-chips{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+.sound-chip{padding:6px 14px;border-radius:99px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.06);color:rgba(255,255,255,.6);font-size:12px;font-weight:600;cursor:pointer;transition:all .18s;font-family:inherit}
+.sound-chip:hover{background:rgba(255,255,255,.12);color:#fff;border-color:rgba(255,255,255,.22)}
+.sound-chip.active{background:rgba(var(--fc-color,96,165,250),.18);border-color:var(--fc-color,#60a5fa);color:#fff}
+.fc-vol-slider{align-self:center}
+
+/* Start button */
+.fc-start-btn{padding:14px 32px;border-radius:99px;border:none;background:linear-gradient(140deg,var(--primaryStrong,#185adb),#0d2ea8);color:#fff;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;box-shadow:0 4px 24px rgba(24,90,219,.45);transition:opacity .2s,transform .18s;align-self:center}
+.fc-start-btn:hover{opacity:.9;transform:translateY(-1px)}
+
+/* ─────────────────────────────────────────
+   STATE 2 — QUOTE TRANSITION
+───────────────────────────────────────── */
+.fc-quote-inner{display:flex;flex-direction:column;align-items:center;gap:14px;max-width:640px;padding:0 32px;text-align:center;animation:fcQuoteIn .6s ease}
+@keyframes fcQuoteIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+.fc-quote-text{margin:0;font-size:clamp(20px,3vw,34px);font-weight:300;line-height:1.75;color:rgba(255,255,255,.92);letter-spacing:.02em}
+.fc-quote-author{font-size:13px;color:rgba(255,255,255,.38);letter-spacing:.08em;padding-top:8px;border-top:1px solid rgba(255,255,255,.1);width:80px;text-align:center}
+.fc-quote-hint{font-size:11px;color:rgba(255,255,255,.22);margin-top:24px;cursor:pointer}
+
+/* ─────────────────────────────────────────
+   STATE 3 — TIMER SCREEN
+───────────────────────────────────────── */
+#focus-timer-screen{flex-direction:column;gap:28px;position:relative}
+.fc-close-timer{top:24px;right:24px}
+
+/* Sound bar (top-left) */
+.fc-sound-bar{position:absolute;top:24px;left:24px;display:flex;flex-direction:column;gap:8px;align-items:flex-start}
+.fc-sound-chips-sm{display:flex;gap:6px}
+.sound-chip-sm{width:30px;height:30px;border-radius:9px;border:1px solid rgba(255,255,255,.10);background:rgba(255,255,255,.06);font-size:13px;cursor:pointer;transition:background .15s,border-color .15s;display:grid;place-items:center}
+.sound-chip-sm:hover{background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.2)}
+.sound-chip-sm.active{background:rgba(96,165,250,.18);border-color:rgba(96,165,250,.5)}
+
+/* Ring */
+.fc-ring-wrap{position:relative;display:grid;place-items:center;width:min(60vw,420px);height:min(60vw,420px)}
+#focus-ring-svg{width:100%;height:100%;overflow:visible}
+#focus-ring-track{fill:none;stroke:rgba(255,255,255,.06);stroke-width:2}
+#focus-ring-progress{fill:none;stroke:var(--fc-color,#60a5fa);stroke-width:3;stroke-linecap:round;transform-origin:220px 220px;transform:rotate(-90deg);stroke-dasharray:1119.0;stroke-dashoffset:0;transition:stroke-dashoffset 1s linear,stroke .5s ease}
+#focus-ring-dot{fill:var(--fc-color,#60a5fa);transition:cx .9s linear,cy .9s linear,fill .5s ease;filter:drop-shadow(0 0 4px var(--fc-color,#60a5fa))}
+
+/* Center content */
+.fc-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px}
+.fc-mode-label{font-size:11px;font-weight:700;color:rgba(255,255,255,.45);letter-spacing:.18em;text-transform:uppercase}
+.fc-countdown{font-size:clamp(52px,9vw,84px);font-weight:700;letter-spacing:-3px;font-variant-numeric:tabular-nums;color:#fff;line-height:1;direction:ltr}
+.fc-round-indicator{display:flex;align-items:center;gap:7px;flex-wrap:wrap;justify-content:center}
+.round-txt{font-size:11px;color:rgba(255,255,255,.4);font-weight:600;margin-left:4px}
+.pom-dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.18);transition:background .3s}
+.pom-dot.done{background:var(--fc-color,#60a5fa)}
+.pom-dot.active{background:var(--fc-color,#60a5fa);box-shadow:0 0 0 3px rgba(96,165,250,.25);animation:pulse 2s ease-in-out infinite}
+
+/* Extend chips — reveal on ring hover */
+.fc-extend-chips{display:flex;gap:6px;opacity:0;transition:opacity .25s ease;margin-top:2px}
+.fc-ring-wrap:hover .fc-extend-chips{opacity:1}
+.extend-chip{padding:4px 11px;border-radius:99px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.07);color:rgba(255,255,255,.7);font-size:11px;font-weight:700;cursor:pointer;transition:background .15s,color .15s;font-family:inherit}
+.extend-chip:hover{background:rgba(255,255,255,.16);color:#fff}
+
+/* Controls */
+.fc-controls{display:flex;align-items:center;gap:16px}
+.fc-ctrl{display:grid;place-items:center;border:none;cursor:pointer;transition:opacity .18s,transform .18s,background .18s;border-radius:50%}
+.fc-ctrl svg{display:block}
+.fc-ctrl-sec{width:48px;height:48px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);color:rgba(255,255,255,.6)}
+.fc-ctrl-sec:hover{background:rgba(255,255,255,.14);color:#fff;transform:scale(1.07)}
+.fc-ctrl-sec svg{width:18px;height:18px}
+.fc-ctrl-main{width:68px;height:68px;background:var(--fc-color,#60a5fa);color:#fff;box-shadow:0 4px 20px rgba(96,165,250,.4)}
+.fc-ctrl-main:hover{opacity:.88;transform:scale(1.06)}
+.fc-ctrl-main svg{width:26px;height:26px}
+.fc-ctrl-sec.fc-confirm{background:rgba(251,55,72,.25);border-color:rgba(251,55,72,.5);color:#fb3748}
+
+/* Pause & warning states */
+#focus-timer-screen.fc-paused #focus-ring-progress{opacity:.35}
+#focus-timer-screen.fc-paused .fc-countdown{animation:blink 2s ease-in-out infinite}
+@keyframes blink{50%{opacity:.5}}
+#focus-timer-screen.fc-warning #focus-ring-progress{stroke:#f59e0b}
+#focus-timer-screen.fc-critical #focus-ring-progress{stroke:#ef4444}
+.fc-kbd-hint{font-size:11px;color:rgba(255,255,255,.2);margin:0;direction:ltr;letter-spacing:.04em}
+
+/* ─────────────────────────────────────────
+   STATE 4 — BREAK SCREEN
+───────────────────────────────────────── */
+#focus-break-screen{background:radial-gradient(ellipse at 50% 40%,rgba(30,58,95,.6),rgba(8,11,22,.0) 70%)}
+.fc-break-inner{display:flex;flex-direction:column;align-items:center;gap:14px;position:relative;padding:0 24px;text-align:center;max-width:440px}
+.fc-breathe-ring{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:520px;height:520px;border-radius:50%;background:radial-gradient(circle,rgba(96,165,250,.06) 0%,transparent 70%);animation:breathe 4s ease-in-out infinite;pointer-events:none;z-index:-1}
+@keyframes breathe{0%,100%{transform:translate(-50%,-50%) scale(1);opacity:.4}50%{transform:translate(-50%,-50%) scale(1.08);opacity:.7}}
+.fc-break-emoji{font-size:40px;line-height:1;animation:bounceIn .5s cubic-bezier(.22,1,.36,1)}
+@keyframes bounceIn{from{transform:scale(.5);opacity:0}to{transform:scale(1);opacity:1}}
+#focus-break-screen h3{margin:0;font-size:22px;font-weight:700;color:#fff}
+#focus-break-screen p{margin:0;font-size:14px;color:rgba(255,255,255,.55)}
+.fc-break-progress{width:280px;height:3px;background:rgba(255,255,255,.1);border-radius:99px;overflow:hidden}
+.fc-break-fill{height:100%;background:var(--fc-color,#60a5fa);border-radius:99px;width:0;transition:width .9s linear}
+.fc-break-time{font-size:28px;font-weight:700;letter-spacing:-1px;font-variant-numeric:tabular-nums;color:#fff;direction:ltr}
+.fc-break-tip{display:flex;gap:8px;align-items:flex-start;padding:12px 16px;border-radius:12px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);max-width:340px;font-size:13px;color:rgba(255,255,255,.65);line-height:1.6;text-align:right}
+.fc-skip-break-btn{padding:9px 22px;border-radius:99px;border:1px solid rgba(255,255,255,.14);background:transparent;color:rgba(255,255,255,.45);font-size:12.5px;font-weight:600;cursor:pointer;font-family:inherit;transition:color .2s,border-color .2s}
+.fc-skip-break-btn:hover{color:#fff;border-color:rgba(255,255,255,.35)}
+
+/* ─────────────────────────────────────────
+   STATE 5 — END SCREEN
+───────────────────────────────────────── */
+.fc-end-inner{display:flex;flex-direction:column;align-items:center;gap:18px;padding:0 24px;text-align:center;max-width:380px}
+.fc-end-emoji{font-size:52px;line-height:1;animation:endPop .6s cubic-bezier(.22,1,.36,1)}
+@keyframes endPop{from{transform:scale(0) rotate(-20deg)}to{transform:scale(1) rotate(0)}}
+.fc-end-title{margin:0;font-size:28px;font-weight:800;color:#fff}
+.fc-end-stats{width:100%;display:flex;flex-direction:column;gap:0;border-radius:14px;overflow:hidden;border:1px solid rgba(255,255,255,.08)}
+.fc-stat-row{display:flex;justify-content:space-between;align-items:center;padding:11px 16px;font-size:13.5px;border-bottom:1px solid rgba(255,255,255,.06)}
+.fc-stat-row:last-child{border-bottom:none}
+.fc-stat-row span:first-child{color:rgba(255,255,255,.5)}
+.fc-stat-row span:last-child{font-weight:700;color:#fff}
+.fc-end-actions{display:flex;gap:10px}
+.fc-end-btn-sec{padding:11px 24px;border-radius:99px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.06);color:rgba(255,255,255,.7);font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .18s}
+.fc-end-btn-sec:hover{background:rgba(255,255,255,.12);color:#fff}
+.fc-end-btn-pri{padding:11px 28px;border-radius:99px;border:none;background:linear-gradient(140deg,var(--primaryStrong,#185adb),#0d2ea8);color:#fff;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;box-shadow:0 3px 16px rgba(24,90,219,.4);transition:opacity .18s}
+.fc-end-btn-pri:hover{opacity:.88}
