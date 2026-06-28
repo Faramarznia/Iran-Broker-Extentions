@@ -128,7 +128,7 @@
   /* ----------------------------- State ----------------------------- */
   const PERSIST_KEY = 'ib_newtab_v2';
   const state = {
-    theme: 'dark', layout: 'scroll', accent: '#185adb', showGrid: true,
+    theme: 'dark', layout: 'simple', accent: '#185adb', showGrid: true,
     name: '', engine: 'google', activeEngine: 'google',
     coins: 'bitcoin,ethereum,tether,solana,ripple,dogecoin',
     showCrypto: true, query: '', sugIdx: -1, tipIndex: 0,
@@ -549,7 +549,7 @@
     if (els.themeBtn) els.themeBtn.innerHTML = '<span class="icon">' + svg(icon) + '</span>';
     applyAccent();
   }
-  function applyLayout() { document.body.setAttribute('data-layout', state.layout === 'fit' ? 'fit' : 'scroll'); }
+  function applyLayout() { document.body.setAttribute('data-layout', state.layout || 'simple'); }
   function applyGrid() { els.bgGrid.hidden = !state.showGrid; }
   function applyShowCrypto() { els.cryptoCard.style.display = state.showCrypto ? '' : 'none'; }
 
