@@ -1,51 +1,37 @@
 /* ===================================================================
-   ایران بروکر — Focus Mode (js/focus.js)
-   Self-contained focus/pomodoro module.
+   ایران بروکر — Focus Mode (js/focus.js)  v3.0 – redesigned
    =================================================================== */
 (function () {
   'use strict';
 
-  /* ─── Constants ─── */
-  var STORE_KEY = 'ib_focus_v2';
-  var RING_R = 178;
-  var SVG_CX = 220, SVG_CY = 220;
-  var CIRC = 2 * Math.PI * RING_R;
+  var STORE_KEY  = 'ib_focus_v3';
+  var RING_R     = 140;
+  var SVG_CX     = 160, SVG_CY = 160;
+  var CIRC       = 2 * Math.PI * RING_R; // ≈ 879.65
 
-  /* ─── Quotes ─── */
   var QUOTES = [
-    { text: 'قلب آرام، تصمیم‌های روشن‌تری می‌گیرد.', author: 'دالایی لاما' },
+    { text: 'تمرکز یعنی نه گفتن به صد ایده‌ی خوب.', author: 'استیو جابز' },
     { text: 'بهترین معامله‌گران می‌توانند ساعت‌ها هیچ کاری نکنند.', author: 'جسی لیورمور' },
-    { text: 'بازار به کسی که عجله دارد پول نمی‌دهد.', author: 'جسی لیورمور' },
-    { text: 'معامله بر اساس ترس یا طمع، نتیجه‌ای جز زیان ندارد.', author: 'ایران بروکر' },
     { text: 'صبر، مهم‌ترین مهارت یک تریدر موفق است.', author: 'وارن بافت' },
-    { text: 'صبر کن که صبر داروی دل است.', author: 'سعدی شیرازی' },
-    { text: 'عجول باش در آموختن، آرام باش در تصمیم گرفتن.', author: 'امام علی (ع)' },
     { text: 'در آرامش قدرتی نهفته است که در شتاب نیست.', author: 'مولانا' },
-    { text: 'تمرکز یعنی نه گفتن به صد ایده خوب.', author: 'استیو جابز' },
-    { text: 'ذهنی که آرام است، بیشتر می‌بیند.', author: 'حکمت ژاپنی' },
-    { text: 'کیفیت حضور، مهم‌تر از مقدار زمان است.', author: 'ایران بروکر' },
+    { text: 'در بازار، انضباط از هوش مهم‌تر است.', author: 'ری دالیو' },
     { text: 'اول سرمایه را حفظ کن، بعد به سود فکر کن.', author: 'جورج سوروس' },
+    { text: 'قلب آرام، تصمیم‌های روشن‌تری می‌گیرد.', author: 'دالایی لاما' },
+    { text: 'بازار به کسی که عجله دارد پول نمی‌دهد.', author: 'جسی لیورمور' },
     { text: 'پلن داشتن، یعنی نصف راه را رفتن.', author: 'ایران بروکر' },
-    { text: 'هر چیزی که احساساتی‌ات می‌کند، احتمالاً اشتباهی است.', author: 'Paul Tudor Jones' },
-    { text: 'در بازار، انضباط از هوش مهم‌تر است.', author: 'ری دالیو' }
+    { text: 'کیفیت حضور، مهم‌تر از مقدار زمان است.', author: 'ایران بروکر' },
+    { text: 'هر چیزی که احساساتی‌ات می‌کند، احتمالاً اشتباهی است.', author: 'Paul Tudor Jones' }
   ];
 
   var BREAK_TIPS = [
-    'از صفحه دور شو و چند لحظه چشمانت را ببند.',
+    'از صفحه دور شو و چند لحظه چشم‌هایت را ببند.',
     'یک لیوان آب بنوش — هیدراتاسیون روی تصمیم‌گیری تأثیر مستقیم دارد.',
-    'معامله‌ای باز نگذار در استراحت — ذهنت باید واقعاً استراحت کند.',
-    '۵ نفس عمیق بکش — ریه‌ها ذهن را اکسیژن می‌دهند.',
-    'کمی کشش و حرکت بده — تریدر بودن کار نشسته‌ای است.'
+    'در استراحت معامله‌ای باز نگذار — ذهنت باید واقعاً استراحت کند.',
+    'پنج نفس عمیق بکش — اکسیژن، ذهن را روشن می‌کند.',
+    'کمی کشش و حرکت بده — نشستن طولانی خستگی می‌آورد.'
   ];
 
-  /* ─── Mode colors ─── */
-  var MODE_COLORS = {
-    pomodoro_work:  '#ef4444',
-    pomodoro_short: '#60a5fa',
-    pomodoro_long:  '#818cf8',
-    custom:         '#60a5fa',
-    session:        '#22c55e'
-  };
+  var BREATH_SEQ = [['دم بگیر', 4500], ['نگه دار', 2000], ['بازدم', 4500]];
 
   /* ─── State ─── */
   var s = {
@@ -53,55 +39,54 @@
     mode: 'pomodoro',
     running: false,
     remaining: 25 * 60,
-    total: 25 * 60,
-    pomRound: 1,
+    total:     25 * 60,
+    pomRound:       1,
     pomTotalRounds: 4,
     pomPhase: 'work',
-    pomWorkMins: 25,
-    pomShortMins: 5,
-    pomLongMins: 15,
-    customMins: 45,
-    sessStart: '15:00',
-    sessEnd: '17:00',
+    pomWorkMins:  25,
+    pomShortMins:  5,
+    pomLongMins:  15,
+    customMins:   45,
+    sessStart: '10:30',
+    sessEnd:   '12:30',
+    sessPreset: 'london',
+    intention:  '',
     soundType: 'none',
     volume: 60,
-    autoBreak: true,
-    pauseCount: 0,
-    totalPaused: 0,
-    pausedAt: null,
-    startedAt: null,
-    savedAt: null,
-    streak: 0,
+    pauseCount:  0,
+    focusedSec:  0,
+    streak:      0,
+    todayMins:   0,
     lastFocusDate: null
   };
 
-  var tickInterval = null;
-  var quoteTimeout = null;
+  var tickInterval        = null;
+  var quoteTimeout        = null;
+  var breathTimeout       = null;
+  var breathIdx           = 0;
+  var resetConfirmTimeout = null;
+  var audioCtx            = null;
+  var audioSource         = null;
+  var audioGain           = null;
+  var audioLfo            = null;
 
   /* ─── Audio ─── */
-  var audioCtx = null;
-  var audioSource = null;
-  var audioGain = null;
-  var audioLfo = null;
-
-  function ensureAudioCtx() {
+  function ensureAudio() {
     if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     if (audioCtx.state === 'suspended') audioCtx.resume();
   }
 
-  function createNoiseBuffer() {
-    var rate = audioCtx.sampleRate;
-    var len = rate * 3;
-    var buf = audioCtx.createBuffer(1, len, rate);
-    var d = buf.getChannelData(0);
-    for (var i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1);
+  function noiseBuffer() {
+    var rate = audioCtx.sampleRate, len = rate * 3;
+    var buf  = audioCtx.createBuffer(1, len, rate), d = buf.getChannelData(0);
+    for (var i = 0; i < len; i++) d[i] = Math.random() * 2 - 1;
     return buf;
   }
 
   function stopSound() {
     try {
       if (audioSource) { audioSource.stop(); audioSource = null; }
-      if (audioLfo) { audioLfo.stop(); audioLfo = null; }
+      if (audioLfo)    { audioLfo.stop();    audioLfo    = null; }
       audioGain = null;
     } catch(e) {}
   }
@@ -116,76 +101,38 @@
       audioGain = gain;
 
       var src = audioCtx.createBufferSource();
-      src.buffer = createNoiseBuffer();
+      src.buffer = noiseBuffer();
       src.loop = true;
       audioSource = src;
 
       if (type === 'rain') {
-        var filter = audioCtx.createBiquadFilter();
-        filter.type = 'lowpass';
-        filter.frequency.value = 700;
-        filter.Q.value = 0.8;
-        src.connect(filter);
-        filter.connect(gain);
-
+        var f = audioCtx.createBiquadFilter(); f.type='lowpass'; f.frequency.value=720; f.Q.value=0.8;
+        src.connect(f); f.connect(gain);
       } else if (type === 'ocean') {
-        var filt2 = audioCtx.createBiquadFilter();
-        filt2.type = 'lowpass';
-        filt2.frequency.value = 500;
-        filt2.Q.value = 1.2;
-        src.connect(filt2);
-        filt2.connect(gain);
-        var lfo = audioCtx.createOscillator();
-        lfo.frequency.value = 0.12;
-        var lfoGain = audioCtx.createGain();
-        lfoGain.gain.value = 0.18;
-        lfo.connect(lfoGain);
-        lfoGain.connect(gain.gain);
-        lfo.start();
-        audioLfo = lfo;
-
+        var f2 = audioCtx.createBiquadFilter(); f2.type='lowpass'; f2.frequency.value=500; f2.Q.value=1.2;
+        src.connect(f2); f2.connect(gain);
+        var lfo = audioCtx.createOscillator(); lfo.frequency.value=0.12;
+        var lg  = audioCtx.createGain();       lg.gain.value=0.18;
+        lfo.connect(lg); lg.connect(gain.gain); lfo.start(); audioLfo = lfo;
       } else if (type === 'forest') {
-        var filt3 = audioCtx.createBiquadFilter();
-        filt3.type = 'bandpass';
-        filt3.frequency.value = 1200;
-        filt3.Q.value = 0.5;
-        src.connect(filt3);
-        filt3.connect(gain);
+        var f3 = audioCtx.createBiquadFilter(); f3.type='bandpass'; f3.frequency.value=1200; f3.Q.value=0.5;
+        src.connect(f3); f3.connect(gain);
       }
-
       src.start();
     } catch(e) {}
   }
 
-  function setVolume(v) {
-    s.volume = v;
-    if (audioGain) audioGain.gain.value = v / 100 * 0.3;
-  }
-
   /* ─── Persistence ─── */
-  function saveState() {
+  function savePrefs() {
     try {
       localStorage.setItem(STORE_KEY, JSON.stringify({
-        active: true,
         mode: s.mode,
-        remaining: s.remaining,
-        total: s.total,
-        pomRound: s.pomRound,
-        pomTotalRounds: s.pomTotalRounds,
-        pomPhase: s.pomPhase,
-        pomWorkMins: s.pomWorkMins,
-        pomShortMins: s.pomShortMins,
-        pomLongMins: s.pomLongMins,
+        pomWorkMins: s.pomWorkMins, pomShortMins: s.pomShortMins,
+        pomLongMins: s.pomLongMins, pomTotalRounds: s.pomTotalRounds,
         customMins: s.customMins,
-        pauseCount: s.pauseCount,
-        totalPaused: s.totalPaused,
-        soundType: s.soundType,
-        volume: s.volume,
-        autoBreak: s.autoBreak,
-        screen: s.screen,
-        savedAt: Date.now(),
-        streak: s.streak,
-        lastFocusDate: s.lastFocusDate
+        sessStart: s.sessStart, sessEnd: s.sessEnd, sessPreset: s.sessPreset,
+        intention: s.intention, soundType: s.soundType, volume: s.volume,
+        streak: s.streak, todayMins: s.todayMins, lastFocusDate: s.lastFocusDate
       }));
     } catch(e) {}
   }
@@ -193,46 +140,10 @@
   function loadPrefs() {
     try {
       var d = JSON.parse(localStorage.getItem(STORE_KEY) || '{}');
-      if (d.streak != null) s.streak = d.streak;
-      if (d.lastFocusDate != null) s.lastFocusDate = d.lastFocusDate;
-      if (d.pomWorkMins) s.pomWorkMins = d.pomWorkMins;
-      if (d.pomShortMins) s.pomShortMins = d.pomShortMins;
-      if (d.pomLongMins) s.pomLongMins = d.pomLongMins;
-      if (d.soundType) s.soundType = d.soundType;
-      if (d.volume != null) s.volume = d.volume;
-      if (d.autoBreak != null) s.autoBreak = d.autoBreak;
-      if (d.customMins) s.customMins = d.customMins;
-    } catch(e) {}
-  }
-
-  function checkExistingSession() {
-    try {
-      var d = JSON.parse(localStorage.getItem(STORE_KEY) || '{}');
-      if (!d.active || !d.savedAt) return false;
-      var elapsed = Math.floor((Date.now() - d.savedAt) / 1000);
-      var remaining = Math.max(0, (d.remaining || 0) - elapsed);
-      if (remaining <= 0) { clearSavedState(); return false; }
-      Object.assign(s, d, { remaining: remaining, running: false, pausedAt: null });
-      return true;
-    } catch(e) {}
-    return false;
-  }
-
-  function clearSavedState() {
-    try {
-      var d = JSON.parse(localStorage.getItem(STORE_KEY) || '{}');
-      localStorage.setItem(STORE_KEY, JSON.stringify({
-        active: false,
-        streak: d.streak || 0,
-        lastFocusDate: d.lastFocusDate || null,
-        pomWorkMins: d.pomWorkMins || 25,
-        pomShortMins: d.pomShortMins || 5,
-        pomLongMins: d.pomLongMins || 15,
-        soundType: d.soundType || 'none',
-        volume: d.volume != null ? d.volume : 60,
-        autoBreak: d.autoBreak !== false,
-        customMins: d.customMins || 45
-      }));
+      ['mode','pomWorkMins','pomShortMins','pomLongMins','pomTotalRounds',
+       'customMins','sessStart','sessEnd','sessPreset',
+       'intention','soundType','volume','streak','todayMins','lastFocusDate'
+      ].forEach(function(k) { if (d[k] != null) s[k] = d[k]; });
     } catch(e) {}
   }
 
@@ -243,144 +154,220 @@
   function fmt(sec) {
     sec = Math.max(0, sec);
     var m = Math.floor(sec / 60), ss = sec % 60;
-    return String(m).padStart(2, '0') + ':' + String(ss).padStart(2, '0');
+    return String(m).padStart(2,'0') + ':' + String(ss).padStart(2,'0');
   }
-  function $ (id) { return document.getElementById(id); }
+  function $(id) { return document.getElementById(id); }
   function randomItem(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+  function sessDurMin() {
+    var a = s.sessStart.split(':'), b = s.sessEnd.split(':');
+    var mins = (parseInt(b[0])*60 + parseInt(b[1])) - (parseInt(a[0])*60 + parseInt(a[1]));
+    if (mins <= 0) mins += 1440;
+    return mins;
+  }
 
-  /* ─── Container ─── */
+  /* ─── Container show/hide ─── */
   function showContainer() {
-    var c = $('focus-container');
-    if (!c) return;
+    var c = $('focus-container'); if (!c) return;
     c.hidden = false;
     requestAnimationFrame(function() { c.classList.add('fc-visible'); });
-    document.querySelector('.layout-wrap') && document.querySelector('.layout-wrap').classList.add('focus-bg-dim');
-  }
-  function hideContainer() {
-    var c = $('focus-container');
-    if (!c) return;
-    c.classList.remove('fc-visible');
-    setTimeout(function() { c.hidden = true; }, 350);
-    document.querySelector('.layout-wrap') && document.querySelector('.layout-wrap').classList.remove('focus-bg-dim');
-  }
-  function showScreen(name) {
-    ['focus-setup', 'focus-quote-screen', 'focus-timer-screen', 'focus-break-screen', 'focus-end-screen'].forEach(function(id) {
-      var el = $(id);
-      if (el) el.hidden = (id !== name);
-    });
-    s.screen = name;
-    saveState();
+    var lw = document.querySelector('.layout-wrap');
+    if (lw) lw.classList.add('focus-bg-dim');
   }
 
-  /* ─── Focus btn badge ─── */
+  function hideContainer() {
+    var c = $('focus-container'); if (!c) return;
+    c.classList.remove('fc-visible');
+    setTimeout(function() { c.hidden = true; }, 350);
+    var lw = document.querySelector('.layout-wrap');
+    if (lw) lw.classList.remove('focus-bg-dim');
+  }
+
+  function showScreen(name) {
+    ['focus-setup','focus-quote-screen','focus-timer-screen',
+     'focus-break-screen','focus-end-screen'].forEach(function(id) {
+      var el = $(id); if (el) el.hidden = (id !== name);
+    });
+    s.screen = name;
+    updatePreviewActive(name);
+  }
+
+  /* ─── Preview / state switcher bar ─── */
+  function updatePreviewActive(name) {
+    var pills = document.querySelectorAll('.fc-preview-pill');
+    pills.forEach(function(p) { p.classList.toggle('active', p.getAttribute('data-screen') === name); });
+  }
+
+  function preview(name) {
+    clearInterval(tickInterval); clearTimeout(quoteTimeout); stopBreath(); stopSound();
+    s.running = false;
+
+    if (name === 'focus-setup') {
+      showScreen('focus-setup'); syncSetupUI();
+
+    } else if (name === 'focus-quote-screen') {
+      var q = randomItem(QUOTES);
+      var qt = $('fq-text');   if (qt) qt.textContent = q.text;
+      var qa = $('fq-author'); if (qa) qa.textContent = '— ' + q.author;
+      showScreen('focus-quote-screen');   // static preview — no auto-advance
+
+    } else if (name === 'focus-timer-screen') {
+      s.mode = 'pomodoro'; s.pomPhase = 'work'; s.pomRound = 2;
+      s.remaining = 18 * 60; s.total = 25 * 60; s.pauseCount = 1; s.running = false;
+      showScreen('focus-timer-screen'); renderTimerUI();
+
+    } else if (name === 'focus-break-screen') {
+      s.pomPhase = 'short'; s.pomRound = 2;
+      s.remaining = 4 * 60; s.total = 5 * 60; s.running = true;
+      showScreen('focus-break-screen');
+      var title = $('focus-break-title'); if (title) title.textContent = toFa(5) + ' دقیقه استراحت';
+      var tip = $('focus-break-tip'); if (tip) tip.textContent = randomItem(BREAK_TIPS);
+      renderBreak(); startBreath();
+      clearInterval(tickInterval); tickInterval = setInterval(breakTick, 1000);
+
+    } else if (name === 'focus-end-screen') {
+      showScreen('focus-end-screen');
+      var de = $('es-duration'); if (de) de.textContent = toFa(75);
+      var re = $('es-rounds');   if (re) re.textContent = toFa(4);
+      var pe = $('es-pauses');   if (pe) pe.textContent = toFa(1);
+      var pl = $('es-pauses-label'); if (pl) pl.textContent = 'توقف';
+      var se = $('es-streak');   if (se) se.textContent = toFa(4);
+    }
+    updateFocusBtn();
+  }
+
+  /* ─── Theme ─── (delegates to the project's global theme toggle) */
+  function toggleGlobalTheme() {
+    var globalBtn = document.getElementById('theme-btn');
+    if (globalBtn) globalBtn.click();
+  }
+
+  /* ─── Focus button badge ─── */
   function updateFocusBtn() {
-    var btn = $('focus-btn');
-    if (!btn) return;
+    var btn = $('focus-btn'); if (!btn) return;
     if (s.screen && s.screen !== 'focus-setup') {
       btn.classList.add('focus-btn-active');
       var badge = btn.querySelector('.fb-badge');
-      if (!badge) {
-        badge = document.createElement('span');
-        badge.className = 'fb-badge';
-        btn.appendChild(badge);
-      }
+      if (!badge) { badge = document.createElement('span'); badge.className = 'fb-badge'; btn.appendChild(badge); }
       badge.textContent = fmt(s.remaining) + ' باقی';
     } else {
       btn.classList.remove('focus-btn-active');
-      var b2 = btn.querySelector('.fb-badge');
-      if (b2) b2.remove();
+      var b2 = btn.querySelector('.fb-badge'); if (b2) b2.remove();
     }
-  }
-
-  /* ─── Mode color ─── */
-  function getModeColor() {
-    var key = s.mode === 'pomodoro' ? 'pomodoro_' + s.pomPhase : s.mode;
-    return MODE_COLORS[key] || '#60a5fa';
-  }
-  function applyModeColor() {
-    document.documentElement.style.setProperty('--fc-color', getModeColor());
   }
 
   /* ─── Ring ─── */
-  function updateRing(remaining, total) {
-    var progress = total > 0 ? remaining / total : 0;
-    var offset = CIRC * (1 - progress);
+  function updateRing() {
+    var progress = s.total > 0 ? s.remaining / s.total : 0;
+    var offset   = CIRC * (1 - progress);
+    var color;
+    if (s.screen === 'focus-break-screen') color = 'var(--green)';
+    else if (progress <= 1/12) color = 'var(--red)';
+    else if (progress <= 0.2)  color = 'var(--orange)';
+    else                       color = 'var(--primary)';
+
     var ring = $('focus-ring-progress');
-    if (ring) {
-      ring.style.strokeDashoffset = offset.toFixed(2);
-      var color;
-      if (progress <= 1/12) color = '#ef4444';
-      else if (progress <= 1/5) color = '#f59e0b';
-      else color = 'var(--fc-color)';
-      ring.style.stroke = color;
-    }
+    if (ring) { ring.style.strokeDashoffset = offset.toFixed(2); ring.style.stroke = color; }
+
     var dot = $('focus-ring-dot');
     if (dot) {
-      var angle = (1 - progress) * 2 * Math.PI - Math.PI / 2;
-      dot.setAttribute('cx', (SVG_CX + RING_R * Math.cos(angle)).toFixed(2));
-      dot.setAttribute('cy', (SVG_CY + RING_R * Math.sin(angle)).toFixed(2));
-      dot.style.fill = color || 'var(--fc-color)';
+      var ang = (1 - progress) * 2 * Math.PI;
+      dot.setAttribute('cx', (SVG_CX + RING_R * Math.sin(ang)).toFixed(2));
+      dot.setAttribute('cy', (SVG_CY - RING_R * Math.cos(ang)).toFixed(2));
+      dot.style.fill = color;
     }
   }
 
-  /* ─── Setup Screen ─── */
+  /* ─── Setup UI sync ─── */
+  function syncSetupUI() {
+    // Mode cards
+    ['pomodoro','custom','session'].forEach(function(m) {
+      var card = $('mode-' + m); if (card) card.classList.toggle('selected', s.mode === m);
+    });
+    // Sub-config panels
+    var pc = $('pom-config'), cc = $('custom-config'), sc2 = $('session-config');
+    if (pc)  pc.hidden  = s.mode !== 'pomodoro';
+    if (cc)  cc.hidden  = s.mode !== 'custom';
+    if (sc2) sc2.hidden = s.mode !== 'session';
+
+    // Stepper values
+    var pw = $('pom-work-val');   if (pw)  pw.textContent  = toFa(s.pomWorkMins);
+    var ps = $('pom-short-val');  if (ps)  ps.textContent  = toFa(s.pomShortMins);
+    var pl = $('pom-long-val');   if (pl)  pl.textContent  = toFa(s.pomLongMins);
+    var pr = $('pom-rounds-val'); if (pr)  pr.textContent  = toFa(s.pomTotalRounds);
+    var cm = $('custom-mins-val');if (cm)  cm.textContent  = toFa(s.customMins);
+
+    // Custom preset chips
+    document.querySelectorAll('.preset-chip').forEach(function(c) {
+      c.classList.toggle('active', parseInt(c.getAttribute('data-mins')) === s.customMins);
+    });
+
+    // Session chips & time
+    document.querySelectorAll('.sess-chip').forEach(function(c) {
+      c.classList.toggle('active', c.getAttribute('data-key') === s.sessPreset);
+    });
+    var ss = $('sess-start-input'); if (ss) ss.value = s.sessStart;
+    var se = $('sess-end-input');   if (se) se.value = s.sessEnd;
+    updateSessDur();
+
+    // Intention
+    var intent = $('fc-intention'); if (intent) intent.value = s.intention;
+
+    // Sound
+    syncSoundChips('setup');
+    var sv = $('setup-volume'); if (sv) sv.value = s.volume;
+
+    // Streak
+    var stk = $('fc-streak-count'); if (stk) stk.textContent = toFa(s.streak);
+    var tdm = $('fc-today-mins');   if (tdm) tdm.textContent = toFa(s.todayMins);
+  }
+
+  function updateSessDur() {
+    var el = $('sess-dur-label'); if (el) el.textContent = toFa(sessDurMin()) + ' دقیقه';
+  }
+
+  function syncSoundChips(ctx) {
+    document.querySelectorAll('.sc-' + ctx).forEach(function(c) {
+      c.classList.toggle('active', c.getAttribute('data-sound') === s.soundType);
+    });
+  }
+
+  /* ─── Open setup ─── */
   function openSetup() {
     showContainer();
     showScreen('focus-setup');
     syncSetupUI();
   }
 
-  function syncSetupUI() {
-    ['mode-pomodoro', 'mode-custom', 'mode-session'].forEach(function(id) {
-      var el = $(id);
-      if (el) el.classList.toggle('selected', id === 'mode-' + s.mode);
-    });
-    var pw = $('pom-work-input'); if (pw) pw.value = s.pomWorkMins;
-    var ps = $('pom-short-input'); if (ps) ps.value = s.pomShortMins;
-    var pl = $('pom-long-input'); if (pl) pl.value = s.pomLongMins;
-    var cm = $('custom-mins-input'); if (cm) cm.value = s.customMins;
-    var ss = $('sess-start-input'); if (ss) ss.value = s.sessStart;
-    var se = $('sess-end-input'); if (se) se.value = s.sessEnd;
-    syncSoundChips('setup');
-    var sv = $('setup-volume'); if (sv) sv.value = s.volume;
-  }
-
-  function syncSoundChips(ctx) {
-    var chips = document.querySelectorAll('.sc-' + ctx);
-    chips.forEach(function(c) {
-      c.classList.toggle('active', c.getAttribute('data-sound') === s.soundType);
-    });
-  }
-
-  /* ─── Quote Screen ─── */
+  /* ─── Quote / Intro screen ─── */
   function showQuote() {
     showScreen('focus-quote-screen');
-    var q = randomItem(QUOTES);
-    var qt = $('fq-text'); if (qt) qt.textContent = q.text;
+    var q  = randomItem(QUOTES);
+    var qt = $('fq-text');   if (qt) qt.textContent = q.text;
     var qa = $('fq-author'); if (qa) qa.textContent = '— ' + q.author;
     clearTimeout(quoteTimeout);
-    quoteTimeout = setTimeout(showTimerScreen, 3200);
+    quoteTimeout = setTimeout(goTimer, 4600);
   }
 
-  /* ─── Timer Screen ─── */
+  /* ─── Timer screen ─── */
+  function goTimer() {
+    s.running = true;
+    showScreen('focus-timer-screen');
+    renderTimerUI();
+    startTicking();
+  }
+
   function startSession() {
-    applyModeColor();
-    s.running = false;
+    s.running    = false;
     s.pauseCount = 0;
-    s.totalPaused = 0;
-    s.startedAt = Date.now();
+    s.focusedSec = 0;
 
     if (s.mode === 'pomodoro') {
-      s.pomRound = 1;
-      s.pomPhase = 'work';
-      s.remaining = s.pomWorkMins * 60;
-      s.total = s.remaining;
+      s.pomRound  = 1; s.pomPhase = 'work';
+      s.remaining = s.pomWorkMins * 60; s.total = s.remaining;
     } else if (s.mode === 'custom') {
-      s.remaining = s.customMins * 60;
-      s.total = s.remaining;
+      s.remaining = s.customMins * 60; s.total = s.remaining;
     } else {
-      var now = new Date();
-      var parts = s.sessEnd.split(':');
+      var now = new Date(), parts = s.sessEnd.split(':');
       var end = new Date(now);
       end.setHours(parseInt(parts[0]), parseInt(parts[1]), 0, 0);
       if (end <= now) end.setDate(end.getDate() + 1);
@@ -388,22 +375,15 @@
       s.total = s.remaining;
     }
 
-    ensureAudioCtx();
-    playSound(s.soundType);
-    showTimerScreen();
-    setTimeout(function() { togglePause(); }, 100);
-  }
-
-  function showTimerScreen() {
-    showScreen('focus-timer-screen');
-    applyModeColor();
-    updateRing(s.remaining, s.total);
-    renderTimerUI();
+    ensureAudio(); playSound(s.soundType);
+    showQuote();
   }
 
   function renderTimerUI() {
+    // Countdown
     var cd = $('focus-countdown'); if (cd) cd.textContent = fmt(s.remaining);
 
+    // Mode label
     var labels = {
       pomodoro_work: 'تمرکز', pomodoro_short: 'استراحت کوتاه',
       pomodoro_long: 'استراحت بلند', custom: 'تمرکز', session: 'سشن معاملاتی'
@@ -411,40 +391,52 @@
     var key = s.mode === 'pomodoro' ? 'pomodoro_' + s.pomPhase : s.mode;
     var lbl = $('focus-mode-label'); if (lbl) lbl.textContent = labels[key] || '';
 
+    // Round dots
     var ri = $('focus-round-indicator');
     if (ri) {
       if (s.mode === 'pomodoro') {
         var dots = '';
         for (var i = 0; i < s.pomTotalRounds; i++) {
-          var cls = i < s.pomRound - 1 ? 'pom-dot done' : (i === s.pomRound - 1 ? 'pom-dot active' : 'pom-dot');
+          var cls = 'pom-dot' + (i < s.pomRound-1 ? ' done' : (i === s.pomRound-1 ? ' active' : ''));
           dots += '<span class="' + cls + '"></span>';
         }
-        ri.innerHTML = '<span class="round-txt">دور ' + toFa(s.pomRound) + ' از ' + toFa(s.pomTotalRounds) + '</span>' + dots;
-        ri.hidden = false;
-      } else {
-        ri.hidden = true;
-      }
+        ri.innerHTML = dots; ri.hidden = false;
+      } else { ri.hidden = true; }
     }
 
+    // Play/Pause icon
     var tgl = $('focus-toggle');
     if (tgl) {
       tgl.innerHTML = s.running
-        ? '<svg viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16" rx="1"/><rect x="14" y="4" width="4" height="16" rx="1"/></svg>'
-        : '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>';
+        ? '<svg width="24" height="24" viewBox="0 0 24 24" fill="#fff"><rect x="6" y="4" width="4" height="16" rx="1.4"/><rect x="14" y="4" width="4" height="16" rx="1.4"/></svg>'
+        : '<svg width="26" height="26" viewBox="0 0 24 24" fill="#fff"><path d="M8 5.5v13l11-6.5z"/></svg>';
     }
 
-    var skipBtn = $('focus-skip-btn');
-    if (skipBtn) skipBtn.hidden = s.mode !== 'pomodoro';
+    // Skip button
+    var skipBtn = $('focus-skip-btn'); if (skipBtn) skipBtn.hidden = s.mode !== 'pomodoro';
 
+    // Paused label
+    var pl = $('fc-paused-lbl'); if (pl) pl.hidden = s.running;
+
+    // Timer screen classes
     var ts = $('focus-timer-screen');
     if (ts) {
       ts.classList.toggle('fc-paused', !s.running);
       var pct = s.total > 0 ? s.remaining / s.total : 1;
-      ts.classList.toggle('fc-warning', pct <= 0.2 && pct > 1/12);
+      ts.classList.toggle('fc-warning',  pct <= 0.2  && pct > 1/12);
       ts.classList.toggle('fc-critical', pct <= 1/12);
     }
 
-    updateRing(s.remaining, s.total);
+    // Intention badge
+    var badge = $('fc-intention-badge');
+    if (badge) {
+      var txt = s.intention.trim();
+      badge.textContent = txt;
+      badge.hidden = !txt;
+    }
+
+    syncSoundChips('timer');
+    updateRing();
     updateFocusBtn();
   }
 
@@ -456,39 +448,24 @@
 
   function tick() {
     s.remaining = Math.max(0, s.remaining - 1);
-    saveState();
+    if (s.pomPhase === 'work') s.focusedSec++;
     renderTimerUI();
-    if (s.remaining <= 0) {
-      clearInterval(tickInterval);
-      onPhaseEnd();
-    }
+    if (s.remaining <= 0) { clearInterval(tickInterval); onPhaseEnd(); }
   }
 
   function onPhaseEnd() {
     sendNotification();
     if (s.mode === 'pomodoro') {
       if (s.pomPhase === 'work') {
-        var isLong = (s.pomRound % s.pomTotalRounds === 0);
-        s.pomPhase = isLong ? 'long' : 'short';
-        if (s.autoBreak) {
-          showBreakScreen();
-        } else {
-          showBreakScreen();
-        }
+        s.pomPhase = (s.pomRound % s.pomTotalRounds === 0) ? 'long' : 'short';
+        showBreakScreen();
       } else {
-        var nextRound = s.pomRound + (s.pomPhase !== 'long' ? 1 : 0);
-        if (nextRound > s.pomTotalRounds && s.pomPhase === 'long') {
-          showEndScreen();
-        } else {
-          s.pomRound = nextRound;
-          s.pomPhase = 'work';
-          s.remaining = s.pomWorkMins * 60;
-          s.total = s.remaining;
-          s.running = false;
-          applyModeColor();
-          showTimerScreen();
-          if (s.autoBreak) setTimeout(function() { togglePause(); }, 200);
-        }
+        if (s.pomPhase === 'long') { showEndScreen(); return; }
+        s.pomRound = Math.min(s.pomRound + 1, s.pomTotalRounds);
+        s.pomPhase  = 'work';
+        s.remaining = s.pomWorkMins * 60; s.total = s.remaining;
+        s.running   = true;
+        showScreen('focus-timer-screen'); renderTimerUI(); startTicking();
       }
     } else {
       showEndScreen();
@@ -498,39 +475,25 @@
   /* ─── Controls ─── */
   function togglePause() {
     s.running = !s.running;
-    if (s.running) {
-      if (s.pausedAt) { s.totalPaused += Math.floor((Date.now() - s.pausedAt) / 1000); s.pausedAt = null; }
-      startTicking();
-    } else {
-      s.pauseCount++;
-      s.pausedAt = Date.now();
-      clearInterval(tickInterval);
-    }
+    if (!s.running) s.pauseCount++;
+    if (s.running) startTicking(); else clearInterval(tickInterval);
     renderTimerUI();
   }
 
-  var resetConfirmTimeout = null;
   function resetTimer() {
-    var btn = $('focus-reset-btn');
-    if (!btn) return;
+    var btn = $('focus-reset-btn'); if (!btn) return;
     if (btn.dataset.confirm === '1') {
       clearTimeout(resetConfirmTimeout);
-      btn.dataset.confirm = '0';
-      btn.classList.remove('fc-confirm');
+      btn.dataset.confirm = '0'; btn.classList.remove('fc-confirm');
       clearInterval(tickInterval);
-      s.running = false;
-      s.pauseCount = 0;
-      s.totalPaused = 0;
+      s.running = false; s.pauseCount = 0; s.focusedSec = 0;
       if (s.mode === 'pomodoro') {
         s.pomRound = 1; s.pomPhase = 'work';
-        s.remaining = s.pomWorkMins * 60;
-      } else {
-        s.remaining = s.total;
-      }
+        s.remaining = s.pomWorkMins * 60; s.total = s.remaining;
+      } else { s.remaining = s.total; }
       renderTimerUI();
     } else {
-      btn.dataset.confirm = '1';
-      btn.classList.add('fc-confirm');
+      btn.dataset.confirm = '1'; btn.classList.add('fc-confirm');
       resetConfirmTimeout = setTimeout(function() {
         btn.dataset.confirm = '0'; btn.classList.remove('fc-confirm');
       }, 1500);
@@ -539,36 +502,39 @@
 
   function skipPhase() {
     if (s.mode !== 'pomodoro') return;
-    clearInterval(tickInterval);
-    s.remaining = 0;
-    onPhaseEnd();
+    clearInterval(tickInterval); s.remaining = 0; onPhaseEnd();
   }
 
   function extendTime(mins) {
-    s.remaining += mins * 60;
-    s.total += mins * 60;
-    renderTimerUI();
-    saveState();
+    s.remaining += mins * 60; s.total += mins * 60; renderTimerUI();
   }
 
-  /* ─── Break Screen ─── */
+  /* ─── Break screen ─── */
+  function startBreath() {
+    clearTimeout(breathTimeout); breathIdx = 0;
+    function step() {
+      var el = $('fc-breath-label'); if (el) el.textContent = BREATH_SEQ[breathIdx][0];
+      breathTimeout = setTimeout(function() {
+        breathIdx = (breathIdx + 1) % BREATH_SEQ.length; step();
+      }, BREATH_SEQ[breathIdx][1]);
+    }
+    step();
+  }
+
+  function stopBreath() { clearTimeout(breathTimeout); }
+
   function showBreakScreen() {
-    showScreen('focus-break-screen');
-    var isLong = s.pomPhase === 'long';
+    var isLong  = (s.pomPhase === 'long');
     var breakSec = (isLong ? s.pomLongMins : s.pomShortMins) * 60;
-    s.remaining = breakSec;
-    s.total = breakSec;
-    s.running = true;
-    applyModeColor();
+    s.remaining = breakSec; s.total = breakSec; s.running = true;
+    showScreen('focus-break-screen');
 
     var title = $('focus-break-title');
-    if (title) title.textContent = 'دور ' + toFa(s.pomRound) + ' تموم شد!';
-    var sub = $('focus-break-sub');
-    if (sub) sub.textContent = (isLong ? toFa(s.pomLongMins) : toFa(s.pomShortMins)) + ' دقیقه استراحت — اجباریه!';
-    var tip = $('focus-break-tip');
-    if (tip) tip.textContent = randomItem(BREAK_TIPS);
+    if (title) title.textContent = (isLong ? toFa(s.pomLongMins) : toFa(s.pomShortMins)) + ' دقیقه استراحت' + (isLong ? ' بلند' : '');
+    var tip = $('focus-break-tip'); if (tip) tip.textContent = randomItem(BREAK_TIPS);
 
     renderBreak();
+    startBreath();
     clearInterval(tickInterval);
     tickInterval = setInterval(breakTick, 1000);
   }
@@ -577,246 +543,220 @@
     var bt = $('focus-break-time'); if (bt) bt.textContent = fmt(s.remaining);
     var fill = $('focus-break-fill');
     if (fill) fill.style.width = ((1 - s.remaining / s.total) * 100).toFixed(1) + '%';
+    updateFocusBtn();
   }
 
   function breakTick() {
     s.remaining = Math.max(0, s.remaining - 1);
-    saveState();
     renderBreak();
-    updateFocusBtn();
     if (s.remaining <= 0) {
-      clearInterval(tickInterval);
-      s.pomRound = Math.min(s.pomRound + 1, s.pomTotalRounds);
-      s.pomPhase = 'work';
-      s.remaining = s.pomWorkMins * 60;
-      s.total = s.remaining;
-      s.running = false;
-      applyModeColor();
-      showTimerScreen();
-      if (s.autoBreak) setTimeout(function() { togglePause(); }, 200);
+      clearInterval(tickInterval); stopBreath();
+      if (s.pomPhase === 'long') { showEndScreen(); return; }
+      s.pomRound  = Math.min(s.pomRound + 1, s.pomTotalRounds);
+      s.pomPhase  = 'work';
+      s.remaining = s.pomWorkMins * 60; s.total = s.remaining;
+      s.running   = true;
+      showScreen('focus-timer-screen'); renderTimerUI(); startTicking();
     }
   }
 
-  /* ─── End Screen ─── */
+  /* ─── End screen ─── */
   function showEndScreen() {
-    clearInterval(tickInterval);
-    stopSound();
-    s.running = false;
-    s.screen = 'focus-end-screen';
+    clearInterval(tickInterval); stopSound(); stopBreath(); s.running = false;
 
     var today = new Date().toDateString();
-    if (s.lastFocusDate === today) {
-      s.streak = (s.streak || 0) + 1;
-    } else if (s.lastFocusDate && new Date(s.lastFocusDate).toDateString() !== new Date(Date.now() - 86400000).toDateString()) {
-      s.streak = 1;
-    } else {
-      s.streak = (s.streak || 0) + 1;
-    }
-    s.lastFocusDate = today;
+    if (s.lastFocusDate !== today) { s.streak = (s.streak || 0) + 1; s.lastFocusDate = today; }
+    var dur = Math.round(s.focusedSec / 60) || Math.round(s.total / 60);
+    s.todayMins = (s.todayMins || 0) + dur;
+    var endRounds = s.mode === 'pomodoro' ? s.pomTotalRounds : 1;
 
-    var totalMins = Math.floor((s.total) / 60);
-    var dur = $('es-duration');
-    if (dur) dur.textContent = toFa(totalMins) + ' دقیقه';
-    var pauseEl = $('es-pauses');
-    if (pauseEl) pauseEl.textContent = toFa(s.pauseCount) + ' بار';
-    var statusEl = $('es-status');
-    if (statusEl) statusEl.textContent = s.pauseCount === 0 ? 'بدون وقفه 🏆' : 'با ' + toFa(s.pauseCount) + ' توقف';
-    var streakEl = $('es-streak');
-    if (streakEl) streakEl.textContent = toFa(s.streak) + ' روز';
-
-    clearSavedState();
-    saveState();
-    updateFocusBtn();
     showScreen('focus-end-screen');
+    var de = $('es-duration'); if (de) de.textContent = toFa(dur);
+    var re = $('es-rounds');   if (re) re.textContent = toFa(endRounds);
+    var pe = $('es-pauses');   if (pe) pe.textContent = toFa(s.pauseCount);
+    var pl = $('es-pauses-label');
+    if (pl) pl.textContent = s.pauseCount === 0 ? 'بدون وقفه' : 'توقف';
+    var se2 = $('es-streak'); if (se2) se2.textContent = toFa(s.streak);
+
+    savePrefs();
+    updateFocusBtn();
   }
 
   /* ─── Notifications ─── */
-  function requestNotifPermission(cb) {
-    if (!('Notification' in window)) return;
-    if (Notification.permission === 'granted') { if (cb) cb(); return; }
-    if (Notification.permission === 'denied') return;
-    Notification.requestPermission(function(p) { if (p === 'granted' && cb) cb(); });
-  }
-
   function sendNotification() {
     if (!('Notification' in window) || Notification.permission !== 'granted') return;
-    try {
-      new Notification('⏱ تمرکز تموم شد!', {
-        body: 'وقت استراحته. آفرین که فوکوست رو حفظ کردی!',
-        icon: '../icons/icon48.png'
-      });
-    } catch(e) {}
+    try { new Notification('⏱ تمرکز تموم شد!', { body: 'وقت استراحته. آفرین!', icon: '../icons/icon48.png' }); } catch(e) {}
   }
 
   /* ─── Close ─── */
   function closeAll() {
-    clearInterval(tickInterval);
-    clearTimeout(quoteTimeout);
-    stopSound();
-    s.running = false;
-    clearSavedState();
-    s.screen = null;
-    hideContainer();
-    updateFocusBtn();
+    clearInterval(tickInterval); clearTimeout(quoteTimeout);
+    stopSound(); stopBreath();
+    s.running = false; s.screen = null;
+    hideContainer(); updateFocusBtn();
   }
 
-  /* ─── Bind events ─── */
+  /* ─── Stepper helper ─── */
+  function bindStepper(decId, incId, key, step, min, max, valId) {
+    function update(dir) {
+      s[key] = Math.max(min, Math.min(max, s[key] + dir * step));
+      var el = $(valId); if (el) el.textContent = toFa(s[key]);
+      savePrefs();
+    }
+    var dec = $(decId), inc = $(incId);
+    if (dec) dec.addEventListener('click', function() { update(-1); });
+    if (inc) inc.addEventListener('click', function() { update(1); });
+  }
+
+  /* ─── Bind all events ─── */
   function bindEvents() {
+    // Focus open button
     var focusBtn = $('focus-btn');
     if (focusBtn) focusBtn.addEventListener('click', openSetup);
 
-    /* Setup screen */
-    var startBtn = $('start-focus-btn');
-    if (startBtn) startBtn.addEventListener('click', function() {
-      var pw = $('pom-work-input'); if (pw) s.pomWorkMins = Math.max(1, parseInt(pw.value) || 25);
-      var ps = $('pom-short-input'); if (ps) s.pomShortMins = Math.max(1, parseInt(ps.value) || 5);
-      var pl = $('pom-long-input'); if (pl) s.pomLongMins = Math.max(1, parseInt(pl.value) || 15);
-      var cm = $('custom-mins-input'); if (cm) s.customMins = Math.max(1, parseInt(cm.value) || 45);
-      var ss = $('sess-start-input'); if (ss) s.sessStart = ss.value || '15:00';
-      var se = $('sess-end-input'); if (se) s.sessEnd = se.value || '17:00';
-      requestNotifPermission();
-      showQuote();
-      setTimeout(startSession, 3400);
+    // Theme toggle — reuses the project's global theme system
+    var themeBtn = $('fc-theme-btn');
+    if (themeBtn) themeBtn.addEventListener('click', toggleGlobalTheme);
+
+    // Preview / state switcher pills
+    document.querySelectorAll('.fc-preview-pill').forEach(function(p) {
+      p.addEventListener('click', function() { preview(p.getAttribute('data-screen')); });
     });
 
-    var setupClose = $('setup-close');
-    if (setupClose) setupClose.addEventListener('click', function() {
-      s.screen = null;
-      hideContainer();
-      updateFocusBtn();
+    // Close (always-visible top-left button)
+    var closeBtn = $('fc-close-btn');
+    if (closeBtn) closeBtn.addEventListener('click', closeAll);
+
+    // Mode cards
+    ['pomodoro','custom','session'].forEach(function(m) {
+      var card = $('mode-' + m); if (!card) return;
+      card.addEventListener('click', function() { s.mode = m; syncSetupUI(); savePrefs(); });
     });
 
-    /* Mode cards */
-    ['pomodoro', 'custom', 'session'].forEach(function(m) {
-      var card = $('mode-' + m);
-      if (!card) return;
-      card.addEventListener('click', function(e) {
-        if (e.target.tagName === 'INPUT') return;
-        s.mode = m;
-        syncSetupUI();
-      });
-    });
+    // Pomodoro steppers
+    bindStepper('dec-work',   'inc-work',   'pomWorkMins',    5, 5,  90, 'pom-work-val');
+    bindStepper('dec-short',  'inc-short',  'pomShortMins',   1, 1,  30, 'pom-short-val');
+    bindStepper('dec-long',   'inc-long',   'pomLongMins',    5, 5,  45, 'pom-long-val');
+    bindStepper('dec-rounds', 'inc-rounds', 'pomTotalRounds', 1, 2,   8, 'pom-rounds-val');
+    bindStepper('dec-custom', 'inc-custom', 'customMins',     5, 5, 180, 'custom-mins-val');
 
-    /* Preset chips */
+    // Custom preset chips
     document.querySelectorAll('.preset-chip').forEach(function(c) {
       c.addEventListener('click', function() {
-        var mins = parseInt(c.getAttribute('data-mins'));
-        s.customMins = mins;
-        var cm = $('custom-mins-input'); if (cm) { cm.value = mins; }
+        s.customMins = parseInt(c.getAttribute('data-mins'));
         s.mode = 'custom';
-        syncSetupUI();
+        syncSetupUI(); savePrefs();
       });
     });
 
-    /* Sound chips (setup) */
+    // Session preset chips
+    document.querySelectorAll('.sess-chip').forEach(function(c) {
+      c.addEventListener('click', function() {
+        s.sessPreset = c.getAttribute('data-key');
+        s.sessStart  = c.getAttribute('data-start');
+        s.sessEnd    = c.getAttribute('data-end');
+        syncSetupUI(); savePrefs();
+      });
+    });
+
+    // Session time inputs
+    var ssInput = $('sess-start-input');
+    if (ssInput) ssInput.addEventListener('change', function() {
+      s.sessStart = this.value; s.sessPreset = '';
+      updateSessDur(); savePrefs();
+    });
+    var seInput = $('sess-end-input');
+    if (seInput) seInput.addEventListener('change', function() {
+      s.sessEnd = this.value; s.sessPreset = '';
+      updateSessDur(); savePrefs();
+    });
+
+    // Intention input
+    var intentInput = $('fc-intention');
+    if (intentInput) intentInput.addEventListener('input', function() { s.intention = this.value; });
+
+    // Sound chips — setup
     document.querySelectorAll('.sc-setup').forEach(function(c) {
       c.addEventListener('click', function() {
         s.soundType = c.getAttribute('data-sound');
-        syncSoundChips('setup');
-        syncSoundChips('timer');
+        syncSoundChips('setup'); syncSoundChips('timer'); savePrefs();
+      });
+    });
+    var sv = $('setup-volume');
+    if (sv) sv.addEventListener('input', function() {
+      s.volume = parseInt(this.value);
+      if (audioGain) audioGain.gain.value = s.volume / 100 * 0.3;
+      savePrefs();
+    });
+
+    // Sound chips — timer
+    document.querySelectorAll('.sc-timer').forEach(function(c) {
+      c.addEventListener('click', function() {
+        s.soundType = c.getAttribute('data-sound');
+        syncSoundChips('timer'); syncSoundChips('setup');
+        ensureAudio(); playSound(s.soundType); savePrefs();
       });
     });
 
-    var setupVol = $('setup-volume');
-    if (setupVol) setupVol.addEventListener('input', function() { setVolume(parseInt(this.value)); });
+    // Start button
+    var startBtn = $('start-focus-btn');
+    if (startBtn) startBtn.addEventListener('click', function() {
+      if (window.Notification && Notification.permission === 'default') Notification.requestPermission();
+      savePrefs(); startSession();
+    });
 
-    /* Timer screen */
+    // Quote screen — click to skip
+    var qs = $('focus-quote-screen');
+    if (qs) qs.addEventListener('click', function() { clearTimeout(quoteTimeout); goTimer(); });
+
+    // Timer controls
     var toggleBtn = $('focus-toggle');
     if (toggleBtn) toggleBtn.addEventListener('click', togglePause);
 
     var resetBtn = $('focus-reset-btn');
-    if (resetBtn) {
-      resetBtn.dataset.confirm = '0';
-      resetBtn.addEventListener('click', resetTimer);
-    }
+    if (resetBtn) { resetBtn.dataset.confirm = '0'; resetBtn.addEventListener('click', resetTimer); }
 
     var skipBtn = $('focus-skip-btn');
     if (skipBtn) skipBtn.addEventListener('click', skipPhase);
 
-    var closeBtn = $('focus-close');
-    if (closeBtn) closeBtn.addEventListener('click', closeAll);
-
-    /* Sound chips (timer) */
-    document.querySelectorAll('.sc-timer').forEach(function(c) {
-      c.addEventListener('click', function() {
-        s.soundType = c.getAttribute('data-sound');
-        syncSoundChips('timer');
-        syncSoundChips('setup');
-        playSound(s.soundType);
-      });
-    });
-
-    var volSlider = $('focus-volume');
-    if (volSlider) volSlider.addEventListener('input', function() { setVolume(parseInt(this.value)); });
-
-    /* Extend chips */
+    // Extend chips
     document.querySelectorAll('.extend-chip').forEach(function(c) {
       c.addEventListener('click', function() { extendTime(parseInt(c.getAttribute('data-add'))); });
     });
 
-    /* Break screen */
+    // Break: skip
     var skipBreak = $('focus-skip-break');
     if (skipBreak) skipBreak.addEventListener('click', function() {
-      clearInterval(tickInterval);
-      s.pomPhase = 'work';
-      s.pomRound = Math.min(s.pomRound + 1, s.pomTotalRounds);
-      s.remaining = s.pomWorkMins * 60;
-      s.total = s.remaining;
-      s.running = false;
-      applyModeColor();
-      showTimerScreen();
+      clearInterval(tickInterval); stopBreath();
+      s.pomRound  = Math.min(s.pomRound + 1, s.pomTotalRounds);
+      s.pomPhase  = 'work';
+      s.remaining = s.pomWorkMins * 60; s.total = s.remaining;
+      s.running   = true;
+      showScreen('focus-timer-screen'); renderTimerUI(); startTicking();
     });
 
-    /* End screen */
+    // End screen
     var restartBtn = $('focus-restart-btn');
-    if (restartBtn) restartBtn.addEventListener('click', function() { openSetup(); });
+    if (restartBtn) restartBtn.addEventListener('click', openSetup);
     var doneBtn = $('focus-done-btn');
     if (doneBtn) doneBtn.addEventListener('click', closeAll);
 
-    /* Quote click to skip */
-    var qs = $('focus-quote-screen');
-    if (qs) qs.addEventListener('click', function() {
-      clearTimeout(quoteTimeout);
-      showTimerScreen();
-      setTimeout(function() { togglePause(); }, 100);
-    });
-
-    /* Keyboard */
+    // Keyboard
     document.addEventListener('keydown', function(e) {
-      var c = $('focus-container');
-      if (!c || c.hidden) return;
+      var c = $('focus-container'); if (!c || c.hidden) return;
       if (s.screen === 'focus-timer-screen') {
         if (e.key === ' ') { e.preventDefault(); togglePause(); }
-        if (e.key === 'Escape') { closeAll(); }
-      } else if (s.screen === 'focus-setup') {
-        if (e.key === 'Escape') { s.screen = null; hideContainer(); updateFocusBtn(); }
-      } else if (e.key === 'Escape') {
-        closeAll();
-      }
+        if (e.key === 'Escape') closeAll();
+      } else if (e.key === 'Escape') { closeAll(); }
     });
   }
 
   /* ─── Init ─── */
   function init() {
-    bindEvents();
     loadPrefs();
-
-    var hasSession = checkExistingSession();
-    if (hasSession && s.remaining > 0) {
-      showContainer();
-      applyModeColor();
-      if (s.screen === 'focus-break-screen') {
-        showBreakScreen();
-      } else {
-        showTimerScreen();
-      }
-      updateFocusBtn();
-    }
+    bindEvents();
   }
 
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', init);
-  } else {
-    init();
-  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+  else init();
 })();
