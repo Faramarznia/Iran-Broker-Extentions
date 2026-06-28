@@ -96,14 +96,14 @@
     { id: 'ripple', price: 2.27, chg: 3.06 }, { id: 'dogecoin', price: 0.382, chg: -0.74 }
   ];
   const NEWS_SEED = [
-    { title: 'تحلیل طلا: روند صعودی در بازارهای جهانی ادامه دارد', cat: 'طلا', catColor: '#f6a723', time: '۲ ساعت پیش', url: 'https://iranbroker.net/news/' },
-    { title: 'بانک مرکزی اروپا نرخ بهره را ثابت نگه داشت', cat: 'فارکس', catColor: '#6f9bf3', time: '۳ ساعت پیش', url: 'https://iranbroker.net/news/' },
-    { title: 'بیت‌کوین از مقاومت ۷۰ هزار دلاری عبور کرد', cat: 'کریپتو', catColor: '#a78bfa', time: '۵ ساعت پیش', url: 'https://iranbroker.net/news/' },
-    { title: 'قیمت نفت برنت زیر فشار کاهش تقاضای چین', cat: 'نفت', catColor: '#fb3748', time: '۶ ساعت پیش', url: 'https://iranbroker.net/news/' },
-    { title: 'دلار آمریکا در برابر ین ژاپن تضعیف شد', cat: 'فارکس', catColor: '#6f9bf3', time: '۷ ساعت پیش', url: 'https://iranbroker.net/news/' },
-    { title: 'اتریوم پس از به‌روزرسانی شبکه جهش کرد', cat: 'کریپتو', catColor: '#a78bfa', time: '۹ ساعت پیش', url: 'https://iranbroker.net/news/' },
-    { title: 'شاخص بورس تهران با رشد همراه شد', cat: 'بورس', catColor: '#1fc16b', time: '۱۱ ساعت پیش', url: 'https://iranbroker.net/news/' },
-    { title: 'بررسی وضعیت بروکرهای فعال برای ایرانیان', cat: 'بروکر', catColor: '#35d0c0', time: '۱ روز پیش', url: 'https://iranbroker.net/news/' }
+    { title: 'بانک مرکزی اروپا نرخ بهره را ثابت نگه داشت', cat: 'فارکس', catColor: '#6f9bf3', time: '۳ ساعت پیش', url: 'https://iranbroker.net/news/', img: null },
+    { title: 'دلار آمریکا در برابر ین ژاپن تضعیف شد', cat: 'فارکس', catColor: '#6f9bf3', time: '۷ ساعت پیش', url: 'https://iranbroker.net/news/', img: null },
+    { title: 'بیت‌کوین از مقاومت ۷۰ هزار دلاری عبور کرد', cat: 'کریپتو', catColor: '#a78bfa', time: '۵ ساعت پیش', url: 'https://iranbroker.net/news/', img: null },
+    { title: 'اتریوم پس از به‌روزرسانی شبکه جهش کرد', cat: 'کریپتو', catColor: '#a78bfa', time: '۹ ساعت پیش', url: 'https://iranbroker.net/news/', img: null },
+    { title: 'تحلیل طلا: روند صعودی در بازارهای جهانی ادامه دارد', cat: 'طلا', catColor: '#f6a723', time: '۲ ساعت پیش', url: 'https://iranbroker.net/news/', img: null },
+    { title: 'قیمت نفت برنت زیر فشار کاهش تقاضای چین', cat: 'نفت', catColor: '#fb3748', time: '۶ ساعت پیش', url: 'https://iranbroker.net/news/', img: null },
+    { title: 'شاخص بورس تهران با رشد همراه شد', cat: 'بورس', catColor: '#1fc16b', time: '۱۱ ساعت پیش', url: 'https://iranbroker.net/news/', img: null },
+    { title: 'بررسی وضعیت بروکرهای فعال برای ایرانیان', cat: 'بروکر', catColor: '#35d0c0', time: '۱ روز پیش', url: 'https://iranbroker.net/news/', img: null }
   ];
   const COMMUNITY = [
     { name: 'علی رضایی', initial: 'ع', color: '#6f9bf3', time: '۱۵ دقیقه پیش', text: 'آیا کسی با IC Markets تجربه برداشت ریالی داشته؟ کارمزد تبدیل ارز چطوره؟', replies: 4 },
@@ -251,15 +251,43 @@
   }
 
   function renderNews(items) {
-    const el = document.getElementById('sb-news-list');
+    const el = document.getElementById('bento-news-list');
     if (!el) return;
-    el.innerHTML = items.slice(0, 8).map(function (n) {
-      const color = n.catColor || CAT_COLORS[n.cat] || '#6f9bf3';
-      return '<a class="sb-item" href="' + (n.url || 'https://iranbroker.net/news/') + '" target="_blank" rel="noopener">' +
-        '<span class="sb-cat" style="background:' + hexA(color, 0.15) + ';color:' + color + '">' + n.cat + '</span>' +
-        '<div class="sb-news-title">' + n.title + '</div>' +
-        '<div class="sb-time">' + n.time + '</div>' +
-      '</a>';
+    // Group by category, preserving order of first appearance
+    const groups = {};
+    const groupOrder = [];
+    items.forEach(function (n) {
+      if (!groups[n.cat]) {
+        groups[n.cat] = { items: [], color: n.catColor || CAT_COLORS[n.cat] || '#6f9bf3' };
+        groupOrder.push(n.cat);
+      }
+      groups[n.cat].items.push(n);
+    });
+    el.innerHTML = groupOrder.map(function (cat) {
+      const g = groups[cat];
+      const color = g.color;
+      const soft = hexA(color, 0.13);
+      const itemsHTML = g.items.map(function (n) {
+        var thumb;
+        if (n.img) {
+          thumb = '<img class="bn-thumb-img" src="' + n.img + '" alt="" loading="lazy"/>';
+        } else {
+          thumb = '<div class="bn-thumb-placeholder" style="background:' + soft + ';color:' + color + '">' + cat.slice(0, 2) + '</div>';
+        }
+        return '<a class="bn-item" href="' + (n.url || 'https://iranbroker.net/news/') + '" target="_blank" rel="noopener">' +
+          '<div class="bn-thumb">' + thumb + '</div>' +
+          '<div class="bn-body">' +
+            '<div class="bn-time">' + n.time + '</div>' +
+            '<div class="bn-title">' + n.title + '</div>' +
+          '</div>' +
+        '</a>';
+      }).join('');
+      return '<div class="bn-group">' +
+        '<div class="bn-group-head">' +
+          '<span class="bn-group-cat" style="background:' + soft + ';color:' + color + '">' + cat + '</span>' +
+        '</div>' +
+        itemsHTML +
+      '</div>';
     }).join('');
   }
 
@@ -282,7 +310,7 @@
         const doc = parser.parseFromString(text, 'text/xml');
         const items = Array.prototype.slice.call(doc.querySelectorAll('item'));
         if (!items.length) return;
-        const parsed = items.slice(0, 8).map(function (item) {
+        const parsed = items.slice(0, 12).map(function (item) {
           const title = (item.querySelector('title') ? item.querySelector('title').textContent : '').replace(/<!\[CDATA\[|\]\]>/g, '').trim();
           const guidEl = item.querySelector('guid');
           const url = guidEl ? guidEl.textContent.trim() : 'https://iranbroker.net/news/';
@@ -290,7 +318,25 @@
           const catEl = item.querySelector('category');
           const cat = catEl ? catEl.textContent.replace(/<!\[CDATA\[|\]\]>/g, '').trim() : 'اخبار';
           const color = CAT_COLORS[cat] || '#6f9bf3';
-          return { title: title, url: url, cat: cat, catColor: color, time: relTimeFa(pubDate) };
+          // Try to extract featured image from feed
+          var img = null;
+          var mediaTh = item.querySelector('media\\:thumbnail') || item.querySelector('thumbnail');
+          var mediaC = item.querySelector('media\\:content') || item.querySelector('content');
+          var enclosure = item.querySelector('enclosure');
+          if (mediaTh && mediaTh.getAttribute('url')) {
+            img = mediaTh.getAttribute('url');
+          } else if (mediaC && mediaC.getAttribute('url') && /image/i.test(mediaC.getAttribute('medium') || mediaC.getAttribute('type') || 'image')) {
+            img = mediaC.getAttribute('url');
+          } else if (enclosure && /^image\//i.test(enclosure.getAttribute('type') || '')) {
+            img = enclosure.getAttribute('url');
+          } else {
+            var descEl = item.querySelector('description');
+            if (descEl) {
+              var m = descEl.textContent.match(/<img[^>]+src=["']([^"']+)["']/i);
+              if (m) img = m[1];
+            }
+          }
+          return { title: title, url: url, cat: cat, catColor: color, time: relTimeFa(pubDate), img: img };
         }).filter(function (n) { return n.title; });
         if (parsed.length) renderNews(parsed);
       })
@@ -298,17 +344,17 @@
   }
 
   function initSidebars() {
-    [['sidebar-news', 'ib_sb_news'], ['sidebar-community', 'ib_sb_comm']].forEach(function (pair) {
-      var sb = document.querySelector('.' + pair[0]);
-      if (!sb) return;
-      var btn = sb.querySelector('.sb-toggle');
-      if (!btn) return;
-      try { if (localStorage.getItem(pair[1]) === '1') sb.classList.add('collapsed'); } catch (e) {}
-      btn.addEventListener('click', function () {
-        sb.classList.toggle('collapsed');
-        try { localStorage.setItem(pair[1], sb.classList.contains('collapsed') ? '1' : '0'); } catch (e) {}
-      });
-    });
+    var sb = document.getElementById('sb-community');
+    if (!sb) return;
+    var collapseBtn = document.getElementById('sb-comm-toggle');
+    var expandTab = document.getElementById('sb-comm-tab');
+    try { if (localStorage.getItem('ib_sb_comm') === '1') sb.classList.add('collapsed'); } catch (e) {}
+    function toggle() {
+      sb.classList.toggle('collapsed');
+      try { localStorage.setItem('ib_sb_comm', sb.classList.contains('collapsed') ? '1' : '0'); } catch (e) {}
+    }
+    if (collapseBtn) collapseBtn.addEventListener('click', toggle);
+    if (expandTab) expandTab.addEventListener('click', toggle);
   }
 
   function renderEngines() {
@@ -331,8 +377,6 @@
     els.searchIcon.innerHTML = svg('search');
     els.searchGo.innerHTML = svg('arrowLeft');
     els.cryptoRefresh.innerHTML = svg('refresh');
-    els.tipBgIc.innerHTML = svg('shieldCheck');
-    els.tipNextIc.innerHTML = '<span class="icon">' + svg('arrowLeft') + '</span>';
     els.settingsClose.innerHTML = '<span class="icon">' + svg('close') + '</span>';
   }
 
@@ -850,7 +894,6 @@
       'hero-date', 'clock', 'hero-greeting', 'hero-active', 'hero-utc',
       'search-box', 'search-icon', 'search-input', 'scope-label', 'search-go', 'suggest', 'engines',
       'tools-grid', 'crypto-card', 'crypto-list', 'crypto-foot', 'crypto-refresh',
-      'tip-bg-ic', 'tip-tag', 'tip-text', 'tip-next', 'tip-next-ic',
       'markets-wrap', 'markets-utc-badge',
       'quick-links', 'settings-modal', 'settings-panel', 'settings-close', 'settings-save',
       'set-name', 'set-engine', 'set-layout', 'set-accent', 'set-grid', 'set-crypto', 'set-coins',
@@ -876,7 +919,6 @@
     renderQuick();
     renderEngines();
     els.scopeLabel.textContent = ENGINES[state.activeEngine].label;
-    renderTip();
     renderCrypto();
     applyShowCrypto();
     renderTime();
@@ -896,9 +938,6 @@
 
     // crypto
     els.cryptoRefresh.addEventListener('click', function () { loadCrypto(); });
-
-    // tip
-    els.tipNext.addEventListener('click', function () { state.tipIndex = (state.tipIndex + 1) % TIPS.length; renderTip(); persist(); });
 
     // tab switching
     document.querySelectorAll('.m-tab').forEach(function(t) {

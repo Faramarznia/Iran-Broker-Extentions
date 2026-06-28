@@ -14,23 +14,6 @@
 
     <div class="layout-wrap">
 
-    <!-- Sidebar: News (left) -->
-    <aside class="sidebar sidebar-news">
-      <div class="sb-head">
-        <div class="sb-head-info">
-          <span class="sb-title">اخبار بازار</span>
-          <span class="sb-dot"></span>
-        </div>
-        <button class="sb-toggle" id="sb-news-toggle" aria-label="جمع کردن">
-          <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M10 12L6 8l4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </button>
-      </div>
-      <div class="sb-list" id="sb-news-list"></div>
-      <div class="sb-footer">
-        <a class="sb-more" href="https://iranbroker.net/news/" target="_blank" rel="noopener">همه اخبار</a>
-      </div>
-    </aside>
-
     <div class="page-col">
 
       <!-- ===== TOP BAR ===== -->
@@ -128,15 +111,16 @@
             <div class="markets-wrap" id="markets-wrap"></div>
           </div>
 
-          <!-- tip -->
-          <div class="tip-card">
-            <span class="bg-ic" id="tip-bg-ic"></span>
+          <!-- news bento card -->
+          <div class="card bento-news-card" id="bento-news-card">
             <div class="card-head">
-              <h3>نکتهٔ امروز</h3>
-              <span class="tag" id="tip-tag">آگاهی</span>
+              <div class="h-title">
+                <span class="dot"></span>
+                <h3>اخبار بازار</h3>
+              </div>
+              <a class="bento-news-all" href="https://iranbroker.net/news/" target="_blank" rel="noopener">همه اخبار</a>
             </div>
-            <p class="tip-text" id="tip-text">…</p>
-            <button class="tip-next" id="tip-next">نکتهٔ بعدی <span id="tip-next-ic"></span></button>
+            <div class="bento-news-list" id="bento-news-list"></div>
           </div>
         </section>
 
@@ -145,24 +129,30 @@
 
     </div>
 
-    <!-- Sidebar: Community (right) -->
-    <aside class="sidebar sidebar-community">
-      <div class="sb-head">
-        <div class="sb-head-info">
-          <span class="sb-dot"></span>
-          <span class="sb-title">جامعه ایران بروکر</span>
-        </div>
-        <button class="sb-toggle" id="sb-comm-toggle" aria-label="جمع کردن">
-          <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M10 12L6 8l4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </button>
-      </div>
-      <div class="sb-list" id="sb-comm-list"></div>
-      <div class="sb-footer">
-        <a class="sb-more" href="https://iranbroker.net/" target="_blank" rel="noopener">مشارکت در گفتگو</a>
-      </div>
-    </aside>
 
     </div><!-- /layout-wrap -->
+
+    <!-- Community sidebar: fixed overlay panel -->
+    <aside class="sidebar sidebar-community" id="sb-community">
+      <button class="sb-tab" id="sb-comm-tab" aria-label="باز کردن جامعه">
+        <span>تاپیک‌های کامیونیتی ایران بروکر</span>
+      </button>
+      <div class="sb-content">
+        <div class="sb-head">
+          <div class="sb-head-info">
+            <span class="sb-dot"></span>
+            <span class="sb-title">جامعه ایران بروکر</span>
+          </div>
+          <button class="sb-toggle" id="sb-comm-toggle" aria-label="جمع کردن">
+            <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M10 12L6 8l4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+        <div class="sb-list" id="sb-comm-list"></div>
+        <div class="sb-footer">
+          <a class="sb-more" href="https://iranbroker.net/" target="_blank" rel="noopener">مشارکت در گفتگو</a>
+        </div>
+      </div>
+    </aside>
 
     <!-- ===== SETTINGS MODAL ===== -->
     <div class="modal-overlay" id="settings-modal" hidden>

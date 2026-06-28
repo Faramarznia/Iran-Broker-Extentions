@@ -907,6 +907,120 @@ a {
   height: 15px
 }
 
+/* ===== Bento News Card ===== */
+.bento-news-card {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden
+}
+
+.bento-news-all {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--primary);
+  text-decoration: none;
+  white-space: nowrap;
+  opacity: .8;
+  transition: opacity .15s
+}
+
+.bento-news-all:hover { opacity: 1 }
+
+.bento-news-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden
+}
+
+.bento-news-list::-webkit-scrollbar { width: 3px }
+.bento-news-list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 99px }
+
+/* Category group */
+.bn-group { display: flex; flex-direction: column; gap: 0; padding-bottom: 6px }
+
+.bn-group-head {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 6px 4px;
+}
+
+.bn-group-cat {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 9px;
+  border-radius: 6px;
+  white-space: nowrap
+}
+
+/* News item with thumbnail */
+.bn-item {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+  padding: 6px;
+  border-radius: 10px;
+  text-decoration: none;
+  color: var(--text);
+  transition: background .15s
+}
+
+.bn-item:hover { background: var(--surface2) }
+
+.bn-thumb {
+  flex-shrink: 0;
+  width: 48px;
+  height: 48px;
+  border-radius: 8px;
+  overflow: hidden;
+  background: var(--surface2)
+}
+
+.bn-thumb-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block
+}
+
+.bn-thumb-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 800
+}
+
+.bn-body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px
+}
+
+.bn-time {
+  font-size: 10px;
+  color: var(--soft)
+}
+
+.bn-title {
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--sub);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden
+}
+
 /* ===== Market Sessions Timeline ===== */
 .markets-card {
   display: flex;
@@ -1113,11 +1227,11 @@ body[data-theme="glass"] .sidebar {
 }
 
 .sidebar-community .sb-toggle svg {
-  transform: rotate(0deg)
+  transform: rotate(180deg)
 }
 
 .sidebar-community.collapsed .sb-toggle svg {
-  transform: rotate(180deg)
+  transform: rotate(0deg)
 }
 
 .sb-title {
@@ -1693,9 +1807,14 @@ body[data-layout="data"] .stage-root {
   height: 100vh
 }
 
+body[data-layout="data"] .layout-wrap {
+  justify-content: center
+}
+
 body[data-layout="data"] .page-col {
+  flex: 0 1 1200px;
+  width: 100%;
   height: 100%;
-  max-width: 1460px;
   padding-top: 16px;
   padding-bottom: 18px;
   gap: 11px
@@ -3920,6 +4039,83 @@ body[data-theme="glass"] .s-select:focus {
 
 .fc-end-btn-pri:hover {
   opacity: .88
+}
+
+/* ── Community sidebar: fixed overlay panel in data mode ── */
+body[data-layout="data"] .sidebar-community {
+  position: fixed;
+  right: 0;
+  top: 32px;
+  height: calc(100vh - 64px);
+  width: 268px;
+  border-radius: 16px 0 0 16px;
+  border-right: none;
+  padding: 0;
+  overflow: visible;
+  z-index: 30;
+  transition: width .28s cubic-bezier(.4,0,.2,1), box-shadow .28s
+}
+
+body[data-layout="data"] .sidebar-community.collapsed {
+  width: 36px;
+  box-shadow: none
+}
+
+/* Expand tab: vertical label shown when collapsed */
+.sb-tab {
+  display: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 36px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--sub);
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+  transition: color .2s
+}
+
+.sb-tab:hover { color: var(--text) }
+
+.sb-tab span {
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  font-size: 11.5px;
+  font-weight: 700;
+  white-space: nowrap;
+  letter-spacing: .3px;
+  font-family: inherit
+}
+
+body[data-layout="data"] .sidebar-community.collapsed .sb-tab {
+  display: flex
+}
+
+/* Sidebar inner content */
+.sb-content {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 14px 12px 12px;
+  gap: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  opacity: 1;
+  pointer-events: all;
+  transition: opacity .18s
+}
+
+.sb-content::-webkit-scrollbar { width: 3px }
+.sb-content::-webkit-scrollbar-thumb { background: var(--border); border-radius: 99px }
+
+body[data-layout="data"] .sidebar-community.collapsed .sb-content {
+  opacity: 0;
+  pointer-events: none
 }
 
 /* ── Layout: simple (minimal centered) ── */
