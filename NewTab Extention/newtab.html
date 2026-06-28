@@ -85,54 +85,59 @@
         </div>
       </section>
 
-      <!-- ===== TOOLS ===== -->
-      <section class="sec-tools">
-        <div class="tools-head">
-          <h2>ابزارهای ایران بروکر</h2>
-          <span class="hint">دسترسی سریع به مقایسه‌ها و داده‌ها</span>
-        </div>
-        <div class="tools-grid" id="tools-grid"></div>
-      </section>
+      <!-- ===== CONTENT BLOCK (tools + bento) ===== -->
+      <div class="content-block">
 
-      <!-- ===== BENTO ===== -->
-      <section class="sec-bento">
+        <!-- ===== TOOLS ===== -->
+        <section class="sec-tools">
+          <div class="tools-head">
+            <h2>ابزارهای ایران بروکر</h2>
+            <span class="hint">دسترسی سریع به مقایسه‌ها و داده‌ها</span>
+          </div>
+          <div class="tools-grid" id="tools-grid"></div>
+        </section>
 
-        <!-- crypto -->
-        <div class="card crypto-card" id="crypto-card">
-          <div class="card-head">
-            <div class="h-title">
-              <span class="dot"></span>
-              <h3>قیمت لحظه‌ای ارز دیجیتال</h3>
+        <!-- ===== BENTO ===== -->
+        <section class="sec-bento">
+
+          <!-- crypto -->
+          <div class="card crypto-card" id="crypto-card">
+            <div class="card-head">
+              <div class="h-title">
+                <span class="dot"></span>
+                <h3>قیمت لحظه‌ای ارز دیجیتال</h3>
+              </div>
+              <button class="refresh-btn" id="crypto-refresh" title="بروزرسانی" aria-label="بروزرسانی"></button>
             </div>
-            <button class="refresh-btn" id="crypto-refresh" title="بروزرسانی" aria-label="بروزرسانی"></button>
+            <div class="crypto-list" id="crypto-list"></div>
+            <div class="crypto-foot" id="crypto-foot"></div>
           </div>
-          <div class="crypto-list" id="crypto-list"></div>
-          <div class="crypto-foot" id="crypto-foot"></div>
-        </div>
 
-        <!-- market timeline -->
-        <div class="card markets-card">
-          <div class="card-head">
-            <div class="h-title">
-              <span class="dot"></span>
-              <h3>ساعات بازار جهانی</h3>
+          <!-- market timeline -->
+          <div class="card markets-card">
+            <div class="card-head">
+              <div class="h-title">
+                <span class="dot"></span>
+                <h3>ساعات بازار جهانی</h3>
+              </div>
+              <span class="markets-utc-badge" id="markets-utc-badge">--:-- UTC</span>
             </div>
-            <span class="markets-utc-badge" id="markets-utc-badge">--:-- UTC</span>
+            <div class="markets-wrap" id="markets-wrap"></div>
           </div>
-          <div class="markets-wrap" id="markets-wrap"></div>
-        </div>
 
-        <!-- tip -->
-        <div class="tip-card">
-          <span class="bg-ic" id="tip-bg-ic"></span>
-          <div class="card-head">
-            <h3>نکتهٔ امروز</h3>
-            <span class="tag" id="tip-tag">آگاهی</span>
+          <!-- tip -->
+          <div class="tip-card">
+            <span class="bg-ic" id="tip-bg-ic"></span>
+            <div class="card-head">
+              <h3>نکتهٔ امروز</h3>
+              <span class="tag" id="tip-tag">آگاهی</span>
+            </div>
+            <p class="tip-text" id="tip-text">…</p>
+            <button class="tip-next" id="tip-next">نکتهٔ بعدی <span id="tip-next-ic"></span></button>
           </div>
-          <p class="tip-text" id="tip-text">…</p>
-          <button class="tip-next" id="tip-next">نکتهٔ بعدی <span id="tip-next-ic"></span></button>
-        </div>
-      </section>
+        </section>
+
+      </div>
 
 
     </div>
