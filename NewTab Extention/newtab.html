@@ -9,6 +9,7 @@
 <body data-theme="dark" data-layout="scroll">
   <div class="stage-root">
     <canvas id="shader-bg-canvas"></canvas>
+    <div class="bg-overlay" id="bg-overlay"></div>
     <div class="bg-grid" id="bg-grid"></div>
 
     <div class="layout-wrap">
@@ -136,10 +137,6 @@
         </div>
       </section>
 
-      <!-- ===== FOOTER ===== -->
-      <footer class="sec-footer">
-        <div class="quick-links" id="quick-links"></div>
-      </footer>
 
     </div>
 
@@ -165,48 +162,183 @@
     <!-- ===== SETTINGS MODAL ===== -->
     <div class="modal-overlay" id="settings-modal" hidden>
       <div class="modal" id="settings-panel">
+
+        <!-- Head -->
         <div class="modal-head">
-          <h3>تنظیمات تب جدید</h3>
-          <button class="icon-btn" id="settings-close" aria-label="بستن"></button>
+          <div class="mh-brand">
+            <div class="mh-logo">IB</div>
+            <div class="mh-titles">
+              <div class="mh-title">تنظیمات</div>
+              <div class="mh-sub">ایران بروکر · تب جدید</div>
+            </div>
+          </div>
+          <button class="mh-close" id="settings-close" aria-label="بستن">
+            <svg viewBox="0 0 20 20" fill="none"><path d="M5 5l10 10M15 5L5 15" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+          </button>
         </div>
+
+        <!-- Tabs -->
+        <nav class="modal-tabs">
+          <button class="m-tab active" data-tab="appearance">
+            <svg viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="7.5" stroke="currentColor" stroke-width="1.6"/><path d="M10 2.5a7.5 7.5 0 0 1 0 15V2.5z" fill="currentColor"/></svg>
+            ظاهر
+          </button>
+          <button class="m-tab" data-tab="display">
+            <svg viewBox="0 0 20 20" fill="none"><rect x="1.5" y="3.5" width="17" height="11" rx="1.5" stroke="currentColor" stroke-width="1.6"/><path d="M7 18h6M10 14.5V18" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+            نمایش
+          </button>
+          <button class="m-tab" data-tab="data">
+            <svg viewBox="0 0 20 20" fill="none"><path d="M2.5 5.5h15M2.5 10h15M2.5 14.5h15" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><circle cx="7" cy="5.5" r="2" fill="currentColor"/><circle cx="13" cy="10" r="2" fill="currentColor"/><circle cx="6" cy="14.5" r="2" fill="currentColor"/></svg>
+            داده
+          </button>
+        </nav>
+
+        <!-- Body -->
         <div class="modal-body">
-          <label class="set-row">نام شما (برای خوش‌آمدگویی)
-            <input type="text" id="set-name" placeholder="مثلاً مهدی" maxlength="20" />
-          </label>
-          <label class="set-row">موتور جستجوی پیش‌فرض
-            <select id="set-engine">
-              <option value="google">گوگل</option>
-              <option value="ib">ایران بروکر</option>
-              <option value="tv">تریدینگ‌ویو</option>
-            </select>
-          </label>
-          <div class="set-row">چیدمان صفحه
-            <div class="seg" id="set-layout">
-              <button data-layout="scroll" class="active">اسکرول (پیش‌فرض)</button>
-              <button data-layout="fit">تمام‌صفحه بدون اسکرول</button>
+
+          <!-- ═══ TAB: ظاهر ═══ -->
+          <div class="tab-panel active" id="tab-appearance">
+
+            <div class="s-section">
+              <div class="s-section-label">حالت رنگی</div>
+              <div class="theme-cards" id="set-theme-mode">
+                <button class="tc" data-theme="dark">
+                  <div class="tc-preview tc-dark"></div>
+                  <span>تاریک</span>
+                </button>
+                <button class="tc" data-theme="light">
+                  <div class="tc-preview tc-light"></div>
+                  <span>روشن</span>
+                </button>
+                <button class="tc" data-theme="auto">
+                  <div class="tc-preview tc-auto"></div>
+                  <span>خودکار</span>
+                </button>
+                <button class="tc" data-theme="glass">
+                  <div class="tc-preview tc-glass"></div>
+                  <span>شیشه‌ای</span>
+                </button>
+              </div>
             </div>
-          </div>
-          <div class="set-row">رنگ تأکید
-            <div class="swatches" id="set-accent">
-              <button data-accent="#185adb" style="background:#185adb" title="آبی"></button>
-              <button data-accent="#1f9d55" style="background:#1f9d55" title="سبز"></button>
-              <button data-accent="#7c4dff" style="background:#7c4dff" title="بنفش"></button>
-              <button data-accent="#e8590c" style="background:#e8590c" title="نارنجی"></button>
+
+            <div class="s-section">
+              <div class="s-section-label">رنگ تأکید</div>
+              <div class="accent-row" id="set-accent">
+                <button class="ac-btn" data-accent="#185adb" style="background:#185adb" title="آبی سرویس"></button>
+                <button class="ac-btn" data-accent="#1f9d55" style="background:#1f9d55" title="سبز بازار"></button>
+                <button class="ac-btn" data-accent="#7c4dff" style="background:#7c4dff" title="بنفش نئون"></button>
+                <button class="ac-btn" data-accent="#e8590c" style="background:#e8590c" title="نارنجی آتش"></button>
+              </div>
             </div>
+
+            <div class="s-section">
+              <div class="s-section-label">پس‌زمینه</div>
+              <div class="bg-picker" id="bg-picker">
+                <button class="bg-opt-default" id="bg-opt-default">
+                  <span class="bg-default-swatch"></span>
+                  <span>پیش‌فرض — انیمیشن شیدر</span>
+                </button>
+                <div class="bg-gallery" id="bg-gallery"></div>
+                <label class="bg-upload-btn">
+                  <input type="file" id="bg-upload" accept="image/*" />
+                  آپلود تصویر از سیستم
+                </label>
+              </div>
+            </div>
+
           </div>
-          <label class="set-row toggle">نمایش گرید پس‌زمینه
-            <input type="checkbox" id="set-grid" checked />
-          </label>
-          <label class="set-row toggle">نمایش ویجت ارز دیجیتال
-            <input type="checkbox" id="set-crypto" checked />
-          </label>
-          <label class="set-row">ارزهای دیجیتال نمایشی (با کاما جدا کنید)
-            <input type="text" id="set-coins" placeholder="bitcoin,ethereum,tether" />
-          </label>
-        </div>
+
+          <!-- ═══ TAB: نمایش ═══ -->
+          <div class="tab-panel" id="tab-display">
+
+            <div class="s-section">
+              <div class="s-section-label">چیدمان صفحه</div>
+              <div class="layout-cards" id="set-layout">
+                <button class="lc" data-layout="scroll">
+                  <div class="lc-preview">
+                    <div class="lcp-bar" style="width:80%"></div>
+                    <div class="lcp-bar" style="width:60%"></div>
+                    <div class="lcp-bar" style="width:90%"></div>
+                    <div class="lcp-bar" style="width:50%"></div>
+                    <div class="lcp-arrow">↕</div>
+                  </div>
+                  <span>اسکرول</span>
+                </button>
+                <button class="lc" data-layout="fit">
+                  <div class="lc-preview lcp-fit">
+                    <div class="lcp-bar" style="width:80%"></div>
+                    <div class="lcp-bar" style="width:60%"></div>
+                    <div class="lcp-bar" style="width:75%"></div>
+                  </div>
+                  <span>تمام‌صفحه</span>
+                </button>
+              </div>
+            </div>
+
+            <div class="s-section">
+              <div class="s-section-label">نمایش</div>
+              <div class="tog-list">
+                <label class="tog-row" for="set-grid">
+                  <div class="tog-info">
+                    <span class="tog-title">گرید پس‌زمینه</span>
+                    <span class="tog-desc">الگوی شبکه‌ای روی پس‌زمینه</span>
+                  </div>
+                  <div class="ios-tog">
+                    <input type="checkbox" id="set-grid" checked />
+                    <span class="ios-track"></span>
+                  </div>
+                </label>
+                <label class="tog-row" for="set-crypto">
+                  <div class="tog-info">
+                    <span class="tog-title">ویجت ارز دیجیتال</span>
+                    <span class="tog-desc">قیمت لحظه‌ای ارزها در داشبورد</span>
+                  </div>
+                  <div class="ios-tog">
+                    <input type="checkbox" id="set-crypto" checked />
+                    <span class="ios-track"></span>
+                  </div>
+                </label>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- ═══ TAB: داده ═══ -->
+          <div class="tab-panel" id="tab-data">
+
+            <div class="s-section">
+              <div class="s-section-label">نام شما</div>
+              <input class="s-input" type="text" id="set-name" placeholder="مثلاً مهدی" maxlength="20" />
+              <div class="s-hint">برای خوش‌آمدگویی شخصی استفاده می‌شود</div>
+            </div>
+
+            <div class="s-section">
+              <div class="s-section-label">موتور جستجو</div>
+              <div class="s-select-wrap">
+                <select class="s-select" id="set-engine">
+                  <option value="google">گوگل</option>
+                  <option value="ib">ایران بروکر</option>
+                  <option value="tv">تریدینگ‌ویو</option>
+                </select>
+                <svg class="s-select-arrow" viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </div>
+            </div>
+
+            <div class="s-section">
+              <div class="s-section-label">ارزهای دیجیتال نمایشی</div>
+              <input class="s-input" type="text" id="set-coins" placeholder="bitcoin,ethereum,tether" />
+              <div class="s-hint">با کاما جدا کنید — حداکثر ۶ ارز</div>
+            </div>
+
+          </div>
+
+        </div><!-- /modal-body -->
+
         <div class="modal-foot">
-          <button class="btn-primary" id="settings-save">انجام شد</button>
+          <span class="mf-ver">v2.0</span>
+          <button class="btn-primary" id="settings-save">ذخیره تغییرات</button>
         </div>
+
       </div>
     </div>
   </div>
