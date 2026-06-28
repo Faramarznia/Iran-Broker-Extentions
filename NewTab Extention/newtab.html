@@ -54,10 +54,7 @@
         </a>
 
         <div class="top-actions">
-          <div class="market-pill">
-            <span class="dot"></span>
-            <span id="market-count">— بازار فعال</span>
-          </div>
+          <button class="icon-btn" id="focus-btn" title="حالت تمرکز" aria-label="حالت تمرکز"></button>
           <button class="icon-btn" id="theme-btn" title="تغییر تم" aria-label="تغییر تم"></button>
           <button class="icon-btn" id="settings-btn" title="تنظیمات" aria-label="تنظیمات"></button>
         </div>
@@ -339,6 +336,23 @@
           <button class="btn-primary" id="settings-save">ذخیره تغییرات</button>
         </div>
 
+      </div>
+    </div>
+
+    <!-- ===== FOCUS MODE OVERLAY ===== -->
+    <div class="focus-overlay" id="focus-overlay" hidden>
+      <button class="focus-exit" id="focus-exit" aria-label="خروج از حالت تمرکز"></button>
+      <div class="focus-body">
+        <div class="focus-phase-label" id="focus-phase">تمرکز</div>
+        <div class="focus-timer" id="focus-timer">25:00</div>
+        <div class="focus-session-info" id="focus-session-info">سشن ۱ از ۴</div>
+        <div class="focus-dots" id="focus-dots"></div>
+        <div class="focus-actions">
+          <button class="focus-btn focus-btn-secondary" id="focus-reset">ریست</button>
+          <button class="focus-btn focus-btn-primary" id="focus-start">شروع</button>
+          <button class="focus-btn focus-btn-secondary" id="focus-skip">رد کردن</button>
+        </div>
+        <p class="focus-hint">Space برای شروع/مکث · Esc برای خروج</p>
       </div>
     </div>
   </div>

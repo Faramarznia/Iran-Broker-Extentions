@@ -32,7 +32,8 @@
     link: '<path fill="currentColor" d="M18.364 15.536L16.95 14.12l1.414-1.414a5 5 0 1 0-7.071-7.071L9.879 7.05 8.464 5.636 9.88 4.222a7 7 0 0 1 9.9 9.9l-1.415 1.414zm-2.828 2.828l-1.415 1.414a7 7 0 0 1-9.9-9.9l1.415-1.414L7.05 9.88l-1.414 1.414a5 5 0 1 0 7.071 7.071l1.414-1.414 1.415 1.414zm-.708-10.607l1.415 1.415-7.072 7.07-1.414-1.414 7.071-7.07z"/>',
     autoTheme: '<circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="2"/><path fill="currentColor" d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10V2z"/>',
     glassTheme: '<path fill="currentColor" d="M12 2l2 8 8 2-8 2-2 8-2-8-8-2 8-2z"/>',
-    upload: '<path fill="currentColor" d="M4 16v1a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3v-1m-4-8-4-4m0 0-4 4m4-4v12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>'
+    upload: '<path fill="currentColor" d="M4 16v1a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3v-1m-4-8-4-4m0 0-4 4m4-4v12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>',
+    focus: '<circle cx="12" cy="12" r="8.5" stroke="currentColor" stroke-width="1.8" fill="none"/><line x1="12" y1="2" x2="12" y2="5.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><line x1="12" y1="18.5" x2="12" y2="22" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><line x1="2" y1="12" x2="5.5" y2="12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><line x1="18.5" y1="12" x2="22" y2="12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><circle cx="12" cy="12" r="2.5" fill="currentColor"/>'
   };
   function svg(name) {
     return '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">' + (ICONS[name] || '') + '</svg>';
@@ -325,12 +326,14 @@
   function renderStaticIcons() {
     els.themeBtn.innerHTML = '<span class="icon">' + svg(THEME_ICONS[state.theme] || 'moon') + '</span>';
     els.settingsBtn.innerHTML = '<span class="icon">' + svg('equalizer') + '</span>';
+    els.focusBtn.innerHTML = '<span class="icon">' + svg('focus') + '</span>';
     els.searchIcon.innerHTML = svg('search');
     els.searchGo.innerHTML = svg('arrowLeft');
     els.cryptoRefresh.innerHTML = svg('refresh');
     els.tipBgIc.innerHTML = svg('shieldCheck');
     els.tipNextIc.innerHTML = '<span class="icon">' + svg('arrowLeft') + '</span>';
     els.settingsClose.innerHTML = '<span class="icon">' + svg('close') + '</span>';
+    if (els.focusExit) els.focusExit.innerHTML = svg('close');
   }
 
   /* ----------------------------- Search ----------------------------- */
@@ -509,6 +512,120 @@
       rowsHtml;
   }
 
+  /* ----------------------------- Focus / Pomodoro ----------------------------- */
+  var POMO_WORK = 25 * 60;
+  var POMO_SHORT = 5 * 60;
+  var POMO_LONG = 15 * 60;
+  var POMO_SESSIONS = 4;
+
+  var pomoState = {
+    phase: 'work',
+    remaining: POMO_WORK,
+    running: false,
+    sessions: 0,
+    interval: null
+  };
+
+  function pomoFormat(s) {
+    var m = Math.floor(s / 60);
+    var sec = s % 60;
+    return String(m).padStart(2, '0') + ':' + String(sec).padStart(2, '0');
+  }
+
+  function pomoRender() {
+    if (!els.focusTimer) return;
+    els.focusTimer.textContent = pomoFormat(pomoState.remaining);
+
+    var phases = { work: 'تمرکز', short: 'استراحت کوتاه', long: 'استراحت بلند' };
+    els.focusPhase.textContent = phases[pomoState.phase];
+    els.focusPhase.className = 'focus-phase-label' +
+      (pomoState.phase === 'short' ? ' break' : '') +
+      (pomoState.phase === 'long' ? ' long-break' : '');
+
+    els.focusStart.textContent = pomoState.running ? 'مکث' : 'شروع';
+
+    var sessionInCycle = (pomoState.sessions % POMO_SESSIONS) + 1;
+    els.focusSessionInfo.textContent = 'سشن ' + toFaNum(pomoState.phase === 'work' ? sessionInCycle : (pomoState.sessions % POMO_SESSIONS)) + ' از ' + toFaNum(POMO_SESSIONS);
+
+    if (els.focusDots) {
+      els.focusDots.innerHTML = '';
+      for (var i = 0; i < POMO_SESSIONS; i++) {
+        var d = document.createElement('div');
+        var done = i < (pomoState.sessions % POMO_SESSIONS);
+        var active = pomoState.phase === 'work' && i === (pomoState.sessions % POMO_SESSIONS);
+        d.className = 'focus-dot' + (done ? ' done' : '') + (active ? ' active' : '');
+        els.focusDots.appendChild(d);
+      }
+    }
+  }
+
+  function toFaNum(n) {
+    return String(n).replace(/\d/g, function(d) { return '۰۱۲۳۴۵۶۷۸۹'[d]; });
+  }
+
+  function pomoAdvance() {
+    if (pomoState.phase === 'work') {
+      pomoState.sessions++;
+      var isLong = (pomoState.sessions % POMO_SESSIONS === 0);
+      pomoState.phase = isLong ? 'long' : 'short';
+      pomoState.remaining = isLong ? POMO_LONG : POMO_SHORT;
+    } else {
+      pomoState.phase = 'work';
+      pomoState.remaining = POMO_WORK;
+    }
+  }
+
+  function pomoTick() {
+    pomoState.remaining--;
+    if (pomoState.remaining <= 0) {
+      pomoAdvance();
+      els.focusTimer.classList.add('pulse-once');
+      setTimeout(function() { if (els.focusTimer) els.focusTimer.classList.remove('pulse-once'); }, 500);
+    }
+    pomoRender();
+  }
+
+  function pomoToggle() {
+    if (pomoState.running) {
+      clearInterval(pomoState.interval);
+      pomoState.running = false;
+    } else {
+      pomoState.running = true;
+      pomoState.interval = setInterval(pomoTick, 1000);
+    }
+    pomoRender();
+  }
+
+  function pomoReset() {
+    clearInterval(pomoState.interval);
+    pomoState.running = false;
+    pomoState.phase = 'work';
+    pomoState.remaining = POMO_WORK;
+    pomoState.sessions = 0;
+    pomoRender();
+  }
+
+  function pomoSkip() {
+    clearInterval(pomoState.interval);
+    pomoState.running = false;
+    pomoAdvance();
+    pomoRender();
+  }
+
+  function openFocusMode() {
+    if (!els.focusOverlay) return;
+    els.focusOverlay.hidden = false;
+    pomoRender();
+  }
+
+  function closeFocusMode() {
+    if (!els.focusOverlay) return;
+    els.focusOverlay.hidden = true;
+    clearInterval(pomoState.interval);
+    pomoState.running = false;
+    pomoRender();
+  }
+
   /* ----------------------------- Time-dependent render ----------------------------- */
   function renderTime() {
     const now = new Date();
@@ -532,7 +649,7 @@
     const openCount = openSessions.length;
     const activeSession = openSessions.length ? openSessions.map(function (s) { return s.name; }).join('، ') : 'بازارها بسته';
 
-    els.marketCount.textContent = openCount + ' بازار فعال';
+    if (els.marketCount) els.marketCount.textContent = openCount + ' بازار فعال';
     els.heroActive.textContent = activeSession;
     els.heroUtc.textContent = String(uh).padStart(2, '0') + ':' + String(now.getUTCMinutes()).padStart(2, '0');
     if (els.marketsUtcBadge) els.marketsUtcBadge.textContent = String(uh).padStart(2, '0') + ':' + String(now.getUTCMinutes()).padStart(2, '0') + ' UTC';
@@ -803,7 +920,7 @@
   /* ----------------------------- Wire up ----------------------------- */
   function cacheEls() {
     [
-      'bg-grid', 'theme-btn', 'settings-btn', 'market-count',
+      'bg-grid', 'theme-btn', 'settings-btn', 'focus-btn',
       'hero-date', 'clock', 'hero-greeting', 'hero-active', 'hero-utc',
       'search-box', 'search-icon', 'search-input', 'scope-label', 'search-go', 'suggest', 'engines',
       'tools-grid', 'crypto-card', 'crypto-list', 'crypto-foot', 'crypto-refresh',
@@ -811,7 +928,9 @@
       'markets-wrap', 'markets-utc-badge',
       'quick-links', 'settings-modal', 'settings-panel', 'settings-close', 'settings-save',
       'set-name', 'set-engine', 'set-layout', 'set-accent', 'set-grid', 'set-crypto', 'set-coins',
-      'set-theme-mode', 'bg-picker', 'bg-opt-default', 'bg-gallery', 'bg-upload'
+      'set-theme-mode', 'bg-picker', 'bg-opt-default', 'bg-gallery', 'bg-upload',
+      'focus-overlay', 'focus-exit', 'focus-phase', 'focus-timer', 'focus-session-info',
+      'focus-dots', 'focus-start', 'focus-reset', 'focus-skip'
     ].forEach(function (id) {
       const camel = id.replace(/-([a-z])/g, function (_, c) { return c.toUpperCase(); });
       els[camel] = $(id);
@@ -844,6 +963,13 @@
     // top bar
     els.themeBtn.addEventListener('click', toggleTheme);
     els.settingsBtn.addEventListener('click', openSettings);
+    els.focusBtn.addEventListener('click', openFocusMode);
+
+    // focus mode
+    els.focusExit.addEventListener('click', closeFocusMode);
+    els.focusStart.addEventListener('click', pomoToggle);
+    els.focusReset.addEventListener('click', pomoReset);
+    els.focusSkip.addEventListener('click', pomoSkip);
 
     // search
     els.searchInput.addEventListener('input', function (e) { state.query = e.target.value; state.sugIdx = -1; renderSuggest(); });
@@ -924,7 +1050,13 @@
       });
     }
 
-    document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !els.settingsModal.hidden) closeSettings(); });
+    document.addEventListener('keydown', function (e) {
+      if (!els.focusOverlay.hidden) {
+        if (e.key === 'Escape') { closeFocusMode(); return; }
+        if (e.key === ' ') { e.preventDefault(); pomoToggle(); return; }
+      }
+      if (e.key === 'Escape' && !els.settingsModal.hidden) closeSettings();
+    });
 
     // timers
     setInterval(renderTime, 1000 * 20);
