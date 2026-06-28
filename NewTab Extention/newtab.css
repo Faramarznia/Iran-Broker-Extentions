@@ -15,7 +15,7 @@
   --fc-color:#60a5fa;
   --bg:#090b12;--bg2:#0e121b;--surface:rgba(255,255,255,.04);--surface2:rgba(255,255,255,.07);--surfaceSolid:#141926;
   --border:rgba(255,255,255,.08);--border2:rgba(255,255,255,.14);
-  --text:#f5f7fa;--sub:#9aa1b1;--soft:#6a7180;--logo-text:#f5f7fa;--logo-mark:#2f6fe0;
+  --text:#f5f7fa;--sub:#9aa1b1;--soft:#6a7180;--logo-text:#f5f7fa;--logo-mark:#f5f7fa;
   --primary:#6f9bf3;--primaryStrong:#185adb;--primarySoft:rgba(111,155,243,.14);
   --green:#1fc16b;--greenSoft:rgba(31,193,107,.13);--red:#fb3748;--redSoft:rgba(251,55,72,.12);
   --teal:#35d0c0;--purple:#a78bfa;--orange:#f6a723;--pink:#f6679f;
@@ -671,7 +671,7 @@ body[data-layout="simple"] .layout-wrap{gap:0;padding:0;justify-content:center}
 body[data-layout="simple"] .content-block{display:none}
 body[data-layout="simple"] .page-col{padding:32px;gap:0;justify-content:flex-start;align-items:center}
 body[data-layout="simple"] .topbar{align-self:stretch;max-width:none}
-body[data-layout="simple"] .hero-search-wrap{flex:1;justify-content:center}
+body[data-layout="simple"] .hero-search-wrap{flex:1;justify-content:center;padding-bottom:100px}
 
 .content-block{display:flex;flex-direction:column;gap:24px;flex:1;min-height:0}
 .content-block .sec-bento{flex:1;min-height:0}
