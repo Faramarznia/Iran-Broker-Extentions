@@ -4258,6 +4258,40 @@ body[data-layout="data"] .sidebar-telegram.collapsed .sb-content {
   height: 14px
 }
 
+.sb-tg-bar {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  margin-bottom: 10px
+}
+
+.sb-tg-winbtn {
+  width: 100%;
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid var(--accent, #185adb);
+  background: var(--accent, #185adb);
+  color: #fff;
+  font-family: inherit;
+  font-weight: 700;
+  font-size: 12px;
+  cursor: pointer;
+  transition: opacity .2s
+}
+
+.sb-tg-winbtn:hover {
+  opacity: .9
+}
+
+.sb-tg-diag {
+  font-size: 10px;
+  line-height: 1.7;
+  color: var(--sub);
+  white-space: pre-line;
+  text-align: center
+}
+
 .sb-tg-frame-wrap {
   position: relative;
   flex: 1;

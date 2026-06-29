@@ -13,7 +13,7 @@
     "48": "icons/icon48.png",
     "128": "icons/icon128.png"
   },
-  "permissions": ["storage", "notifications", "declarativeNetRequest"],
+  "permissions": ["storage", "notifications", "declarativeNetRequest", "declarativeNetRequestFeedback"],
   "host_permissions": [
     "https://api.coingecko.com/*",
     "https://api.frankfurter.app/*",
@@ -24,6 +24,9 @@
     "https://api.accesstoexchange.com/*",
     "https://web.telegram.org/*"
   ],
+  "background": {
+    "service_worker": "background.js"
+  },
   "declarative_net_request": {
     "rule_resources": [
       {

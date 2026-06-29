@@ -6,14 +6,13 @@
       "type": "modifyHeaders",
       "responseHeaders": [
         { "header": "x-frame-options", "operation": "remove" },
-        { "header": "frame-options", "operation": "remove" },
         { "header": "content-security-policy", "operation": "remove" },
         { "header": "content-security-policy-report-only", "operation": "remove" }
       ]
     },
     "condition": {
       "urlFilter": "||web.telegram.org",
-      "resourceTypes": ["sub_frame"]
+      "resourceTypes": ["main_frame", "sub_frame"]
     }
   }
 ]
