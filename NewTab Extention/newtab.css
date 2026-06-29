@@ -4189,6 +4189,113 @@ body[data-layout="data"] .sidebar-community.collapsed .sb-content {
   pointer-events: none
 }
 
+/* ── Telegram sidebar: fixed overlay panel on the LEFT in data mode ── */
+body[data-layout="data"] .sidebar-telegram {
+  position: fixed;
+  left: 0;
+  right: auto;
+  top: 32px;
+  height: calc(100vh - 64px);
+  width: 380px;
+  border-radius: 0 16px 16px 0;
+  border-left: none;
+  padding: 0;
+  overflow: visible;
+  z-index: 30;
+  transition: width .28s cubic-bezier(.4,0,.2,1), box-shadow .28s
+}
+
+body[data-layout="data"] .sidebar-telegram.collapsed {
+  width: 36px;
+  box-shadow: none
+}
+
+body[data-layout="data"] .sidebar-telegram.collapsed .sb-tab {
+  display: flex
+}
+
+body[data-layout="data"] .sidebar-telegram.collapsed .sb-content {
+  opacity: 0;
+  pointer-events: none
+}
+
+/* Toggle chevron points toward the left screen edge (collapse direction) */
+.sidebar-telegram .sb-toggle svg {
+  transform: rotate(0deg)
+}
+
+.sidebar-telegram.collapsed .sb-toggle svg {
+  transform: rotate(180deg)
+}
+
+.sb-head-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0
+}
+
+.sb-ext {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface2);
+  color: var(--sub);
+  transition: color .2s, background .2s
+}
+
+.sb-ext:hover {
+  color: var(--text);
+  background: var(--border)
+}
+
+.sb-ext svg {
+  width: 14px;
+  height: 14px
+}
+
+.sb-tg-frame-wrap {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  background: var(--surface2)
+}
+
+.sb-tg-frame {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  display: block;
+  background: #fff
+}
+
+.sb-tg-loading {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--sub);
+  background: var(--surface2);
+  pointer-events: none;
+  transition: opacity .3s
+}
+
+.sb-tg-frame-wrap.loaded .sb-tg-loading {
+  opacity: 0
+}
+
 /* ── Layout: simple (minimal centered) ── */
 body[data-layout="simple"] .sidebar {
   display: none

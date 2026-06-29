@@ -442,6 +442,36 @@
         loadCommunityTab(btn.getAttribute('data-tab'));
       });
     }
+    initTelegramSidebar();
+  }
+
+  function initTelegramSidebar() {
+    var tg = document.getElementById('sb-telegram');
+    if (!tg) return;
+    var TG_URL = 'https://web.telegram.org/a/';
+    var collapseBtn = document.getElementById('sb-tg-toggle');
+    var expandTab = document.getElementById('sb-tg-tab');
+    var frame = document.getElementById('sb-tg-frame');
+    var frameWrap = frame ? frame.parentElement : null;
+    // default collapsed unless the user previously expanded it
+    try { if (localStorage.getItem('ib_sb_tg') !== '0') tg.classList.add('collapsed'); } catch (e) {}
+    function load() {
+      if (frame && !frame.getAttribute('src')) {
+        frame.addEventListener('load', function () {
+          if (frameWrap) frameWrap.classList.add('loaded');
+        });
+        frame.setAttribute('src', TG_URL);
+      }
+    }
+    function toggle() {
+      tg.classList.toggle('collapsed');
+      var collapsed = tg.classList.contains('collapsed');
+      try { localStorage.setItem('ib_sb_tg', collapsed ? '1' : '0'); } catch (e) {}
+      if (!collapsed) load();
+    }
+    if (collapseBtn) collapseBtn.addEventListener('click', toggle);
+    if (expandTab) expandTab.addEventListener('click', toggle);
+    if (!tg.classList.contains('collapsed')) load();
   }
 
   function renderEngines() {
