@@ -164,8 +164,23 @@
   function pad(n) { return (n < 10 ? '0' : '') + n; }
   function nowTimeStr() { var d = new Date(); return pad(d.getHours()) + ':' + pad(d.getMinutes()); }
 
-  function num(v) { var n = parseFloat(v); return isNaN(n) ? 0 : n; }
-  function isNum(v) { return v !== '' && v != null && !isNaN(parseFloat(v)); }
+  // تبدیل ارقام فارسی/عربی به انگلیسی (و جداکننده اعشار) تا محاسبات درست کار کنند
+  var FA_DIGITS = '۰۱۲۳۴۵۶۷۸۹', AR_DIGITS = '٠١٢٣٤٥٦٧٨٩';
+  function faToEn(s) {
+    if (s == null) return s;
+    s = String(s);
+    var out = '';
+    for (var i = 0; i < s.length; i++) {
+      var ch = s[i], fi = FA_DIGITS.indexOf(ch), ai = AR_DIGITS.indexOf(ch);
+      if (fi >= 0) out += fi;
+      else if (ai >= 0) out += ai;
+      else if (ch === '٫' || ch === '،' || ch === '٬') out += (ch === '٫' ? '.' : ''); // اعشار عربی → نقطه، جداکننده هزارگان → حذف
+      else out += ch;
+    }
+    return out;
+  }
+  function num(v) { var n = parseFloat(faToEn(v)); return isNaN(n) ? 0 : n; }
+  function isNum(v) { v = faToEn(v); return v !== '' && v != null && !isNaN(parseFloat(v)); }
 
   function fmtMoney(v, dp) {
     if (v == null || isNaN(v)) return '—';
@@ -605,6 +620,21 @@
         close();
       }
     });
+
+    // نرمال‌سازی زنده ارقام فارسی/عربی به انگلیسی روی فیلدهای عددی (.jr-num).
+    // فاز capture تا قبل از شنونده‌های محاسبه (recalc) اجرا شود و مقدار درست خوانده شود.
+    ['jr-body', 'jr-pop'].forEach(function (cid) {
+      $id(cid).addEventListener('input', function (e) {
+        var t = e.target;
+        if (!t || !t.classList || !t.classList.contains('jr-num')) return;
+        var conv = faToEn(t.value);
+        if (conv !== t.value) {
+          var pos = t.selectionStart;
+          t.value = conv;
+          try { t.setSelectionRange(pos, pos); } catch (_) {}
+        }
+      }, true);
+    });
   }
 
   function tabBtn(id, label) {
@@ -713,25 +743,25 @@
 
     // ── Core fields (both modes) ──
     html += '<div class="jr-grid">';
-    html += field('نماد *', '<input class="jr-in" id="f-symbol" list="jr-symbols" value="' + esc(d.symbol || '') + '" placeholder="EURUSD" />' +
+    html += field('نماد *', '<input class="jr-in" id="f-symbol" list="jr-symbols" value="' + esc(d.symbol || '') + '" placeholder="مثلاً EURUSD یا XAUUSD" title="نماد معامله — با تایپ، فهرست پیشنهادها باز می‌شود" autocomplete="off" />' +
       '<datalist id="jr-symbols">' + SYMBOLS.map(function (x) { return '<option value="' + esc(x) + '">'; }).join('') + '</datalist>' +
       '<span class="jr-price-chip" id="f-price-chip" hidden></span>');
     html += '<div class="jr-field"><span class="jr-flabel">جهت *</span><div class="jr-dir">' +
-      '<button type="button" class="jr-dirbtn jr-long' + (d.direction === 'long' || !d.direction ? ' active' : '') + '" data-dir="long">خرید (Long)</button>' +
-      '<button type="button" class="jr-dirbtn jr-short' + (d.direction === 'short' ? ' active' : '') + '" data-dir="short">فروش (Short)</button>' +
+      '<button type="button" class="jr-dirbtn jr-long' + (d.direction === 'long' || !d.direction ? ' active' : '') + '" data-dir="long" title="معامله خرید — انتظار افزایش قیمت">خرید (Long)</button>' +
+      '<button type="button" class="jr-dirbtn jr-short' + (d.direction === 'short' ? ' active' : '') + '" data-dir="short" title="معامله فروش — انتظار کاهش قیمت">فروش (Short)</button>' +
       '<input type="hidden" id="f-direction" value="' + esc(d.direction || 'long') + '"></div></div>';
     html += '</div>';
 
     html += '<div class="jr-grid jr-grid-3">';
-    html += field('قیمت ورود *', numInput('f-entryPrice', d.entryPrice, d.symbol));
-    html += field('قیمت خروج', numInput('f-exitPrice', d.exitPrice, d.symbol));
-    html += field('حجم (لات)', '<input class="jr-in" id="f-lotSize" type="number" step="0.01" value="' + (d.lotSize != null ? d.lotSize : s.defaultLotSize) + '" />');
+    html += field('قیمت ورود *', numInput('f-entryPrice', d.entryPrice, d.symbol, 'مثلاً 1.08450', 'قیمتی که در آن وارد معامله شدید'));
+    html += field('قیمت خروج', numInput('f-exitPrice', d.exitPrice, d.symbol, 'مثلاً 1.09120', 'قیمت بستن معامله (در صورت بسته بودن)'));
+    html += field('حجم (لات)', '<input class="jr-in jr-num" id="f-lotSize" type="text" inputmode="decimal" autocomplete="off" value="' + (d.lotSize != null ? d.lotSize : s.defaultLotSize) + '" placeholder="مثلاً 0.1" title="حجم معامله به لات" />');
     html += '</div>';
 
     html += '<div class="jr-grid jr-grid-3">';
-    html += field('حد ضرر (SL)', numInput('f-stopLoss', d.stopLoss, d.symbol));
-    html += field('حد سود (TP)', numInput('f-takeProfit', d.takeProfit, d.symbol));
-    html += field('کمیسیون ($)', '<input class="jr-in" id="f-commission" type="number" step="0.01" value="' + (d.commission != null ? d.commission : '') + '" />');
+    html += field('حد ضرر (SL)', numInput('f-stopLoss', d.stopLoss, d.symbol, 'قیمت حد ضرر', 'قیمت حد ضرر — برای محاسبه ریسک و R:R'));
+    html += field('حد سود (TP)', numInput('f-takeProfit', d.takeProfit, d.symbol, 'قیمت حد سود', 'قیمت حد سود — برای محاسبه R:R پلن‌شده'));
+    html += field('کمیسیون ($)', '<input class="jr-in jr-num" id="f-commission" type="text" inputmode="decimal" autocomplete="off" value="' + (d.commission != null ? d.commission : '') + '" placeholder="مثلاً 3.5" title="کمیسیون و کارمزد به دلار" />');
     html += '</div>';
 
     html += '<div class="jr-rr-box" id="f-rrbox"></div>';
@@ -740,30 +770,30 @@
     if (logMode === 'full' || editingId) {
       html += '<div class="jr-divider">جزئیات معامله</div>';
       html += '<div class="jr-grid jr-grid-2">';
-      html += field('وضعیت', sel('f-status', [['open','باز'],['closed','بسته'],['cancelled','لغوشده']], d.status || 'closed'));
-      html += field('بازار', sel('f-marketType', MARKETS.map(function (m) { return [m.v, m.label]; }), d.marketType || 'forex'));
+      html += field('وضعیت', sel('f-status', [['open','باز'],['closed','بسته'],['cancelled','لغوشده']], d.status || 'closed', 'وضعیت معامله — باز، بسته یا لغوشده'));
+      html += field('بازار', sel('f-marketType', MARKETS.map(function (m) { return [m.v, m.label]; }), d.marketType || 'forex', 'نوع بازار معامله'));
       html += '</div>';
 
       html += '<div class="jr-grid jr-grid-2">';
-      html += field('تاریخ ورود', '<input class="jr-in" id="f-entryDate" type="date" value="' + (d.entryDate || todayStr()) + '" />');
-      html += field('ساعت ورود', '<input class="jr-in" id="f-entryTime" type="time" value="' + (d.entryTime || '') + '" />');
+      html += field('تاریخ ورود', '<input class="jr-in" id="f-entryDate" type="date" value="' + (d.entryDate || todayStr()) + '" title="تاریخ ورود به معامله" />');
+      html += field('ساعت ورود', '<input class="jr-in" id="f-entryTime" type="time" value="' + (d.entryTime || '') + '" title="ساعت ورود — سشن به‌طور خودکار تشخیص داده می‌شود" />');
       html += '</div>';
       html += '<div class="jr-grid jr-grid-2">';
-      html += field('تاریخ خروج', '<input class="jr-in" id="f-exitDate" type="date" value="' + (d.exitDate || '') + '" />');
-      html += field('ساعت خروج', '<input class="jr-in" id="f-exitTime" type="time" value="' + (d.exitTime || '') + '" />');
+      html += field('تاریخ خروج', '<input class="jr-in" id="f-exitDate" type="date" value="' + (d.exitDate || '') + '" title="تاریخ خروج از معامله" />');
+      html += field('ساعت خروج', '<input class="jr-in" id="f-exitTime" type="time" value="' + (d.exitTime || '') + '" title="ساعت خروج — مدت معامله محاسبه می‌شود" />');
       html += '</div>';
       html += '<div class="jr-dur" id="f-dur"></div>';
 
       html += '<div class="jr-grid jr-grid-3">';
-      html += field('ستاپ', '<input class="jr-in" id="f-setup" list="jr-setups" value="' + esc(d.setup || '') + '" placeholder="breakout" /><datalist id="jr-setups">' + setupOpts + '</datalist>');
-      html += field('تایم‌فریم', sel('f-timeframe', [['','—']].concat(TIMEFRAMES.map(function (x) { return [x, x]; })), d.timeframe || ''));
-      html += field('سشن (خودکار)', sel('f-session', [['','—']].concat(Object.keys(SESSIONS).map(function (k) { return [k, SESSIONS[k]]; })), d.session || ''));
+      html += field('ستاپ', '<input class="jr-in" id="f-setup" list="jr-setups" value="' + esc(d.setup || '') + '" placeholder="مثلاً breakout یا retest" title="استراتژی/ستاپ معامله — از پلی‌بوک یا متن آزاد" autocomplete="off" /><datalist id="jr-setups">' + setupOpts + '</datalist>');
+      html += field('تایم‌فریم', sel('f-timeframe', [['','— انتخاب کنید —']].concat(TIMEFRAMES.map(function (x) { return [x, x]; })), d.timeframe || '', 'تایم‌فریم نمودار معامله'));
+      html += field('سشن (خودکار)', sel('f-session', [['','— خودکار —']].concat(Object.keys(SESSIONS).map(function (k) { return [k, SESSIONS[k]]; })), d.session || '', 'سشن معاملاتی — از روی ساعت ورود تشخیص داده می‌شود'));
       html += '</div>';
 
       html += '<div class="jr-grid jr-grid-3">';
-      html += field('هم‌سویی روند', sel('f-trendAlignment', [['with','هم‌سو'],['counter','خلاف روند'],['neutral','خنثی']], d.trendAlignment || 'with'));
-      html += field('شرایط بازار', sel('f-marketCondition', [['trending','روندی'],['ranging','رنج'],['volatile','پرنوسان'],['news','خبری']], d.marketCondition || 'trending'));
-      html += field('تگ‌ها', '<input class="jr-in" id="f-tags" value="' + esc((d.tags || []).join(', ')) + '" placeholder="scalp, news-play" />');
+      html += field('هم‌سویی روند', sel('f-trendAlignment', [['with','هم‌سو'],['counter','خلاف روند'],['neutral','خنثی']], d.trendAlignment || 'with', 'جهت معامله نسبت به روند کلی بازار'));
+      html += field('شرایط بازار', sel('f-marketCondition', [['trending','روندی'],['ranging','رنج'],['volatile','پرنوسان'],['news','خبری']], d.marketCondition || 'trending', 'شرایط بازار هنگام معامله'));
+      html += field('تگ‌ها', '<input class="jr-in" id="f-tags" value="' + esc((d.tags || []).join(', ')) + '" placeholder="مثلاً scalp, news-play" title="برچسب‌های دلخواه — با کاما جدا کنید" autocomplete="off" />');
       html += '</div>';
 
       // Psychology
@@ -773,35 +803,36 @@
       html += '<div class="jr-field"><span class="jr-flabel">احساس بعد از معامله</span>' + emojiRow('postEmotion', d.postEmotion) + '</div>';
       html += '</div>';
       html += '<div class="jr-grid jr-grid-2">';
-      html += field('اعتماد در ورود: <b id="f-ce-val">' + (d.confidenceEntry || 5) + '</b>/10', '<input class="jr-range" id="f-confidenceEntry" type="range" min="1" max="10" value="' + (d.confidenceEntry || 5) + '" />');
-      html += field('اعتماد در خروج: <b id="f-cx-val">' + (d.confidenceExit || 5) + '</b>/10', '<input class="jr-range" id="f-confidenceExit" type="range" min="1" max="10" value="' + (d.confidenceExit || 5) + '" />');
+      html += field('اعتماد در ورود: <b id="f-ce-val">' + (d.confidenceEntry || 5) + '</b>/10', '<input class="jr-range" id="f-confidenceEntry" type="range" min="1" max="10" value="' + (d.confidenceEntry || 5) + '" title="میزان اطمینان هنگام ورود (۱=خیلی کم تا ۱۰=خیلی زیاد)" />');
+      html += field('اعتماد در خروج: <b id="f-cx-val">' + (d.confidenceExit || 5) + '</b>/10', '<input class="jr-range" id="f-confidenceExit" type="range" min="1" max="10" value="' + (d.confidenceExit || 5) + '" title="میزان اطمینان هنگام خروج (۱=خیلی کم تا ۱۰=خیلی زیاد)" />');
       html += '</div>';
+      var FLAG_TITLES = { fomo:'ترس از جا ماندن — ورود هیجانی بدون پلن', revenge:'معامله انتقامی پس از یک ضرر', impulsive:'ورود عجولانه و بدون تحلیل کافی', oversize:'حجم بیش از حد نسبت به ریسک مجاز', earlyExit:'خروج زودهنگام پیش از رسیدن به هدف', lateEntry:'ورود دیرهنگام پس از حرکت اصلی' };
       html += '<div class="jr-field"><span class="jr-flabel">پرچم‌های رفتاری</span><div class="jr-flags">' +
-        FLAGS.map(function (f) { var on = d.flags && d.flags[f.k]; return '<button type="button" class="jr-flag' + (on ? ' active' : '') + '" data-flag="' + f.k + '">' + f.label + '</button>'; }).join('') + '</div></div>';
-      html += '<label class="jr-checkrow"><input type="checkbox" id="f-followedPlan"' + (d.followedPlan ? ' checked' : '') + '/> <span>طبق پلن معامله شد</span></label>';
+        FLAGS.map(function (f) { var on = d.flags && d.flags[f.k]; return '<button type="button" class="jr-flag' + (on ? ' active' : '') + '" data-flag="' + f.k + '" title="' + esc(FLAG_TITLES[f.k] || f.label) + '">' + f.label + '</button>'; }).join('') + '</div></div>';
+      html += '<label class="jr-checkrow" title="اگر معامله دقیقاً طبق پلن انجام شد، تیک بزنید"><input type="checkbox" id="f-followedPlan"' + (d.followedPlan ? ' checked' : '') + '/> <span>طبق پلن معامله شد</span></label>';
 
       // Notes
       html += '<div class="jr-divider">یادداشت‌ها</div>';
-      html += field('دلیل ورود', '<textarea class="jr-in jr-ta" id="f-reasonEntry" rows="2">' + esc(d.reasonEntry || '') + '</textarea>');
+      html += field('دلیل ورود', '<textarea class="jr-in jr-ta" id="f-reasonEntry" rows="2" placeholder="چرا وارد این معامله شدی؟ سیگنال و تأییدیه‌ها…" title="دلیل و منطق ورود به معامله">' + esc(d.reasonEntry || '') + '</textarea>');
       html += '<div class="jr-grid jr-grid-2">';
-      html += field('دلیل خروج', '<textarea class="jr-in jr-ta" id="f-reasonExit" rows="2">' + esc(d.reasonExit || '') + '</textarea>');
-      html += field('درس‌های آموخته', '<textarea class="jr-in jr-ta" id="f-lessonsLearned" rows="2">' + esc(d.lessonsLearned || '') + '</textarea>');
+      html += field('دلیل خروج', '<textarea class="jr-in jr-ta" id="f-reasonExit" rows="2" placeholder="چرا و کجا از معامله خارج شدی؟" title="دلیل بستن معامله">' + esc(d.reasonExit || '') + '</textarea>');
+      html += field('درس‌های آموخته', '<textarea class="jr-in jr-ta" id="f-lessonsLearned" rows="2" placeholder="چه درسی از این معامله گرفتی؟" title="درس‌ها و نکاتی که برای دفعه بعد باید رعایت کنی">' + esc(d.lessonsLearned || '') + '</textarea>');
       html += '</div>';
 
       // Screenshot
       html += '<div class="jr-field"><span class="jr-flabel">تصویر معامله</span>' +
         '<div class="jr-shot" id="f-shot-wrap">' +
           (d.screenshotBase64 ? '<img class="jr-shot-img" id="f-shot-img" src="' + d.screenshotBase64 + '" />' : '') +
-          '<label class="jr-shot-btn"><input type="file" id="f-shot-input" accept="image/*" hidden />افزودن / تغییر تصویر</label>' +
+          '<label class="jr-shot-btn" title="تصویر چارت معامله را اضافه کنید (تا ۸۰۰px فشرده می‌شود)"><input type="file" id="f-shot-input" accept="image/*" hidden />افزودن / تغییر تصویر</label>' +
           (d.screenshotBase64 ? '<button type="button" class="jr-link jr-link-danger" id="f-shot-remove">حذف تصویر</button>' : '') +
         '</div></div>';
 
       // Prop firm
       html += '<div class="jr-divider">حساب</div>';
       html += '<div class="jr-grid jr-grid-3">';
-      html += field('نوع حساب', sel('f-accountType', [['personal','شخصی'],['prop','پراپ']], d.accountType || 'personal'));
-      html += field('نام پراپ‌فرم', '<input class="jr-in" id="f-propFirmName" value="' + esc(d.propFirmName || '') + '" />');
-      html += field('نام چلنج', '<input class="jr-in" id="f-propChallengeName" value="' + esc(d.propChallengeName || '') + '" />');
+      html += field('نوع حساب', sel('f-accountType', [['personal','شخصی'],['prop','پراپ']], d.accountType || 'personal', 'حساب شخصی یا حساب پراپ‌فرم'));
+      html += field('نام پراپ‌فرم', '<input class="jr-in" id="f-propFirmName" value="' + esc(d.propFirmName || '') + '" placeholder="مثلاً FTMO" title="نام شرکت پراپ‌فرم" autocomplete="off" />');
+      html += field('نام چلنج', '<input class="jr-in" id="f-propChallengeName" value="' + esc(d.propChallengeName || '') + '" placeholder="مثلاً Phase 1 - 100K" title="نام یا مرحله چلنج پراپ" autocomplete="off" />');
       html += '</div>';
     }
 
@@ -813,12 +844,13 @@
     wireLogForm(d);
   }
 
-  function numInput(id, val, symbol) {
-    var step = pipSizeFor(symbol);
-    return '<input class="jr-in" id="' + id + '" type="number" step="' + step + '" value="' + (val != null && val !== '' ? val : '') + '" inputmode="decimal" />';
+  // ورودی عددی: type=text + inputmode تا ارقام فارسی هم وارد و سپس به انگلیسی نرمال شوند
+  function numInput(id, val, symbol, ph, title) {
+    return '<input class="jr-in jr-num" id="' + id + '" type="text" inputmode="decimal" autocomplete="off" value="' + (val != null && val !== '' ? val : '') + '"' +
+      (ph ? ' placeholder="' + esc(ph) + '"' : '') + (title ? ' title="' + esc(title) + '"' : '') + ' />';
   }
-  function sel(id, opts, val) {
-    return '<div class="jr-selwrap"><select class="jr-sel" id="' + id + '">' +
+  function sel(id, opts, val, title) {
+    return '<div class="jr-selwrap"><select class="jr-sel" id="' + id + '"' + (title ? ' title="' + esc(title) + '"' : '') + '>' +
       opts.map(function (o) { return '<option value="' + esc(o[0]) + '"' + (String(o[0]) === String(val) ? ' selected' : '') + '>' + esc(o[1]) + '</option>'; }).join('') +
       '</select><svg class="jr-sel-arrow" viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>';
   }
@@ -1108,7 +1140,7 @@
 
     body.innerHTML =
       '<div class="jr-hist-filters">' +
-        '<input class="jr-in jr-search" id="h-search" placeholder="جستجو در نماد، یادداشت، تگ…" value="' + esc(histState.search) + '" />' +
+        '<input class="jr-in jr-search" id="h-search" placeholder="جستجو در نماد، دلیل ورود، درس‌ها و تگ‌ها…" title="جستجو در معاملات" autocomplete="off" value="' + esc(histState.search) + '" />' +
         '<div class="jr-filt-row">' +
           dateF('h-from','از', f.from) + dateF('h-to','تا', f.to) +
           filtSel('h-symbol','نماد', [['','همه']].concat(symbols.map(function (s) { return [s, s]; })), f.symbol) +
@@ -1595,13 +1627,13 @@
       '<button class="jr-hbtn jr-close" id="jr-dn-close"><svg viewBox="0 0 20 20" fill="none"><path d="M5 5l10 10M15 5L5 15" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></div>' +
       '<div class="jr-detail-body">' +
         '<div class="jr-field"><span class="jr-flabel">حال‌وهوای روز</span><div class="jr-mood-row" id="dn-mood">' +
-          MOODS.map(function (m) { return '<button type="button" class="jr-mood' + (n.mood === m.v ? ' active' : '') + '" data-v="' + m.v + '"><span>' + m.emoji + '</span><small>' + m.label + '</small></button>'; }).join('') + '</div></div>' +
+          MOODS.map(function (m) { return '<button type="button" class="jr-mood' + (n.mood === m.v ? ' active' : '') + '" data-v="' + m.v + '" title="حال‌وهوای کلی روز: ' + m.label + '"><span>' + m.emoji + '</span><small>' + m.label + '</small></button>'; }).join('') + '</div></div>' +
         '<div class="jr-grid jr-grid-2">' +
-          field('بایاس بازار', sel('dn-bias', [['','—'],['bullish','صعودی'],['bearish','نزولی'],['neutral','خنثی']], n.marketBias || '')) +
-          field('هدف امروز', '<input class="jr-in" id="dn-goal" value="' + esc(n.dailyGoal || '') + '" />') +
+          field('بایاس بازار', sel('dn-bias', [['','— انتخاب کنید —'],['bullish','صعودی'],['bearish','نزولی'],['neutral','خنثی']], n.marketBias || '', 'دیدگاه کلی شما به بازار در این روز')) +
+          field('هدف امروز', '<input class="jr-in" id="dn-goal" value="' + esc(n.dailyGoal || '') + '" placeholder="هدف معاملاتی امروز…" title="هدف یا تمرکز اصلی امروز" autocomplete="off" />') +
         '</div>' +
-        field('یادداشت صبح (قبل از بازار)', '<textarea class="jr-in jr-ta" id="dn-morning" rows="3">' + esc(n.morningNote || '') + '</textarea>') +
-        field('یادداشت شب (مرور روز)', '<textarea class="jr-in jr-ta" id="dn-evening" rows="3">' + esc(n.eveningNote || '') + '</textarea>') +
+        field('یادداشت صبح (قبل از بازار)', '<textarea class="jr-in jr-ta" id="dn-morning" rows="3" placeholder="بایاس روز، نواحی کلیدی، برنامه و وضعیت ذهنی…" title="یادداشت پیش از شروع بازار">' + esc(n.morningNote || '') + '</textarea>') +
+        field('یادداشت شب (مرور روز)', '<textarea class="jr-in jr-ta" id="dn-evening" rows="3" placeholder="مرور عملکرد، درس‌ها و برنامه فردا…" title="یادداشت پس از پایان بازار">' + esc(n.eveningNote || '') + '</textarea>') +
       '</div>' +
       '<div class="jr-detail-foot"><button class="jr-btn jr-btn-primary" id="dn-save">ذخیره</button></div></div>');
     openPop(card);
@@ -1662,14 +1694,14 @@
     var card = el('<div class="jr-detail jr-detail-wide"><div class="jr-detail-head"><b>' + (id ? 'ویرایش ستاپ' : 'ستاپ جدید') + '</b>' +
       '<button class="jr-hbtn jr-close" id="sp-close"><svg viewBox="0 0 20 20" fill="none"><path d="M5 5l10 10M15 5L5 15" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></div>' +
       '<div class="jr-detail-body">' +
-        field('نام ستاپ *', '<input class="jr-in" id="sp-name" value="' + esc(p.name) + '" placeholder="شکست خط روند با تأیید حجم" />') +
-        field('توضیح کوتاه', '<textarea class="jr-in jr-ta" id="sp-desc" rows="2">' + esc(p.description || '') + '</textarea>') +
+        field('نام ستاپ *', '<input class="jr-in" id="sp-name" value="' + esc(p.name) + '" placeholder="مثلاً شکست خط روند با تأیید حجم" title="نام ستاپ معاملاتی" autocomplete="off" />') +
+        field('توضیح کوتاه', '<textarea class="jr-in jr-ta" id="sp-desc" rows="2" placeholder="در یکی دو جمله این ستاپ را توضیح بده…" title="توضیح مختصر درباره ستاپ">' + esc(p.description || '') + '</textarea>') +
         '<div class="jr-grid jr-grid-2">' +
-          field('R:R ایده‌آل', '<input class="jr-in" id="sp-rr" type="number" step="0.1" value="' + (p.idealRR || 2) + '" />') +
-          field('تایم‌فریم‌های مناسب', '<input class="jr-in" id="sp-tf" value="' + esc((p.idealTimeframes || []).join(', ')) + '" placeholder="H1, H4" />') +
+          field('R:R ایده‌آل', '<input class="jr-in jr-num" id="sp-rr" type="text" inputmode="decimal" autocomplete="off" value="' + (p.idealRR || 2) + '" placeholder="مثلاً 3" title="نسبت ریسک به ریوارد ایده‌آل این ستاپ" />') +
+          field('تایم‌فریم‌های مناسب', '<input class="jr-in" id="sp-tf" value="' + esc((p.idealTimeframes || []).join(', ')) + '" placeholder="مثلاً H1, H4" title="تایم‌فریم‌های مناسب — با کاما جدا کنید" autocomplete="off" />') +
         '</div>' +
-        '<div class="jr-field"><span class="jr-flabel">قوانین ورود (هر خط یک قانون)</span><textarea class="jr-in jr-ta" id="sp-rules" rows="4">' + esc((p.rules || []).join('\n')) + '</textarea></div>' +
-        '<div class="jr-field"><span class="jr-flabel">قوانین خروج (هر خط یک قانون)</span><textarea class="jr-in jr-ta" id="sp-exit" rows="3">' + esc((p.exitRules || []).join('\n')) + '</textarea></div>' +
+        '<div class="jr-field"><span class="jr-flabel">قوانین ورود (هر خط یک قانون)</span><textarea class="jr-in jr-ta" id="sp-rules" rows="4" placeholder="هر قانون را در یک خط بنویس؛ مثلاً:&#10;کندل breakout با حجم بالا&#10;تأیید در تایم‌فریم بالاتر&#10;حد ضرر زیر کندل" title="قوانین ورود — در حالت چک‌لیست یک‌به‌یک تیک می‌خورند">' + esc((p.rules || []).join('\n')) + '</textarea></div>' +
+        '<div class="jr-field"><span class="jr-flabel">قوانین خروج (هر خط یک قانون)</span><textarea class="jr-in jr-ta" id="sp-exit" rows="3" placeholder="هر قانون خروج را در یک خط بنویس…" title="قوانین خروج از معامله">' + esc((p.exitRules || []).join('\n')) + '</textarea></div>' +
       '</div>' +
       '<div class="jr-detail-foot">' + (id ? '<button class="jr-btn jr-btn-danger" id="sp-del">حذف ستاپ</button>' : '<span></span>') + '<button class="jr-btn jr-btn-primary" id="sp-save">ذخیره</button></div></div>');
     openPop(card);
@@ -1774,14 +1806,14 @@
       '<button class="jr-hbtn jr-close" id="se-close"><svg viewBox="0 0 20 20" fill="none"><path d="M5 5l10 10M15 5L5 15" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></div>' +
       '<div class="jr-detail-body">' +
         '<div class="jr-grid jr-grid-2">' +
-          field('موجودی اولیه حساب ($)', '<input class="jr-in" id="se-balance" type="number" value="' + DB.accountBalance + '" />') +
-          field('ارز حساب', '<input class="jr-in" id="se-currency" value="' + esc(s.currency) + '" />') +
+          field('موجودی اولیه حساب ($)', '<input class="jr-in jr-num" id="se-balance" type="text" inputmode="decimal" autocomplete="off" value="' + DB.accountBalance + '" placeholder="مثلاً 10000" title="موجودی پایه حساب — مبنای محاسبه درصد سود/زیان و ریسک" />') +
+          field('ارز حساب', '<input class="jr-in" id="se-currency" value="' + esc(s.currency) + '" placeholder="USD" title="واحد پول حساب" autocomplete="off" />') +
         '</div>' +
         '<div class="jr-grid jr-grid-2">' +
-          field('ریسک پیش‌فرض هر معامله (٪)', '<input class="jr-in" id="se-risk" type="number" step="0.1" value="' + s.riskPerTrade + '" />') +
-          field('حجم پیش‌فرض (لات)', '<input class="jr-in" id="se-lot" type="number" step="0.01" value="' + s.defaultLotSize + '" />') +
+          field('ریسک پیش‌فرض هر معامله (٪)', '<input class="jr-in jr-num" id="se-risk" type="text" inputmode="decimal" autocomplete="off" value="' + s.riskPerTrade + '" placeholder="مثلاً 1" title="درصد ریسک پیش‌فرض روی هر معامله" />') +
+          field('حجم پیش‌فرض (لات)', '<input class="jr-in jr-num" id="se-lot" type="text" inputmode="decimal" autocomplete="off" value="' + s.defaultLotSize + '" placeholder="مثلاً 0.1" title="حجم پیش‌فرض که در فرم ثبت معامله قرار می‌گیرد" />') +
         '</div>' +
-        field('نمادهای پرکاربرد', '<input class="jr-in" id="se-fav" value="' + esc((s.favSymbols || []).join(', ')) + '" placeholder="EURUSD, XAUUSD" />') +
+        field('نمادهای پرکاربرد', '<input class="jr-in" id="se-fav" value="' + esc((s.favSymbols || []).join(', ')) + '" placeholder="مثلاً EURUSD, XAUUSD, BTCUSD" title="نمادهای پرکاربرد برای دسترسی سریع‌تر — با کاما جدا کنید" autocomplete="off" />') +
         '<div class="jr-field"><span class="jr-flabel">نمایش</span>' +
           '<label class="jr-checkrow"><input type="checkbox" id="se-badge"' + (s.showBadge ? ' checked' : '') + '/> <span>نمایش badge تعداد معاملات امروز روی دکمه</span></label>' +
           '<label class="jr-checkrow"><input type="checkbox" id="se-remind"' + (s.dailyReminder ? ' checked' : '') + '/> <span>یادآوری روزانه (نقطه قرمز اگر امروز معامله‌ای ثبت نشده)</span></label>' +
@@ -1815,9 +1847,9 @@
   /* ════════════════════════ small utils ════════════════════════ */
   function uniq(arr) { var seen = {}, out = []; arr.forEach(function (x) { if (!seen[x]) { seen[x] = 1; out.push(x); } }); return out; }
   function debounce(fn, ms) { var t; return function () { var a = arguments, c = this; clearTimeout(t); t = setTimeout(function () { fn.apply(c, a); }, ms); }; }
-  function dateF(id, label, val) { return '<label class="jr-filt"><span>' + label + '</span><input class="jr-in jr-in-sm" id="' + id + '" type="date" value="' + (val || '') + '" /></label>'; }
+  function dateF(id, label, val) { return '<label class="jr-filt" title="فیلتر ' + esc(label) + ' بر اساس تاریخ ورود"><span>' + label + '</span><input class="jr-in jr-in-sm" id="' + id + '" type="date" value="' + (val || '') + '" title="فیلتر ' + esc(label) + '" /></label>'; }
   function filtSel(id, label, opts, val) {
-    return '<label class="jr-filt"><span>' + label + '</span><div class="jr-selwrap"><select class="jr-sel jr-sel-sm" id="' + id + '">' +
+    return '<label class="jr-filt" title="فیلتر بر اساس ' + esc(label) + '"><span>' + label + '</span><div class="jr-selwrap"><select class="jr-sel jr-sel-sm" id="' + id + '" title="فیلتر بر اساس ' + esc(label) + '">' +
       opts.map(function (o) { return '<option value="' + esc(o[0]) + '"' + (String(o[0]) === String(val || '') ? ' selected' : '') + '>' + esc(o[1]) + '</option>'; }).join('') +
       '</select><svg class="jr-sel-arrow" viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div></label>';
   }
