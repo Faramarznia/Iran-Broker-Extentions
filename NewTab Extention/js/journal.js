@@ -545,11 +545,18 @@
 
   function buildButton() {
     btn = el('<button class="jr-fab" id="jr-fab" title="ژورنال معاملاتی" aria-label="ژورنال معاملاتی">' +
-      '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true">' +
-      '<path d="M5 4.5A1.5 1.5 0 0 1 6.5 3H17a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6.5A1.5 1.5 0 0 1 5 19.5v-15Z" stroke="currentColor" stroke-width="1.6"/>' +
-      '<path d="M9 7.5h6M9 11h6M9 14.5h4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>' +
+      '<svg viewBox="0 0 20 20" fill="none" aria-hidden="true">' +
+      '<rect x="2.5" y="8" width="3" height="6" rx=".6" fill="currentColor" opacity=".75"/>' +
+      '<line x1="4" y1="5.5" x2="4" y2="8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>' +
+      '<line x1="4" y1="14" x2="4" y2="16" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>' +
+      '<rect x="8.5" y="4" width="3" height="8" rx=".6" fill="currentColor"/>' +
+      '<line x1="10" y1="2" x2="10" y2="4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>' +
+      '<line x1="10" y1="12" x2="10" y2="14.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>' +
+      '<rect x="14.5" y="9" width="3" height="5" rx=".6" fill="currentColor" opacity=".75"/>' +
+      '<line x1="16" y1="6.5" x2="16" y2="9" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>' +
+      '<line x1="16" y1="14" x2="16" y2="16.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>' +
+      '</svg>' +
       '<span class="jr-fab-label">ژورنال</span>' +
-      '<span class="jr-fab-badge" id="jr-fab-badge" hidden></span>' +
       '<span class="jr-fab-dot" id="jr-fab-dot" hidden></span>' +
       '</button>');
     document.body.appendChild(btn);
@@ -559,22 +566,13 @@
 
   function refreshButton() {
     if (!btn) return;
-    var badge = $id('jr-fab-badge'), dot = $id('jr-fab-dot');
+    var dot = $id('jr-fab-dot');
     var st = DB.settings;
     var today = todayStr();
     var todays = DB.trades.filter(function (t) {
       var d = new Date(t.createdAt);
       return (d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate())) === today;
     });
-    var todayClosed = DB.trades.filter(function (t) { return t.status === 'closed' && t.exitDate === today; });
-    var pnl = todayClosed.reduce(function (s, t) { return s + (t.pnlAmount || 0); }, 0);
-
-    if (st.showBadge && todays.length) {
-      badge.hidden = false;
-      badge.textContent = todays.length;
-      badge.classList.remove('jr-pos', 'jr-neg');
-      if (todayClosed.length) badge.classList.add(pnl >= 0 ? 'jr-pos' : 'jr-neg');
-    } else { badge.hidden = true; }
 
     dot.hidden = !(st.dailyReminder && todays.length === 0);
   }
@@ -590,7 +588,7 @@
           '<button class="jr-hbtn" id="jr-export-menu-btn" title="خروجی / پشتیبان">' +
             '<svg viewBox="0 0 20 20" fill="none"><path d="M10 3v9m0 0 3.2-3.2M10 12 6.8 8.8M4 14v2.5h12V14" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>' +
           '<button class="jr-hbtn" id="jr-settings-btn" title="تنظیمات ژورنال">' +
-            '<svg viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="2.6" stroke="currentColor" stroke-width="1.6"/><path d="M10 1.8v2M10 16.2v2M18.2 10h-2M3.8 10h-2M15.8 4.2l-1.4 1.4M5.6 14.4l-1.4 1.4M15.8 15.8l-1.4-1.4M5.6 5.6 4.2 4.2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></button>' +
+            '<svg viewBox="0 0 20 20" fill="none"><path d="M10 12.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Z" stroke="currentColor" stroke-width="1.5"/><path d="M16.2 10c0-.3 0-.6-.1-.9l1.7-1.3a.4.4 0 0 0 .1-.5l-1.6-2.7a.4.4 0 0 0-.5-.1l-2 .8a6.7 6.7 0 0 0-1.6-.9L12 3a.4.4 0 0 0-.4-.3H8.4A.4.4 0 0 0 8 3l-.3 2.1a6.7 6.7 0 0 0-1.5.9l-2-.8a.4.4 0 0 0-.5.1L2.1 8a.4.4 0 0 0 .1.5l1.7 1.4c0 .3-.1.6-.1.9s0 .6.1.9L2.2 13a.4.4 0 0 0-.1.5l1.6 2.7c.1.2.3.2.5.1l2-.8c.5.3 1 .6 1.5.9l.3 2.2c0 .2.2.3.4.3h3.2c.2 0 .4-.1.4-.3l.3-2.2a6.7 6.7 0 0 0 1.5-.9l2 .8c.2.1.4 0 .5-.1l1.6-2.7a.4.4 0 0 0-.1-.5l-1.7-1.3c.1-.3.1-.6.1-.9Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>' +
           '<button class="jr-hbtn jr-close" id="jr-close" aria-label="بستن">' +
             '<svg viewBox="0 0 20 20" fill="none"><path d="M5 5l10 10M15 5L5 15" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button>' +
         '</div>' +
@@ -1018,8 +1016,10 @@
     if (t.status === 'closed' && isNum(t.exitPrice)) {
       parts.push('<span class="jr-rr-pnl">P&L: <b class="' + pnlClass(t.pnlAmount) + '">' + fmtMoney(t.pnlAmount) + '</b> · <b>' + fmtNum(t.pnlPips, 1) + ' پیپ</b>' + (t.rrActual ? ' · <b>' + fmtNum(t.rrActual, 2) + 'R</b>' : '') + '</span>');
     }
-    box.innerHTML = parts.join('');
-    box.hidden = !parts.length;
+    box.innerHTML = parts.length
+      ? parts.join('')
+      : '<span class="jr-rr-empty">قیمت ورود، حد ضرر و حجم را وارد کنید تا R:R و ریسک محاسبه شود</span>';
+    box.hidden = false;
   }
 
   function updateDuration() {
