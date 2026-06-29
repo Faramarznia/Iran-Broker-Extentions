@@ -4299,7 +4299,7 @@ body[data-layout="simple"] .hero-search-wrap {
   align-items: center;
   gap: 8px;
   height: 44px;
-  padding: 0 16px 0 13px;
+  padding: 0 16px 0 20px;
   background: var(--surfaceSolid);
   color: var(--text);
   border: 1px solid var(--border);

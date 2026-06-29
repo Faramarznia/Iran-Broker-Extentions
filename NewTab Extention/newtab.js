@@ -656,8 +656,8 @@
     els.heroDate.textContent = dateStr;
 
     const h = now.getHours();
-    const g = h >= 5 && h < 12 ? 'صبح‌تان بخیر' : h >= 12 && h < 17 ? 'ظهر بخیر' : h >= 17 && h < 21 ? 'عصرتان بخیر' : 'شب‌تان بخیر';
-    els.heroGreeting.textContent = g + (state.name ? '، ' + state.name : ' معامله‌گر');
+    const g = h >= 5 && h < 12 ? 'صبحت بخیر' : h >= 12 && h < 17 ? 'ظهرت بخیر' : h >= 17 && h < 21 ? 'عصرت بخیر' : 'شب‌ت بخیر';
+    els.heroGreeting.textContent = g + (state.name ? '، ' + state.name : ' رفیق');
 
     // sessions
     const uh = now.getUTCHours();
