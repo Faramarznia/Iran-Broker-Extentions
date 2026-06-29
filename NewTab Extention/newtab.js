@@ -815,9 +815,9 @@
       '  vec2 clickUv=(clickPos*2.-1.)*resolution/minRes;',
       '  float cd=length(uv-clickUv);',
       '  float fade=max(0.,1.-clickAge*0.72);',
-      '  float edge=0.006/(abs(cd-clickAge*1.3)+0.003)*fade;',
-      '  float ripple=sin(cd*22.-clickAge*11.)*exp(-cd*2.8)*fade*0.28;',
-      '  color+=vec3(0.4,0.65,1.0)*(edge+max(0.,ripple));',
+      '  float edge=0.0025/(abs(cd-clickAge*1.3)+0.004)*fade;',
+      '  float ripple=sin(cd*22.-clickAge*11.)*exp(-cd*3.2)*fade*0.1;',
+      '  color+=vec3(0.3,0.55,0.9)*(edge+max(0.,ripple));',
       '  color=color/(color+vec3(0.9));',
       '  gl_FragColor=vec4(color[0],color[1],color[2],1.);',
       '}'
@@ -851,6 +851,7 @@
     var t = 0, rafId;
 
     window.addEventListener('click', function (e) {
+      if (e.target.closest('button,a,input,select,textarea,.card,.sidebar,.modal-overlay,.topbar,.engines,.sparkle-canvas,.crypto-card,.markets-card,.quick-links,.sb-tab,.sec-hero,.hero-search-wrap')) return;
       click.x = e.clientX / window.innerWidth;
       click.y = 1.0 - e.clientY / window.innerHeight;
       click.age = 0;
