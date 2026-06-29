@@ -13,7 +13,7 @@
     "48": "icons/icon48.png",
     "128": "icons/icon128.png"
   },
-  "permissions": ["storage", "notifications", "declarativeNetRequest", "declarativeNetRequestFeedback"],
+  "permissions": ["storage", "notifications"],
   "host_permissions": [
     "https://api.coingecko.com/*",
     "https://api.frankfurter.app/*",
@@ -21,21 +21,8 @@
     "https://nfs.faireconomy.media/*",
     "https://iranbroker.net/*",
     "https://call4.tgju.org/*",
-    "https://api.accesstoexchange.com/*",
-    "https://web.telegram.org/*"
+    "https://api.accesstoexchange.com/*"
   ],
-  "background": {
-    "service_worker": "background.js"
-  },
-  "declarative_net_request": {
-    "rule_resources": [
-      {
-        "id": "telegram_unframe",
-        "enabled": true,
-        "path": "rules.json"
-      }
-    ]
-  },
   "content_security_policy": {
     "extension_pages": "script-src 'self'; object-src 'self'; connect-src 'self' https://api.coingecko.com https://api.frankfurter.app https://open.er-api.com https://nfs.faireconomy.media https://iranbroker.net https://call4.tgju.org https://api.accesstoexchange.com;"
   }
