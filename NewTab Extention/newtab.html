@@ -46,28 +46,37 @@
       <!-- ===== HERO + SEARCH ===== -->
       <div class="hero-search-wrap">
 
-        <section class="sec-hero">
-          <div class="hero-date" id="hero-date">—</div>
-          <div class="hero-greeting" id="hero-greeting">سلام رفیق</div>
-          <div class="clock" id="clock">--:--</div>
-          <div class="hero-session">جلسهٔ فعال: <b id="hero-active">—</b> · <span id="hero-utc">—</span> به وقت جهانی</div>
-        </section>
+        <!-- ░░ HUB: right box — daily tasks (visual right in RTL) ░░ -->
+        <aside class="hub-aside hub-aside-tasks" id="hub-tasks-box"></aside>
 
-        <section class="sec-search">
-          <div class="search-box" id="search-box">
-            <span class="s-ic" id="search-icon"></span>
-            <input type="text" id="search-input" placeholder="جستجو در گوگل یا ابزارهای ایران بروکر…" autocomplete="off" spellcheck="false" />
-            <span class="scope-label" id="scope-label">گوگل</span>
-            <button class="search-go" id="search-go" title="جستجو" aria-label="جستجو"></button>
-          </div>
-          <ul class="suggest" id="suggest" hidden></ul>
-          <div class="engines" id="engines"></div>
-          <div class="sparkles-strip" aria-hidden="true">
-            <div class="sp-glow-a"></div>
-            <div class="sp-glow-b"></div>
-            <canvas id="sp-canvas"></canvas>
-          </div>
-        </section>
+        <!-- center: hero + search (display:contents outside hub mode) -->
+        <div class="hero-center">
+          <section class="sec-hero">
+            <div class="hero-date" id="hero-date">—</div>
+            <div class="hero-greeting" id="hero-greeting">سلام رفیق</div>
+            <div class="clock" id="clock">--:--</div>
+            <div class="hero-session">جلسهٔ فعال: <b id="hero-active">—</b> · <span id="hero-utc">—</span> به وقت جهانی</div>
+          </section>
+
+          <section class="sec-search">
+            <div class="search-box" id="search-box">
+              <span class="s-ic" id="search-icon"></span>
+              <input type="text" id="search-input" placeholder="جستجو در گوگل یا ابزارهای ایران بروکر…" autocomplete="off" spellcheck="false" />
+              <span class="scope-label" id="scope-label">گوگل</span>
+              <button class="search-go" id="search-go" title="جستجو" aria-label="جستجو"></button>
+            </div>
+            <ul class="suggest" id="suggest" hidden></ul>
+            <div class="engines" id="engines"></div>
+            <div class="sparkles-strip" aria-hidden="true">
+              <div class="sp-glow-a"></div>
+              <div class="sp-glow-b"></div>
+              <canvas id="sp-canvas"></canvas>
+            </div>
+          </section>
+        </div>
+
+        <!-- ░░ HUB: left box — calendar + weather (visual left in RTL) ░░ -->
+        <aside class="hub-aside hub-aside-cal" id="hub-cal-box"></aside>
 
       </div><!-- /hero-search-wrap -->
 
@@ -126,6 +135,14 @@
 
       </div>
 
+      <!-- ===== HUB: QUICK ACCESS (below hero, hub mode only) ===== -->
+      <section id="hub-quick" class="hub-quick">
+        <div class="hub-quick-head">
+          <h2>دسترسی سریع</h2>
+          <span class="hint">میان‌برهای دلخواه خودت را اضافه کن</span>
+        </div>
+        <div class="hub-quick-grid" id="hub-quick-grid"></div>
+      </section>
 
     </div>
 
@@ -269,6 +286,27 @@
                     <div class="lcp-bar" style="width:50%"></div>
                   </div>
                   <span>دیتا محور</span>
+                </button>
+                <button class="lc" data-layout="hub">
+                  <div class="lc-preview lcp-hub">
+                    <div class="lcp-hub-col">
+                      <div class="lcp-hub-cell" style="height:18px;opacity:.5"></div>
+                      <div class="lcp-hub-cell" style="height:5px"></div>
+                      <div class="lcp-hub-cell" style="height:5px"></div>
+                      <div class="lcp-hub-cell" style="height:5px"></div>
+                    </div>
+                    <div class="lcp-hub-col">
+                      <div class="lcp-hub-cell" style="height:5px;opacity:.6"></div>
+                      <div class="lcp-hub-cell" style="height:5px"></div>
+                      <div class="lcp-hub-cell" style="height:5px"></div>
+                      <div class="lcp-hub-cell" style="height:5px"></div>
+                    </div>
+                    <div class="lcp-hub-col">
+                      <div class="lcp-hub-cell" style="height:10px;opacity:.5"></div>
+                      <div class="lcp-hub-cell" style="height:10px"></div>
+                    </div>
+                  </div>
+                  <span>هاب</span>
                 </button>
               </div>
             </div>
@@ -601,8 +639,51 @@
     </div><!-- /focus-container -->
   </div>
 
+  <!-- ===== QUICK-ACCESS ADD MODAL (hub mode) ===== -->
+  <div id="hub-qa-modal" class="hub-modal-bg" hidden>
+    <div class="hub-modal">
+      <div class="hub-modal-head">
+        <span id="hub-qa-modal-title">میان‌بر جدید</span>
+        <button id="hub-qa-modal-x" class="hub-modal-x" aria-label="بستن">×</button>
+      </div>
+      <div class="hub-modal-body">
+        <div class="hub-qa-preview" id="hub-qa-preview">
+          <span class="hqa-prev-ic" id="hub-qa-prev-ic">+</span>
+        </div>
+
+        <label class="hub-modal-lbl" for="hub-qa-inp-url">آدرس سایت</label>
+        <input type="text" id="hub-qa-inp-url" class="hub-modal-inp" placeholder="example.com" autocomplete="off" inputmode="url" dir="ltr" />
+
+        <label class="hub-modal-lbl" for="hub-qa-inp-title">عنوان</label>
+        <input type="text" id="hub-qa-inp-title" class="hub-modal-inp" placeholder="نام میان‌بر" maxlength="22" autocomplete="off" />
+
+        <label class="hub-modal-lbl" for="hub-qa-inp-icon">ایموجی (اختیاری)</label>
+        <input type="text" id="hub-qa-inp-icon" class="hub-modal-inp hub-modal-inp-icon" placeholder="🌐" maxlength="2" autocomplete="off" />
+
+        <label class="hub-modal-lbl">رنگ کارت</label>
+        <div class="hub-qa-colors" id="hub-qa-colors"></div>
+      </div>
+      <div class="hub-modal-foot">
+        <button id="hub-qa-modal-cancel" class="hub-modal-cancel">انصراف</button>
+        <button id="hub-qa-modal-save"   class="hub-modal-save">افزودن</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== CALENDAR DAY-DETAIL MODAL (hub mode) ===== -->
+  <div id="hub-day-modal" class="hub-modal-bg" hidden>
+    <div class="hub-modal hub-day-modal">
+      <div class="hub-modal-head">
+        <span id="hub-day-title">—</span>
+        <button id="hub-day-modal-x" class="hub-modal-x" aria-label="بستن">×</button>
+      </div>
+      <div class="hub-modal-body" id="hub-day-body"></div>
+    </div>
+  </div>
+
   <script src="newtab.js"></script>
   <script src="js/focus.js"></script>
   <script src="js/journal.js"></script>
+  <script src="js/hub.js"></script>
 </body>
 </html>
