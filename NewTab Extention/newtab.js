@@ -105,14 +105,55 @@
     { title: 'شاخص بورس تهران با رشد همراه شد', cat: 'بورس', catColor: '#1fc16b', time: '۱۱ ساعت پیش', url: 'https://iranbroker.net/news/', img: null },
     { title: 'بررسی وضعیت بروکرهای فعال برای ایرانیان', cat: 'بروکر', catColor: '#35d0c0', time: '۱ روز پیش', url: 'https://iranbroker.net/news/', img: null }
   ];
-  const COMMUNITY = [
-    { name: 'علی رضایی', initial: 'ع', color: '#6f9bf3', time: '۱۵ دقیقه پیش', text: 'آیا کسی با IC Markets تجربه برداشت ریالی داشته؟ کارمزد تبدیل ارز چطوره؟', replies: 4 },
-    { name: 'مریم احمدی', initial: 'م', color: '#f6679f', time: '۴۲ دقیقه پیش', text: 'سیگنال‌های تحلیل طلا برای این هفته خیلی دقیق بودن. ممنون از تیم آموزشی.', replies: 7 },
-    { name: 'کاوه نوری', initial: 'ک', color: '#a78bfa', time: '۱ ساعت پیش', text: 'پراپ فرم FTMO هنوز برای ایرانیان قابل استفاده‌ست؟ یا باید VPN خاصی داشته باشیم؟', replies: 12 },
-    { name: 'سارا محمدی', initial: 'س', color: '#1fc16b', time: '۲ ساعت پیش', text: 'اسپرد EUR/USD در بروکر Exness به نظرم تو اوقات پرنوسان خیلی بالا میره. کسی جایگزین بهتری سراغ داره؟', replies: 9 },
-    { name: 'رضا کریمی', initial: 'ر', color: '#f6a723', time: '۳ ساعت پیش', text: 'آموزش پرایس اکشن رو از سایت دنبال کردم. خیلی کامل و رایگانه. پیشنهاد می‌کنم.', replies: 3 },
-    { name: 'نیما صادقی', initial: 'ن', color: '#35d0c0', time: '۵ ساعت پیش', text: 'برای تبدیل تتر به تومان از کدوم صرافی امن‌تر استفاده می‌کنید؟ نوبیتکس یا بیت‌پین؟', replies: 18 }
-  ];
+  const COMM_CATS = {
+    2:  { name: 'تازه‌ها',           color: '#808281', url: 'https://forum.iranbroker.net/c/2' },
+    4:  { name: 'گفتگوی آزاد',       color: '#25AAE2', url: 'https://forum.iranbroker.net/c/lobby/4' },
+    5:  { name: 'بروکرهای فارکس',   color: '#3AB54A', url: 'https://forum.iranbroker.net/c/brokers/5' },
+    6:  { name: 'صرافی‌های ایرانی', color: '#92278F', url: 'https://forum.iranbroker.net/c/iran-exchanges/6' },
+    7:  { name: 'پراپ فرم‌ها',       color: '#F1592A', url: 'https://forum.iranbroker.net/c/props/7' },
+    8:  { name: 'پلتفرم‌های طلا',    color: '#C9A000', url: 'https://forum.iranbroker.net/c/gold-platforms/8' },
+    9:  { name: 'تحلیل و سیگنال',   color: '#0088CC', url: 'https://forum.iranbroker.net/c/analysis/9' },
+    12: { name: 'صرافی‌های خارجی',  color: '#1fc16b', url: 'https://forum.iranbroker.net/c/global-exchanges/12' },
+    13: { name: 'بورس ایران',        color: '#6f9bf3', url: 'https://forum.iranbroker.net/c/bourse/13' },
+    14: { name: 'دوره‌ها و اساتید',  color: '#B3B5B4', url: 'https://forum.iranbroker.net/c/14' },
+    16: { name: 'استراتژی‌ها',       color: '#F7941D', url: 'https://forum.iranbroker.net/c/trading-systems/16' },
+    17: { name: 'ابزارها',           color: '#12A89D', url: 'https://forum.iranbroker.net/c/tools/17' },
+    18: { name: 'روان‌شناسی',        color: '#BF1E2E', url: 'https://forum.iranbroker.net/c/psychology/18' }
+  };
+  const COMMUNITY = {
+    hot: [
+      { title: 'فقط معاملات و تحلیل انس جهانی طلا – xauusd', cat: 'تحلیل و سیگنال', catColor: '#0088CC', time: '...', replies: '11.1ه', views: '21.2ه', url: 'https://forum.iranbroker.net/t/xauusd/4063' },
+      { title: 'تحلیل شاخص کل و انواع صندوق‌های بورس ایران', cat: 'تحلیل و سیگنال', catColor: '#0088CC', time: '...', replies: '1.7ه', views: '5.1ه', url: 'https://forum.iranbroker.net/t/topic/10043' },
+      { title: 'به کامیونیتی ایران بروکر خوش آمدید!', cat: 'گفتگوی آزاد', catColor: '#25AAE2', time: '...', replies: '74', views: '6.9ه', url: 'https://forum.iranbroker.net/t/topic/5' },
+      { title: 'چالش پاس کردن اکانت ۱۰ کا سرمایه‌گذار برتر', cat: 'پراپ فرم‌ها', catColor: '#F1592A', time: '...', replies: '314', views: '4ه', url: 'https://forum.iranbroker.net/t/topic/12777' },
+      { title: 'نقاشی واسه کامیونیتی. خسته شدی بیا اینجا ذهنتو آروم کن', cat: 'گفتگوی آزاد', catColor: '#25AAE2', time: '...', replies: '315', views: '851', url: 'https://forum.iranbroker.net/t/topic/13424' },
+      { title: 'آشنایی با سیستم‌های Algorithmic Order Tracking در معاملات FX', cat: 'استراتژی‌ها', catColor: '#F7941D', time: '...', replies: '155', views: '1.9ه', url: 'https://forum.iranbroker.net/t/algorithmic-order-tracking-fx/2907' }
+    ],
+    latest: [
+      { title: 'معرفی آیرا؛ هوش مصنوعی کامیونیتی ایران بروکر', cat: 'تازه‌ها', catColor: '#808281', time: '...', replies: '4', views: '136', url: 'https://forum.iranbroker.net/t/topic/14739' },
+      { title: 'تمیز کردن تتر و گم کردن رد پول در کریپتو', cat: 'صرافی‌های خارجی', catColor: '#1fc16b', time: '...', replies: '0', views: '17', url: 'https://forum.iranbroker.net/t/topic/14839' },
+      { title: 'ماجرای کلاهبرداری علیرضا امامی نژاد', cat: 'گفتگوی آزاد', catColor: '#25AAE2', time: '...', replies: '35', views: '226', url: 'https://forum.iranbroker.net/t/topic/14753' },
+      { title: 'آشنایی با Algorithmic Order Tracking در معاملات FX', cat: 'استراتژی‌ها', catColor: '#F7941D', time: '...', replies: '155', views: '1.9ه', url: 'https://forum.iranbroker.net/t/algorithmic-order-tracking-fx/2907' },
+      { title: 'نقاشی واسه کامیونیتی. خسته شدی بیا اینجا ذهنتو آروم کن', cat: 'گفتگوی آزاد', catColor: '#25AAE2', time: '...', replies: '315', views: '851', url: 'https://forum.iranbroker.net/t/topic/13424' },
+      { title: 'بررسی پراپ فرصت‌های رابین سود از همه جهات', cat: 'پراپ فرم‌ها', catColor: '#F1592A', time: '...', replies: '73', views: '176', url: 'https://forum.iranbroker.net/t/topic/14333' }
+    ]
+  };
+  let commTabState = 'hot';
+  function commFmtNum(n) {
+    n = parseInt(n) || 0;
+    if (n >= 10000) return (n / 1000).toFixed(1).replace(/\.0$/, '') + 'ه';
+    if (n >= 1000) return (n / 1000).toFixed(1).replace(/\.0$/, '') + 'ه';
+    return String(n);
+  }
+  function commRelTime(iso) {
+    const s = Math.floor((Date.now() - new Date(iso)) / 1000);
+    if (s < 120) return 'همین الان';
+    if (s < 3600) return Math.floor(s / 60) + ' دقیقه پیش';
+    if (s < 86400) return Math.floor(s / 3600) + ' ساعت پیش';
+    if (s < 86400 * 30) return Math.floor(s / 86400) + ' روز پیش';
+    if (s < 86400 * 365) return Math.floor(s / 86400 / 30) + ' ماه پیش';
+    return Math.floor(s / 86400 / 365) + ' سال پیش';
+  }
   const CAT_COLORS = {
     'فارکس': '#6f9bf3', 'طلا': '#f6a723', 'کریپتو': '#a78bfa',
     'نفت': '#fb3748', 'بورس': '#1fc16b', 'بروکر': '#35d0c0',
@@ -230,24 +271,62 @@
       return '<a href="' + q.url + '"><span class="ql-dot"></span>' + q.label + '</a>';
     }).join('');
   }
-  function renderCommunity() {
+  function renderCommunity(items) {
     const el = document.getElementById('sb-comm-list');
     if (!el) return;
-    el.innerHTML = COMMUNITY.map(function (c) {
-      return '<a class="sb-item" href="https://iranbroker.net/" target="_blank" rel="noopener">' +
-        '<div class="sb-comm-row">' +
-          '<div class="sb-avatar" style="background:' + c.color + '">' + c.initial + '</div>' +
-          '<div class="sb-comm-body">' +
-            '<div style="display:flex;align-items:center;justify-content:space-between;gap:4px">' +
-              '<span class="sb-comm-user">' + c.name + '</span>' +
-              '<span class="sb-time">' + c.time + '</span>' +
-            '</div>' +
-            '<div class="sb-comm-text">' + c.text + '</div>' +
-            '<div class="sb-comm-meta"><span>💬 ' + c.replies + ' پاسخ</span></div>' +
-          '</div>' +
+    if (commTabState === 'cats') {
+      const cats = Object.values(COMM_CATS);
+      el.innerHTML = '<div class="comm-cats-grid">' + cats.map(function (c) {
+        return '<a class="comm-cat-chip" href="' + c.url + '" target="_blank" rel="noopener" style="background:' + hexA(c.color, 0.14) + ';color:' + c.color + '">' + c.name + '</a>';
+      }).join('') + '</div>';
+      return;
+    }
+    const list = items || COMMUNITY[commTabState] || [];
+    el.innerHTML = list.map(function (t) {
+      return '<a class="ct-row" href="' + t.url + '" target="_blank" rel="noopener">' +
+        '<div class="ct-title">' + t.title + '</div>' +
+        '<div class="ct-foot">' +
+          '<span class="ct-badge" style="background:' + hexA(t.catColor, 0.14) + ';color:' + t.catColor + '">' + t.cat + '</span>' +
+          '<span class="ct-stats">' +
+            '<span>💬 ' + t.replies + '</span>' +
+            '<span class="ct-sep">·</span>' +
+            '<span>' + t.time + '</span>' +
+          '</span>' +
         '</div>' +
       '</a>';
     }).join('');
+  }
+
+  function loadCommunityTab(tab) {
+    commTabState = tab;
+    const tabBar = document.getElementById('comm-tabs');
+    if (tabBar) {
+      Array.prototype.forEach.call(tabBar.querySelectorAll('.comm-tab'), function (t) {
+        t.classList.toggle('active', t.getAttribute('data-tab') === tab);
+      });
+    }
+    if (tab === 'cats') { renderCommunity(); return; }
+    const el = document.getElementById('sb-comm-list');
+    if (el) el.innerHTML = '<div class="ct-loading">در حال بارگذاری…</div>';
+    const endpoint = 'https://forum.iranbroker.net/' + (tab === 'latest' ? 'latest' : 'hot') + '.json';
+    fetch(endpoint)
+      .then(function (r) { return r.json(); })
+      .then(function (data) {
+        const topics = ((data.topic_list || {}).topics || []).slice(0, 8).map(function (t) {
+          const cat = COMM_CATS[t.category_id] || { name: 'سایر', color: '#888888' };
+          return {
+            title: t.title,
+            cat: cat.name,
+            catColor: cat.color,
+            time: commRelTime(t.last_posted_at),
+            replies: commFmtNum(Math.max(0, (t.posts_count || 1) - 1)),
+            views: commFmtNum(t.views || 0),
+            url: 'https://forum.iranbroker.net/t/' + t.slug + '/' + t.id
+          };
+        });
+        renderCommunity(topics);
+      })
+      .catch(function () { renderCommunity(); });
   }
 
   function renderNews(items) {
@@ -355,6 +434,14 @@
     }
     if (collapseBtn) collapseBtn.addEventListener('click', toggle);
     if (expandTab) expandTab.addEventListener('click', toggle);
+    const tabBar = document.getElementById('comm-tabs');
+    if (tabBar) {
+      tabBar.addEventListener('click', function (e) {
+        const btn = e.target.closest('[data-tab]');
+        if (!btn) return;
+        loadCommunityTab(btn.getAttribute('data-tab'));
+      });
+    }
   }
 
   function renderEngines() {
@@ -922,9 +1009,9 @@
     renderCrypto();
     applyShowCrypto();
     renderTime();
-    renderCommunity();
     loadNews();
     initSidebars();
+    loadCommunityTab('hot');
 
     // top bar
     els.themeBtn.addEventListener('click', toggleTheme);
