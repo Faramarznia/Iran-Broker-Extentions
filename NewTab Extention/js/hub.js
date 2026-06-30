@@ -579,6 +579,14 @@
     var cp=str.codePointAt?str.codePointAt(0):str.charCodeAt(0);
     return cp>0x2000 ? String.fromCodePoint(cp) : str.trim().charAt(0).toUpperCase();
   }
+  function getDomain(url){
+    try{ return String(url).replace(/^https?:\/\//i,'').replace(/^www\./i,'').split(/[\/?#]/)[0]; }
+    catch(e){ return ''; }
+  }
+  function faviconUrl(url){
+    var d=getDomain(url);
+    return d ? 'https://www.google.com/s2/favicons?sz=64&domain='+encodeURIComponent(d) : '';
+  }
 
   function renderQuick(){
     var grid=$('hub-quick-grid'); if(!grid) return;
@@ -593,10 +601,15 @@
           '</a>';
 
     DB.quick.forEach(function(q,idx){
-      var icon=q.icon||getInitial(q.title);
-      html+='<div class="hqa-tile" style="--qac:'+(q.color||'#185adb')+'">'+
+      var col=q.color||'#185adb';
+      /* user emoji wins; otherwise the site favicon over a letter fallback */
+      var inner = q.icon
+        ? '<span class="hqa-ic-txt">'+esc(q.icon)+'</span>'
+        : '<span class="hqa-ic-txt">'+esc(getInitial(q.title))+'</span>'+
+          '<img class="hqa-fav" alt="" src="'+escA(faviconUrl(q.url))+'">';
+      html+='<div class="hqa-tile" style="--qac:'+col+'">'+
               '<a class="hqa-link" href="'+escA(q.url)+'" target="_blank" rel="noopener" title="'+escA(q.title)+'">'+
-                '<span class="hqa-ic">'+esc(icon)+'</span>'+
+                '<span class="hqa-ic'+(q.icon?'':' hqa-ic-fav')+'">'+inner+'</span>'+
                 '<span class="hqa-name">'+esc(q.title)+'</span>'+
               '</a>'+
               '<button class="hqa-del" data-idx="'+idx+'" aria-label="حذف">'+
@@ -622,6 +635,13 @@
     }
 
     grid.innerHTML=html;
+
+    /* favicon: reveal on load, fall back to the letter on error (CSP blocks
+       inline handlers, so wire them here) */
+    Array.prototype.forEach.call(grid.querySelectorAll('.hqa-fav'),function(img){
+      img.addEventListener('load', function(){ img.classList.add('hqa-fav-on'); });
+      img.addEventListener('error', function(){ img.remove(); });
+    });
 
     var addBtn=$('hub-qa-add');
     if(addBtn) addBtn.addEventListener('click', openQaModal);
@@ -658,7 +678,23 @@
     prev.style.setProperty('--qac', qaEditColor);
     var emoji=($('hub-qa-inp-icon').value||'').trim();
     var title=($('hub-qa-inp-title').value||'').trim();
-    ic.textContent = emoji || (title?getInitial(title):'+');
+    var url=($('hub-qa-inp-url').value||'').trim();
+    if(emoji){
+      ic.classList.remove('hqa-ic-fav');
+      ic.innerHTML = esc(emoji);
+    } else if(url && getDomain(url)){
+      ic.classList.add('hqa-ic-fav');
+      ic.innerHTML = '<span class="hqa-ic-txt">'+esc(title?getInitial(title):'★')+'</span>'+
+                     '<img class="hqa-fav" alt="" src="'+escA(faviconUrl(url))+'">';
+      var img=ic.querySelector('.hqa-fav');
+      if(img){
+        img.addEventListener('load', function(){ img.classList.add('hqa-fav-on'); });
+        img.addEventListener('error', function(){ img.remove(); });
+      }
+    } else {
+      ic.classList.remove('hqa-ic-fav');
+      ic.innerHTML = esc(title?getInitial(title):'+');
+    }
   }
 
   function openQaModal(){
@@ -732,7 +768,10 @@
     if(qaX) qaX.addEventListener('click', closeQaModal);
     if(qaModal) qaModal.addEventListener('click',function(e){ if(e.target===qaModal) closeQaModal(); });
     var qaUrl=$('hub-qa-inp-url'), qaTitle=$('hub-qa-inp-title'), qaIcon=$('hub-qa-inp-icon');
-    if(qaUrl){ qaUrl.addEventListener('keydown',function(e){ if(e.key==='Enter') saveQa(); }); }
+    if(qaUrl){
+      qaUrl.addEventListener('keydown',function(e){ if(e.key==='Enter') saveQa(); });
+      qaUrl.addEventListener('input', updateQaPreview);
+    }
     if(qaTitle) qaTitle.addEventListener('input', updateQaPreview);
     if(qaIcon) qaIcon.addEventListener('input', updateQaPreview);
 
