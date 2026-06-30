@@ -144,6 +144,9 @@
     var box=$('hub-cal-box');
     if(!box) return;
     box.innerHTML =
+      /* weather on top */
+      '<div class="hub-card hweather" id="hub-weather"></div>' +
+      /* calendar below */
       '<div class="hub-card hcal">' +
         '<div class="hcal-head">' +
           '<button id="hub-cal-prev" class="hcal-nav" aria-label="ماه قبل">' +
@@ -163,8 +166,7 @@
           '<span class="hcl-item"><i class="hcl-dot" style="background:#f6a723"></i>مناسبت</span>' +
           '<span class="hcl-item"><i class="hcl-bar"></i>رویداد اقتصادی</span>' +
         '</div>' +
-      '</div>' +
-      '<div class="hub-card hweather" id="hub-weather"></div>';
+      '</div>';
 
     $('hub-cal-prev').addEventListener('click', prevMonth);
     $('hub-cal-next').addEventListener('click', nextMonth);
@@ -610,8 +612,8 @@
               '<span class="hqa-add-lbl">افزودن میان‌بر</span>'+
             '</button>';
       filled++;
-      /* ghost placeholders → round the row up to a full grid (min 6 / next 6) */
-      var target = filled<=6 ? 6 : Math.min(12, Math.ceil(filled/6)*6);
+      /* ghost placeholders → fill the 3-col grid (min 9 = 3×3, up to 12) */
+      var target = filled<=9 ? 9 : Math.min(12, Math.ceil(filled/3)*3);
       for(var g=filled; g<target; g++){
         html+='<button class="hqa-tile hqa-ghost" data-add="1" aria-label="افزودن میان‌بر">'+
                 '<span class="hqa-ghost-plus">+</span>'+

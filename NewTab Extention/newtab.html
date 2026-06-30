@@ -44,12 +44,14 @@
       </header>
 
       <!-- ===== HERO + SEARCH ===== -->
+      <!-- Hub layout (areas):  [cal | hero | notes]  /  [cal | quick | notes]
+           cal = weather+calendar (right, RTL) · notes = tasks (left, RTL) -->
       <div class="hero-search-wrap">
 
-        <!-- ░░ HUB: right box — daily tasks (visual right in RTL) ░░ -->
+        <!-- ░░ HUB area "notes": daily tasks (left in RTL) ░░ -->
         <aside class="hub-aside hub-aside-tasks" id="hub-tasks-box"></aside>
 
-        <!-- center: hero + search (display:contents outside hub mode) -->
+        <!-- center top: hero + search (display:contents outside hub mode) -->
         <div class="hero-center">
           <section class="sec-hero">
             <div class="hero-date" id="hero-date">—</div>
@@ -75,7 +77,16 @@
           </section>
         </div>
 
-        <!-- ░░ HUB: left box — calendar + weather (visual left in RTL) ░░ -->
+        <!-- center bottom: quick-access grid (3-col, hub mode only) -->
+        <section id="hub-quick" class="hub-quick">
+          <div class="hub-quick-head">
+            <h2>دسترسی سریع</h2>
+            <span class="hint">میان‌برهای دلخواه خودت را اضافه کن</span>
+          </div>
+          <div class="hub-quick-grid" id="hub-quick-grid"></div>
+        </section>
+
+        <!-- ░░ HUB area "cal": weather (top) + calendar (bottom), right in RTL ░░ -->
         <aside class="hub-aside hub-aside-cal" id="hub-cal-box"></aside>
 
       </div><!-- /hero-search-wrap -->
@@ -134,15 +145,6 @@
         </section>
 
       </div>
-
-      <!-- ===== HUB: QUICK ACCESS (below hero, hub mode only) ===== -->
-      <section id="hub-quick" class="hub-quick">
-        <div class="hub-quick-head">
-          <h2>دسترسی سریع</h2>
-          <span class="hint">میان‌برهای دلخواه خودت را اضافه کن</span>
-        </div>
-        <div class="hub-quick-grid" id="hub-quick-grid"></div>
-      </section>
 
     </div>
 
@@ -685,5 +687,6 @@
   <script src="js/focus.js"></script>
   <script src="js/journal.js"></script>
   <script src="js/hub.js"></script>
+  <script src="js/tour.js"></script>
 </body>
 </html>
