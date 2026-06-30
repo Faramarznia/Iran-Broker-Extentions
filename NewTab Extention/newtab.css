@@ -5910,11 +5910,9 @@ body[data-layout="hub"] .sec-search { max-width: 560px }
 /* ═══════════════════════════════════════
    LEFT ASIDE — calendar + weather
 ═══════════════════════════════════════ */
-.hub-aside-cal {
-  display: flex;
-  flex-direction: column;
-  gap: 16px
-}
+/* gap only — display/flex-direction come from `body[data-layout="hub"] .hub-aside`
+   so this stays hidden (.hub-aside{display:none}) in simple/data modes */
+body[data-layout="hub"] .hub-aside-cal { gap: 16px }
 
 /* ── Calendar ── */
 .hcal { padding: 0 }
