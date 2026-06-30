@@ -5871,22 +5871,26 @@ body[data-layout="hub"] .page-col {
    hero+quick block in the space under the topbar on tall screens. */
 body[data-layout="hub"] .hero-search-wrap {
   display: grid;
-  grid-template-columns: minmax(300px, 340px) minmax(0, 1fr) minmax(300px, 340px);
-  align-items: start;
+  grid-template-columns: minmax(300px, 330px) minmax(0, 1fr) minmax(300px, 330px);
+  align-items: stretch;          /* equal-height columns → balanced dashboard */
   gap: 22px;
   width: 100%;
-  max-width: 1240px;
+  max-width: 1200px;
   margin: auto auto 0;
   padding: 0
 }
-body[data-layout="hub"] .hub-quick { margin: 34px auto auto }
+body[data-layout="hub"] .hub-quick { margin: 30px auto auto }
+
+/* side columns become flex so their card fills the row height */
+body[data-layout="hub"] .hub-aside { display: flex; flex-direction: column }
+body[data-layout="hub"] .hub-aside-tasks .htasks { flex: 1; max-height: none }
+
 body[data-layout="hub"] .hero-center {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-start;
-  gap: 26px;
-  padding-top: 18px;
+  justify-content: center;       /* vertically centre clock+search in the column */
+  gap: 24px;
   min-width: 0
 }
 /* slightly smaller hero clock so it sits between the boxes nicely */
@@ -6229,6 +6233,8 @@ body[data-layout="hub"] .sec-search { max-width: 560px }
 
 .htask-list {
   flex: 1;
+  display: flex;
+  flex-direction: column;
   overflow-y: auto;
   padding: 6px 8px;
   min-height: 120px
@@ -6290,7 +6296,8 @@ body[data-layout="hub"] .sec-search { max-width: 560px }
 .htask-empty {
   display: flex; flex-direction: column; align-items: center; justify-content: center;
   gap: 6px;
-  padding: 36px 18px;
+  margin: auto 0;            /* centre vertically in the (taller) list area */
+  padding: 28px 18px;
   text-align: center
 }
 .htask-empty-ic { font-size: 30px; margin-bottom: 2px }
@@ -6669,12 +6676,13 @@ body[data-layout="hub"] .sec-search { max-width: 560px }
 ═══════════════════════════════════════ */
 @media (max-width: 1080px) {
   body[data-layout="hub"] .hero-search-wrap {
-    grid-template-columns: minmax(270px, 1fr) minmax(290px, 1fr);
-    grid-template-areas: "tasks cal" "hero hero"
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-areas: "hero hero" "cal tasks";
+    align-items: start
   }
   body[data-layout="hub"] .hub-aside-tasks { grid-area: tasks }
   body[data-layout="hub"] .hub-aside-cal { grid-area: cal }
-  body[data-layout="hub"] .hero-center { grid-area: hero; order: -1 }
+  body[data-layout="hub"] .hero-center { grid-area: hero; padding: 8px 0 4px }
   .hub-quick-grid { grid-template-columns: repeat(4, 1fr) }
 }
 
