@@ -30,8 +30,10 @@
     newspaper: '<path fill="currentColor" d="M20 3v16a2 2 0 0 1-2 2H5a3 3 0 0 1-3-3V5h2v13a1 1 0 0 0 2 0V3h14zM7 7v6h8V7H7zm2 2h4v2H9V9zm-2 6h8v2H7v-2z"/>',
     graduation: '<path fill="currentColor" d="M12 2l11 6-11 6L3.545 9.385 3 9.09V14H1V8l11-6zm6.16 9.674L19 12v3.5c0 1.933-3.134 3.5-7 3.5s-7-1.567-7-3.5V12l.84-.326L12 14.276l6.16-2.602z"/>',
     link: '<path fill="currentColor" d="M18.364 15.536L16.95 14.12l1.414-1.414a5 5 0 1 0-7.071-7.071L9.879 7.05 8.464 5.636 9.88 4.222a7 7 0 0 1 9.9 9.9l-1.415 1.414zm-2.828 2.828l-1.415 1.414a7 7 0 0 1-9.9-9.9l1.415-1.414L7.05 9.88l-1.414 1.414a5 5 0 1 0 7.071 7.071l1.414-1.414 1.415 1.414zm-.708-10.607l1.415 1.415-7.072 7.07-1.414-1.414 7.071-7.07z"/>',
-    pencil: '<path fill="currentColor" d="M15.728 9.686l-1.414-1.414L5 17.586V19h1.414l9.314-9.314zm1.414-1.414l1.414-1.414-1.414-1.414-1.414 1.414 1.414 1.414zM7.242 21H3v-4.243L16.435 3.322a1 1 0 0 1 1.414 0l2.829 2.829a1 1 0 0 1 0 1.414L7.243 21z"/>',
-    grip: '<g fill="currentColor"><circle cx="9" cy="5" r="1.5"/><circle cx="15" cy="5" r="1.5"/><circle cx="9" cy="12" r="1.5"/><circle cx="15" cy="12" r="1.5"/><circle cx="9" cy="19" r="1.5"/><circle cx="15" cy="19" r="1.5"/></g>'
+    autoTheme: '<circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="2"/><path fill="currentColor" d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10V2z"/>',
+    glassTheme: '<path fill="currentColor" d="M12 2l2 8 8 2-8 2-2 8-2-8-8-2 8-2z"/>',
+    upload: '<path fill="currentColor" d="M4 16v1a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3v-1m-4-8-4-4m0 0-4 4m4-4v12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>',
+    focus: '<circle cx="12" cy="12" r="8.5" stroke="currentColor" stroke-width="1.8" fill="none"/><line x1="12" y1="2" x2="12" y2="5.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><line x1="12" y1="18.5" x2="12" y2="22" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><line x1="2" y1="12" x2="5.5" y2="12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><line x1="18.5" y1="12" x2="22" y2="12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><circle cx="12" cy="12" r="2.5" fill="currentColor"/>'
   };
   function svg(name) {
     return '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">' + (ICONS[name] || '') + '</svg>';
@@ -66,11 +68,23 @@
     { tag: 'آموزش', text: 'سودآوری مداوم در فارکس یک‌شبه به‌دست نمی‌آید؛ نیاز به سال‌ها تمرین، تجربه و پشتکار دارد.' }
   ];
   const SESSIONS = [
-    { name: 'سیدنی', open: 21, close: 6, c: '#35d0c0' },
-    { name: 'توکیو', open: 0, close: 9, c: '#a78bfa' },
-    { name: 'لندن', open: 7, close: 16, c: '#6f9bf3' },
-    { name: 'نیویورک', open: 12, close: 21, c: '#f6a723' }
+    { name: 'سیدنی', tz: 'Australia/Sydney', open: 21, close: 6, c: '#35d0c0' },
+    { name: 'توکیو', tz: 'Asia/Tokyo', open: 0, close: 9, c: '#a78bfa' },
+    { name: 'لندن', tz: 'Europe/London', open: 7, close: 16, c: '#6f9bf3' },
+    { name: 'نیویورک', tz: 'America/New_York', open: 12, close: 21, c: '#f6a723' }
   ];
+  const GALLERY = [
+    { label: 'ارزهای جهانی',    file: 'assets/gallery/bg1.jpg', gradient: 'linear-gradient(135deg,#8B6914,#C4901A,#7B4F12)' },
+    { label: 'دلار آمریکا',     file: 'assets/gallery/bg2.jpg', gradient: 'linear-gradient(135deg,#1a4d20,#2d7a38,#1a3d22)' },
+    { label: 'بیت‌کوین و اتر', file: 'assets/gallery/bg3.jpg', gradient: 'linear-gradient(135deg,#1a0a00,#4a2800,#1a0d00)' },
+    { label: 'کانتینرها',       file: 'assets/gallery/bg4.jpg', gradient: 'linear-gradient(135deg,#0a1a2e,#1a3a5c,#0d2040)' },
+    { label: 'صفحه معاملات',   file: 'assets/gallery/bg5.jpg', gradient: 'linear-gradient(135deg,#0a0a1e,#0d0d2e,#050514)' },
+    { label: 'هولد بیت‌کوین',  file: 'assets/gallery/bg6.jpg', gradient: 'linear-gradient(135deg,#1a0020,#3a0040,#200028)' },
+    { label: 'نمودار صعودی',   file: 'assets/gallery/bg7.jpg', gradient: 'linear-gradient(135deg,#001a0a,#003a14,#00200a)' },
+    { label: 'نمودار نزولی',   file: 'assets/gallery/bg8.jpg', gradient: 'linear-gradient(135deg,#1a0000,#3a0010,#200008)' }
+  ];
+  const THEME_CYCLE = ['dark', 'light', 'auto', 'glass'];
+  const THEME_ICONS = { dark: 'moon', light: 'sun', auto: 'autoTheme', glass: 'glassTheme' };
   const COIN_META = {
     bitcoin: { sym: 'BTC', name: 'بیت‌کوین' }, ethereum: { sym: 'ETH', name: 'اتریوم' }, tether: { sym: 'USDT', name: 'تتر' },
     solana: { sym: 'SOL', name: 'سولانا' }, ripple: { sym: 'XRP', name: 'ریپل' }, dogecoin: { sym: 'DOGE', name: 'دوج‌کوین' },
@@ -81,35 +95,107 @@
     { id: 'tether', price: 1.0, chg: 0.02 }, { id: 'solana', price: 198.3, chg: -1.12 },
     { id: 'ripple', price: 2.27, chg: 3.06 }, { id: 'dogecoin', price: 0.382, chg: -0.74 }
   ];
+  const NEWS_SEED = [
+    { title: 'بانک مرکزی اروپا نرخ بهره را ثابت نگه داشت', cat: 'فارکس', catColor: '#6f9bf3', time: '۳ ساعت پیش', url: 'https://iranbroker.net/news/', img: null },
+    { title: 'دلار آمریکا در برابر ین ژاپن تضعیف شد', cat: 'فارکس', catColor: '#6f9bf3', time: '۷ ساعت پیش', url: 'https://iranbroker.net/news/', img: null },
+    { title: 'بیت‌کوین از مقاومت ۷۰ هزار دلاری عبور کرد', cat: 'کریپتو', catColor: '#a78bfa', time: '۵ ساعت پیش', url: 'https://iranbroker.net/news/', img: null },
+    { title: 'اتریوم پس از به‌روزرسانی شبکه جهش کرد', cat: 'کریپتو', catColor: '#a78bfa', time: '۹ ساعت پیش', url: 'https://iranbroker.net/news/', img: null },
+    { title: 'تحلیل طلا: روند صعودی در بازارهای جهانی ادامه دارد', cat: 'طلا', catColor: '#f6a723', time: '۲ ساعت پیش', url: 'https://iranbroker.net/news/', img: null },
+    { title: 'قیمت نفت برنت زیر فشار کاهش تقاضای چین', cat: 'نفت', catColor: '#fb3748', time: '۶ ساعت پیش', url: 'https://iranbroker.net/news/', img: null },
+    { title: 'شاخص بورس تهران با رشد همراه شد', cat: 'بورس', catColor: '#1fc16b', time: '۱۱ ساعت پیش', url: 'https://iranbroker.net/news/', img: null },
+    { title: 'بررسی وضعیت بروکرهای فعال برای ایرانیان', cat: 'بروکر', catColor: '#35d0c0', time: '۱ روز پیش', url: 'https://iranbroker.net/news/', img: null }
+  ];
+  const COMM_CATS = {
+    2:  { name: 'تازه‌ها',           color: '#808281', url: 'https://forum.iranbroker.net/c/2' },
+    4:  { name: 'گفتگوی آزاد',       color: '#25AAE2', url: 'https://forum.iranbroker.net/c/lobby/4' },
+    5:  { name: 'بروکرهای فارکس',   color: '#3AB54A', url: 'https://forum.iranbroker.net/c/brokers/5' },
+    6:  { name: 'صرافی‌های ایرانی', color: '#92278F', url: 'https://forum.iranbroker.net/c/iran-exchanges/6' },
+    7:  { name: 'پراپ فرم‌ها',       color: '#F1592A', url: 'https://forum.iranbroker.net/c/props/7' },
+    8:  { name: 'پلتفرم‌های طلا',    color: '#C9A000', url: 'https://forum.iranbroker.net/c/gold-platforms/8' },
+    9:  { name: 'تحلیل و سیگنال',   color: '#0088CC', url: 'https://forum.iranbroker.net/c/analysis/9' },
+    12: { name: 'صرافی‌های خارجی',  color: '#1fc16b', url: 'https://forum.iranbroker.net/c/global-exchanges/12' },
+    13: { name: 'بورس ایران',        color: '#6f9bf3', url: 'https://forum.iranbroker.net/c/bourse/13' },
+    14: { name: 'دوره‌ها و اساتید',  color: '#B3B5B4', url: 'https://forum.iranbroker.net/c/14' },
+    16: { name: 'استراتژی‌ها',       color: '#F7941D', url: 'https://forum.iranbroker.net/c/trading-systems/16' },
+    17: { name: 'ابزارها',           color: '#12A89D', url: 'https://forum.iranbroker.net/c/tools/17' },
+    18: { name: 'روان‌شناسی',        color: '#BF1E2E', url: 'https://forum.iranbroker.net/c/psychology/18' }
+  };
+  const COMMUNITY = {
+    hot: [
+      { title: 'فقط معاملات و تحلیل انس جهانی طلا – xauusd', cat: 'تحلیل و سیگنال', catColor: '#0088CC', time: '...', replies: '11.1ه', views: '21.2ه', url: 'https://forum.iranbroker.net/t/xauusd/4063' },
+      { title: 'تحلیل شاخص کل و انواع صندوق‌های بورس ایران', cat: 'تحلیل و سیگنال', catColor: '#0088CC', time: '...', replies: '1.7ه', views: '5.1ه', url: 'https://forum.iranbroker.net/t/topic/10043' },
+      { title: 'به کامیونیتی ایران بروکر خوش آمدید!', cat: 'گفتگوی آزاد', catColor: '#25AAE2', time: '...', replies: '74', views: '6.9ه', url: 'https://forum.iranbroker.net/t/topic/5' },
+      { title: 'چالش پاس کردن اکانت ۱۰ کا سرمایه‌گذار برتر', cat: 'پراپ فرم‌ها', catColor: '#F1592A', time: '...', replies: '314', views: '4ه', url: 'https://forum.iranbroker.net/t/topic/12777' },
+      { title: 'نقاشی واسه کامیونیتی. خسته شدی بیا اینجا ذهنتو آروم کن', cat: 'گفتگوی آزاد', catColor: '#25AAE2', time: '...', replies: '315', views: '851', url: 'https://forum.iranbroker.net/t/topic/13424' },
+      { title: 'آشنایی با سیستم‌های Algorithmic Order Tracking در معاملات FX', cat: 'استراتژی‌ها', catColor: '#F7941D', time: '...', replies: '155', views: '1.9ه', url: 'https://forum.iranbroker.net/t/algorithmic-order-tracking-fx/2907' }
+    ],
+    latest: [
+      { title: 'معرفی آیرا؛ هوش مصنوعی کامیونیتی ایران بروکر', cat: 'تازه‌ها', catColor: '#808281', time: '...', replies: '4', views: '136', url: 'https://forum.iranbroker.net/t/topic/14739' },
+      { title: 'تمیز کردن تتر و گم کردن رد پول در کریپتو', cat: 'صرافی‌های خارجی', catColor: '#1fc16b', time: '...', replies: '0', views: '17', url: 'https://forum.iranbroker.net/t/topic/14839' },
+      { title: 'ماجرای کلاهبرداری علیرضا امامی نژاد', cat: 'گفتگوی آزاد', catColor: '#25AAE2', time: '...', replies: '35', views: '226', url: 'https://forum.iranbroker.net/t/topic/14753' },
+      { title: 'آشنایی با Algorithmic Order Tracking در معاملات FX', cat: 'استراتژی‌ها', catColor: '#F7941D', time: '...', replies: '155', views: '1.9ه', url: 'https://forum.iranbroker.net/t/algorithmic-order-tracking-fx/2907' },
+      { title: 'نقاشی واسه کامیونیتی. خسته شدی بیا اینجا ذهنتو آروم کن', cat: 'گفتگوی آزاد', catColor: '#25AAE2', time: '...', replies: '315', views: '851', url: 'https://forum.iranbroker.net/t/topic/13424' },
+      { title: 'بررسی پراپ فرصت‌های رابین سود از همه جهات', cat: 'پراپ فرم‌ها', catColor: '#F1592A', time: '...', replies: '73', views: '176', url: 'https://forum.iranbroker.net/t/topic/14333' }
+    ]
+  };
+  let commTabState = 'hot';
+  function commFmtNum(n) {
+    n = parseInt(n) || 0;
+    if (n >= 10000) return (n / 1000).toFixed(1).replace(/\.0$/, '') + 'ه';
+    if (n >= 1000) return (n / 1000).toFixed(1).replace(/\.0$/, '') + 'ه';
+    return String(n);
+  }
+  function commRelTime(iso) {
+    const s = Math.floor((Date.now() - new Date(iso)) / 1000);
+    if (s < 120) return 'همین الان';
+    if (s < 3600) return Math.floor(s / 60) + ' دقیقه پیش';
+    if (s < 86400) return Math.floor(s / 3600) + ' ساعت پیش';
+    if (s < 86400 * 30) return Math.floor(s / 86400) + ' روز پیش';
+    if (s < 86400 * 365) return Math.floor(s / 86400 / 30) + ' ماه پیش';
+    return Math.floor(s / 86400 / 365) + ' سال پیش';
+  }
+  const CAT_COLORS = {
+    'فارکس': '#6f9bf3', 'طلا': '#f6a723', 'کریپتو': '#a78bfa',
+    'نفت': '#fb3748', 'بورس': '#1fc16b', 'بروکر': '#35d0c0',
+    'اقتصاد': '#f6679f', 'بانک': '#a78bfa'
+  };
+
   const ENGINES = {
     google: { label: 'گوگل', icon: 'google', url: function (q) { return 'https://www.google.com/search?q=' + encodeURIComponent(q); } },
-    ib: { label: 'ایران بروکر', icon: 'search', url: function (q) { return 'https://iranbroker.net/?s=' + encodeURIComponent(q); } },
-    tv: { label: 'تریدینگ‌ویو', icon: 'lineChart', url: function (q) { return 'https://www.tradingview.com/symbols/' + encodeURIComponent(q.toUpperCase()) + '/'; } }
+    ib: { label: 'ایران بروکر', icon: 'search', logo: '<svg viewBox="124.5 -1 33 30" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M137.502 0.350075C140.334 -0.328325 143.349 0.000596404 145.997 1.15182C145.59 2.0358 145.162 2.94033 144.734 3.8243C142.351 2.79643 139.621 2.67308 137.156 3.45427C134.793 4.2149 132.776 5.88006 131.391 7.93582C129.7 10.485 129.273 13.7742 130.006 16.7345C130.678 19.4686 132.532 21.8122 134.854 23.3129C137.34 24.8958 140.456 25.2658 143.288 24.5874C147.83 23.4362 151.294 19.078 151.497 14.3703C152.455 14.4731 153.412 14.5142 154.37 14.617C154.227 16.7139 153.697 18.7902 152.638 20.6198C150.744 24.1763 147.138 26.7049 143.247 27.5477C139.132 28.4728 134.671 27.1571 131.493 24.423C131.249 24.1763 130.984 24.1763 130.658 24.5669C129.619 25.7181 128.539 26.8282 127.521 28C126.808 27.3422 126.095 26.6638 125.382 25.9854C126.543 24.7313 127.704 23.4568 128.886 22.2028C129.171 21.8533 129.089 21.5655 128.906 21.3188C127.541 19.1191 126.808 16.5289 126.747 13.9386C126.808 10.9372 127.786 7.95637 129.558 5.55114C131.452 2.91977 134.386 1.13126 137.502 0.350075Z" fill="var(--logo-mark)"/><path d="M149.705 3.84486C151.375 3.45427 152.964 3.12535 154.716 2.8581C155.612 2.75531 156.02 3.22813 155.999 3.84486C155.938 5.79783 155.816 7.19574 155.632 8.90202C155.551 9.80656 154.675 10.2588 154.044 9.76544C153.473 9.49819 152.862 8.49087 152.455 8.75812C152.088 8.9637 151.864 9.33373 151.579 9.64209C149.419 12.1912 147.219 14.6993 145.04 17.2278C144.51 17.8446 143.553 17.9062 142.962 17.3512C141.638 16.0972 140.395 14.7404 139.071 13.4658C138.888 13.2602 138.623 13.3836 138.48 13.548C137.319 14.7198 136.158 15.8916 134.997 17.0634C134.325 16.3644 133.652 15.6449 132.939 14.9871C134.447 13.4247 135.995 11.9034 137.502 10.3616C137.849 9.99157 138.338 9.64209 138.806 9.64209C139.295 9.60098 139.703 9.9299 140.028 10.2588C141.169 11.41 142.31 12.5818 143.451 13.7125C143.593 13.9181 143.879 14.1236 144.082 13.8564C146.16 11.5539 148.177 9.14871 150.214 6.76404C150.54 6.37344 149.236 5.61281 149.012 5.28389C148.625 4.76995 149.053 3.94765 149.705 3.84486Z" fill="var(--logo-mark)"/></svg>', url: function (q) { return 'https://iranbroker.net/?s=' + encodeURIComponent(q); } },
+    tv: { label: 'تریدینگ‌ویو', icon: 'lineChart', logo: '<svg viewBox="24 55 140 74" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M115.055 72.5C115.055 79.8638 109.086 85.8333 101.722 85.8333C94.3583 85.8333 88.3888 79.8638 88.3888 72.5C88.3888 65.1362 94.3583 59.1667 101.722 59.1667C109.086 59.1667 115.055 65.1362 115.055 72.5ZM81.9999 59.7778H28.6667L28.6665 86.4444H55.3332V125.556H81.9999V59.7778ZM128.755 59.7778H159.333L131.778 125.556H101.111L128.755 59.7778Z" fill="currentColor"/></svg>', url: function (q) { return 'https://www.tradingview.com/symbols/' + encodeURIComponent(q.toUpperCase()) + '/'; } }
   };
 
   /* ----------------------------- State ----------------------------- */
   const PERSIST_KEY = 'ib_newtab_v2';
   const state = {
-    theme: 'dark', layout: 'scroll', accent: '#185adb', showGrid: true,
+    theme: 'dark', layout: 'simple', accent: '#185adb', showGrid: true,
     name: '', engine: 'google', activeEngine: 'google',
     coins: 'bitcoin,ethereum,tether,solana,ripple,dogecoin',
     showCrypto: true, query: '', sugIdx: -1, tipIndex: 0,
-    crypto: SEED.slice(), cryptoErr: false, cryptoTime: '', refreshing: false, cryptoLive: false
+    crypto: SEED.slice(), cryptoErr: false, cryptoTime: '', refreshing: false, cryptoLive: false,
+    bgMode: 'default', bgIndex: 0, bgImage: null
   };
+  const BG_IMAGE_KEY = 'ib_bg_image';
 
   function load() {
-    let saved = {};
+    var saved = {};
     try { saved = JSON.parse(localStorage.getItem(PERSIST_KEY) || '{}'); } catch (e) {}
-    ['theme', 'layout', 'accent', 'showGrid', 'name', 'engine', 'coins', 'showCrypto', 'tipIndex'].forEach(function (k) {
+    ['theme', 'layout', 'accent', 'showGrid', 'name', 'engine', 'coins', 'showCrypto', 'tipIndex', 'bgMode', 'bgIndex'].forEach(function (k) {
       if (saved[k] !== undefined) state[k] = saved[k];
     });
     state.activeEngine = state.engine;
+    if (state.bgMode === 'custom') {
+      try { state.bgImage = localStorage.getItem(BG_IMAGE_KEY) || null; } catch (e) {}
+      if (!state.bgImage) state.bgMode = 'default';
+    }
   }
   function persist() {
     const o = {
       theme: state.theme, layout: state.layout, accent: state.accent, showGrid: state.showGrid,
       name: state.name, engine: state.engine, coins: state.coins,
-      showCrypto: state.showCrypto, tipIndex: state.tipIndex
+      showCrypto: state.showCrypto, tipIndex: state.tipIndex,
+      bgMode: state.bgMode, bgIndex: state.bgIndex
     };
     try { localStorage.setItem(PERSIST_KEY, JSON.stringify(o)); } catch (e) {}
   }
@@ -121,10 +207,17 @@
     const m = function (v) { return Math.round(v + (255 - v) * amt); };
     return 'rgb(' + m(r) + ',' + m(g) + ',' + m(b) + ')';
   }
+  function getEffectiveTheme() {
+    if (state.theme === 'auto') {
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+    return state.theme;
+  }
   function applyAccent() {
     const a = state.accent; if (!a || a[0] !== '#') return;
+    const eff = getEffectiveTheme();
     document.body.style.setProperty('--primaryStrong', a);
-    document.body.style.setProperty('--primary', state.theme === 'light' ? a : lighten(a, 0.32));
+    document.body.style.setProperty('--primary', eff === 'light' ? a : lighten(a, 0.32));
     document.body.style.setProperty('--primarySoft', hexA(a, 0.14));
   }
 
@@ -173,14 +266,189 @@
     }).join('');
   }
   function renderQuick() {
+    if (!els.quickLinks) return;
     els.quickLinks.innerHTML = QUICK.map(function (q) {
       return '<a href="' + q.url + '"><span class="ql-dot"></span>' + q.label + '</a>';
     }).join('');
   }
+  function renderCommunity(items) {
+    const el = document.getElementById('sb-comm-list');
+    if (!el) return;
+    if (commTabState === 'cats') {
+      const cats = Object.values(COMM_CATS);
+      el.innerHTML = '<div class="comm-cats-grid">' + cats.map(function (c) {
+        return '<a class="comm-cat-chip" href="' + c.url + '" target="_blank" rel="noopener" style="background:' + hexA(c.color, 0.14) + ';color:' + c.color + '">' + c.name + '</a>';
+      }).join('') + '</div>';
+      return;
+    }
+    const list = items || COMMUNITY[commTabState] || [];
+    el.innerHTML = list.map(function (t) {
+      return '<a class="ct-row" href="' + t.url + '" target="_blank" rel="noopener">' +
+        '<div class="ct-title">' + t.title + '</div>' +
+        '<div class="ct-foot">' +
+          '<span class="ct-badge" style="background:' + hexA(t.catColor, 0.14) + ';color:' + t.catColor + '">' + t.cat + '</span>' +
+          '<span class="ct-stats">' +
+            '<span>💬 ' + t.replies + '</span>' +
+            '<span class="ct-sep">·</span>' +
+            '<span>' + t.time + '</span>' +
+          '</span>' +
+        '</div>' +
+      '</a>';
+    }).join('');
+  }
+
+  function loadCommunityTab(tab) {
+    commTabState = tab;
+    const tabBar = document.getElementById('comm-tabs');
+    if (tabBar) {
+      Array.prototype.forEach.call(tabBar.querySelectorAll('.comm-tab'), function (t) {
+        t.classList.toggle('active', t.getAttribute('data-tab') === tab);
+      });
+    }
+    if (tab === 'cats') { renderCommunity(); return; }
+    const el = document.getElementById('sb-comm-list');
+    if (el) el.innerHTML = '<div class="ct-loading">در حال بارگذاری…</div>';
+    const endpoint = 'https://forum.iranbroker.net/' + (tab === 'latest' ? 'latest' : 'hot') + '.json';
+    fetch(endpoint)
+      .then(function (r) { return r.json(); })
+      .then(function (data) {
+        const topics = ((data.topic_list || {}).topics || []).slice(0, 8).map(function (t) {
+          const cat = COMM_CATS[t.category_id] || { name: 'سایر', color: '#888888' };
+          return {
+            title: t.title,
+            cat: cat.name,
+            catColor: cat.color,
+            time: commRelTime(t.last_posted_at),
+            replies: commFmtNum(Math.max(0, (t.posts_count || 1) - 1)),
+            views: commFmtNum(t.views || 0),
+            url: 'https://forum.iranbroker.net/t/' + t.slug + '/' + t.id
+          };
+        });
+        renderCommunity(topics);
+      })
+      .catch(function () { renderCommunity(); });
+  }
+
+  function renderNews(items) {
+    const el = document.getElementById('bento-news-list');
+    if (!el) return;
+    // Group by category, preserving order of first appearance
+    const groups = {};
+    const groupOrder = [];
+    items.forEach(function (n) {
+      if (!groups[n.cat]) {
+        groups[n.cat] = { items: [], color: n.catColor || CAT_COLORS[n.cat] || '#6f9bf3' };
+        groupOrder.push(n.cat);
+      }
+      groups[n.cat].items.push(n);
+    });
+    el.innerHTML = groupOrder.map(function (cat) {
+      const g = groups[cat];
+      const color = g.color;
+      const soft = hexA(color, 0.13);
+      const itemsHTML = g.items.map(function (n) {
+        var thumb;
+        if (n.img) {
+          thumb = '<img class="bn-thumb-img" src="' + n.img + '" alt="" loading="lazy"/>';
+        } else {
+          thumb = '<div class="bn-thumb-placeholder" style="background:' + soft + ';color:' + color + '">' + cat.slice(0, 2) + '</div>';
+        }
+        return '<a class="bn-item" href="' + (n.url || 'https://iranbroker.net/news/') + '" target="_blank" rel="noopener">' +
+          '<div class="bn-thumb">' + thumb + '</div>' +
+          '<div class="bn-body">' +
+            '<div class="bn-time">' + n.time + '</div>' +
+            '<div class="bn-title">' + n.title + '</div>' +
+          '</div>' +
+        '</a>';
+      }).join('');
+      return '<div class="bn-group">' +
+        '<div class="bn-group-head">' +
+          '<span class="bn-group-cat" style="background:' + soft + ';color:' + color + '">' + cat + '</span>' +
+        '</div>' +
+        itemsHTML +
+      '</div>';
+    }).join('');
+  }
+
+  function relTimeFa(dateStr) {
+    const d = new Date(dateStr);
+    if (isNaN(d)) return '';
+    const diff = Math.floor((Date.now() - d) / 1000);
+    if (diff < 60) return 'چند لحظه پیش';
+    if (diff < 3600) return Math.floor(diff / 60) + ' دقیقه پیش';
+    if (diff < 86400) return Math.floor(diff / 3600) + ' ساعت پیش';
+    return Math.floor(diff / 86400) + ' روز پیش';
+  }
+
+  function loadNews() {
+    renderNews(NEWS_SEED);
+    fetch('https://iranbroker.net/feed/')
+      .then(function (res) { return res.text(); })
+      .then(function (text) {
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(text, 'text/xml');
+        const items = Array.prototype.slice.call(doc.querySelectorAll('item'));
+        if (!items.length) return;
+        const parsed = items.slice(0, 12).map(function (item) {
+          const title = (item.querySelector('title') ? item.querySelector('title').textContent : '').replace(/<!\[CDATA\[|\]\]>/g, '').trim();
+          const guidEl = item.querySelector('guid');
+          const url = guidEl ? guidEl.textContent.trim() : 'https://iranbroker.net/news/';
+          const pubDate = item.querySelector('pubDate') ? item.querySelector('pubDate').textContent : '';
+          const catEl = item.querySelector('category');
+          const cat = catEl ? catEl.textContent.replace(/<!\[CDATA\[|\]\]>/g, '').trim() : 'اخبار';
+          const color = CAT_COLORS[cat] || '#6f9bf3';
+          // Try to extract featured image from feed
+          var img = null;
+          var mediaTh = item.querySelector('media\\:thumbnail') || item.querySelector('thumbnail');
+          var mediaC = item.querySelector('media\\:content') || item.querySelector('content');
+          var enclosure = item.querySelector('enclosure');
+          if (mediaTh && mediaTh.getAttribute('url')) {
+            img = mediaTh.getAttribute('url');
+          } else if (mediaC && mediaC.getAttribute('url') && /image/i.test(mediaC.getAttribute('medium') || mediaC.getAttribute('type') || 'image')) {
+            img = mediaC.getAttribute('url');
+          } else if (enclosure && /^image\//i.test(enclosure.getAttribute('type') || '')) {
+            img = enclosure.getAttribute('url');
+          } else {
+            var descEl = item.querySelector('description');
+            if (descEl) {
+              var m = descEl.textContent.match(/<img[^>]+src=["']([^"']+)["']/i);
+              if (m) img = m[1];
+            }
+          }
+          return { title: title, url: url, cat: cat, catColor: color, time: relTimeFa(pubDate), img: img };
+        }).filter(function (n) { return n.title; });
+        if (parsed.length) renderNews(parsed);
+      })
+      .catch(function () {});
+  }
+
+  function initSidebars() {
+    var sb = document.getElementById('sb-community');
+    if (!sb) return;
+    var collapseBtn = document.getElementById('sb-comm-toggle');
+    var expandTab = document.getElementById('sb-comm-tab');
+    try { if (localStorage.getItem('ib_sb_comm') === '1') sb.classList.add('collapsed'); } catch (e) {}
+    function toggle() {
+      sb.classList.toggle('collapsed');
+      try { localStorage.setItem('ib_sb_comm', sb.classList.contains('collapsed') ? '1' : '0'); } catch (e) {}
+    }
+    if (collapseBtn) collapseBtn.addEventListener('click', toggle);
+    if (expandTab) expandTab.addEventListener('click', toggle);
+    const tabBar = document.getElementById('comm-tabs');
+    if (tabBar) {
+      tabBar.addEventListener('click', function (e) {
+        const btn = e.target.closest('[data-tab]');
+        if (!btn) return;
+        loadCommunityTab(btn.getAttribute('data-tab'));
+      });
+    }
+  }
+
   function renderEngines() {
     els.engines.innerHTML = ['google', 'ib', 'tv'].map(function (k) {
       const active = state.activeEngine === k ? ' active' : '';
-      return '<button data-engine="' + k + '" class="' + active.trim() + '">' + svg(ENGINES[k].icon) + ENGINES[k].label + '</button>';
+      const icon = ENGINES[k].logo || svg(ENGINES[k].icon);
+      return '<button data-engine="' + k + '" class="' + active.trim() + '">' + icon + ENGINES[k].label + '</button>';
     }).join('');
     bindEngineButtons();
   }
@@ -190,13 +458,12 @@
     });
   }
   function renderStaticIcons() {
-    els.themeBtn.innerHTML = '<span class="icon">' + svg(state.theme === 'light' ? 'moon' : 'sun') + '</span>';
+    els.themeBtn.innerHTML = '<span class="icon">' + svg(THEME_ICONS[state.theme] || 'moon') + '</span>';
     els.settingsBtn.innerHTML = '<span class="icon">' + svg('equalizer') + '</span>';
+    els.focusBtn.innerHTML = '<span class="icon">' + svg('focus') + '</span>';
     els.searchIcon.innerHTML = svg('search');
     els.searchGo.innerHTML = svg('arrowLeft');
     els.cryptoRefresh.innerHTML = svg('refresh');
-    els.tipBgIc.innerHTML = svg('shieldCheck');
-    els.tipNextIc.innerHTML = '<span class="icon">' + svg('arrowLeft') + '</span>';
     els.settingsClose.innerHTML = '<span class="icon">' + svg('close') + '</span>';
   }
 
@@ -313,6 +580,69 @@
     els.tipText.textContent = t.text;
   }
 
+  /* ----------------------------- Market Sessions Timeline ----------------------------- */
+  function renderMarkets() {
+    if (!els.marketsWrap) return;
+    var now = new Date();
+    var utcH = now.getUTCHours() + now.getUTCMinutes() / 60;
+    var nowPct = (utcH / 24 * 100).toFixed(2);
+
+    var TICKS = [
+      { label: '00:00', pct: '0', tr: 'translateX(0)' },
+      { label: '06:00', pct: '25', tr: 'translateX(-50%)' },
+      { label: '12:00', pct: '50', tr: 'translateX(-50%)' },
+      { label: '18:00', pct: '75', tr: 'translateX(-50%)' }
+    ];
+    var ticksHtml = TICKS.map(function (t) {
+      return '<span class="mkt-tick" style="left:' + t.pct + '%;transform:' + t.tr + '">' + t.label + '</span>';
+    }).join('');
+
+    var rowsHtml = SESSIONS.map(function (s) {
+      var open = isOpen(s, now.getUTCHours());
+      var opacity = open ? '1' : '0.28';
+
+      var localStr = '';
+      try {
+        localStr = new Intl.DateTimeFormat('en-US', {
+          hour: 'numeric', minute: '2-digit', hour12: true, timeZone: s.tz
+        }).format(now).toLowerCase().replace(' ', '');
+      } catch (e) {}
+
+      var segs = '';
+      if (s.open < s.close) {
+        var l = (s.open / 24 * 100).toFixed(2);
+        var w = ((s.close - s.open) / 24 * 100).toFixed(2);
+        segs = '<div class="mkt-seg" style="left:' + l + '%;width:' + w + '%;background:' + s.c + ';opacity:' + opacity + '"></div>';
+      } else {
+        var l1 = (s.open / 24 * 100).toFixed(2);
+        var w1 = ((24 - s.open) / 24 * 100).toFixed(2);
+        var w2 = (s.close / 24 * 100).toFixed(2);
+        segs = '<div class="mkt-seg" style="left:' + l1 + '%;width:' + w1 + '%;background:' + s.c + ';opacity:' + opacity + '"></div>' +
+               '<div class="mkt-seg" style="left:0%;width:' + w2 + '%;background:' + s.c + ';opacity:' + opacity + '"></div>';
+      }
+
+      return '<div class="mkt-row">' +
+        '<div class="mkt-info">' +
+          '<span class="mkt-name">' + s.name + '</span>' +
+          '<span class="mkt-status" style="color:' + (open ? 'var(--green)' : 'var(--soft)') + '">' + (open ? 'باز' : 'بسته') + '</span>' +
+        '</div>' +
+        '<div class="mkt-track" dir="ltr">' +
+          segs +
+          '<div class="mkt-now-line" style="left:' + nowPct + '%"></div>' +
+        '</div>' +
+        '<span class="mkt-ltime" dir="ltr">' + localStr + '</span>' +
+      '</div>';
+    }).join('');
+
+    els.marketsWrap.innerHTML =
+      '<div class="mkt-row mkt-axis">' +
+        '<div class="mkt-info" aria-hidden="true"></div>' +
+        '<div class="mkt-ticks" dir="ltr">' + ticksHtml + '</div>' +
+        '<div class="mkt-ltime" aria-hidden="true"></div>' +
+      '</div>' +
+      rowsHtml;
+  }
+
   /* ----------------------------- Time-dependent render ----------------------------- */
   function renderTime() {
     const now = new Date();
@@ -326,8 +656,8 @@
     els.heroDate.textContent = dateStr;
 
     const h = now.getHours();
-    const g = h >= 5 && h < 12 ? 'صبح‌تان بخیر' : h >= 12 && h < 17 ? 'ظهر بخیر' : h >= 17 && h < 21 ? 'عصرتان بخیر' : 'شب‌تان بخیر';
-    els.heroGreeting.textContent = g + (state.name ? '، ' + state.name : ' معامله‌گر');
+    const g = h >= 5 && h < 12 ? 'صبحت بخیر' : h >= 12 && h < 17 ? 'ظهرت بخیر' : h >= 17 && h < 21 ? 'عصرت بخیر' : 'شب‌ت بخیر';
+    els.heroGreeting.textContent = g + (state.name ? '، ' + state.name : ' رفیق');
 
     // sessions
     const uh = now.getUTCHours();
@@ -336,50 +666,99 @@
     const openCount = openSessions.length;
     const activeSession = openSessions.length ? openSessions.map(function (s) { return s.name; }).join('، ') : 'بازارها بسته';
 
-    els.marketCount.textContent = openCount + ' بازار فعال';
-    els.ringCount.textContent = openCount;
+    if (els.marketCount) els.marketCount.textContent = openCount + ' بازار فعال';
     els.heroActive.textContent = activeSession;
     els.heroUtc.textContent = String(uh).padStart(2, '0') + ':' + String(now.getUTCMinutes()).padStart(2, '0');
-
-    // ring arcs
-    els.ringArcs.innerHTML = SESSIONS.map(function (s, i) {
-      const rr = 74 - i * 9;
-      return '<path d="' + arc(100, 100, rr, s.open, s.close) + '" fill="none" stroke="' + s.c + '" stroke-width="7" stroke-linecap="round" opacity="' + (open[i] ? 1 : 0.28) + '"></path>';
-    }).join('');
-
-    // hand
-    const utcF = uh + now.getUTCMinutes() / 60;
-    const hand = polar(100, 100, 80, (utcF / 24) * 360);
-    els.ringHand.setAttribute('x2', hand[0].toFixed(2));
-    els.ringHand.setAttribute('y2', hand[1].toFixed(2));
-    els.ringTip.setAttribute('cx', hand[0].toFixed(2));
-    els.ringTip.setAttribute('cy', hand[1].toFixed(2));
-
-    // session list
-    els.sessionList.innerHTML = SESSIONS.map(function (s, i) {
-      const op = open[i];
-      return '<div class="s-row">' +
-        '<span class="s-dot" style="background:' + s.c + ';opacity:' + (op ? 1 : 0.28) + '"></span>' +
-        '<span class="s-name">' + s.name + '</span>' +
-        '<span class="s-time">' + String(s.open).padStart(2, '0') + '–' + String(s.close).padStart(2, '0') + ' UTC</span>' +
-        '<span class="s-status" style="color:' + (op ? 'var(--green)' : 'var(--soft)') + '">' + (op ? 'باز' : 'بسته') + '</span>' +
-        '</div>';
-    }).join('');
+    if (els.marketsUtcBadge) els.marketsUtcBadge.textContent = String(uh).padStart(2, '0') + ':' + String(now.getUTCMinutes()).padStart(2, '0') + ' UTC';
+    renderMarkets();
   }
 
   /* ----------------------------- Theme / layout / grid ----------------------------- */
   function applyTheme() {
-    document.body.setAttribute('data-theme', state.theme);
-    if (els.themeBtn) els.themeBtn.innerHTML = '<span class="icon">' + svg(state.theme === 'light' ? 'moon' : 'sun') + '</span>';
+    var eff = getEffectiveTheme();
+    document.body.setAttribute('data-theme', eff);
+    var icon = THEME_ICONS[state.theme] || 'moon';
+    if (els.themeBtn) els.themeBtn.innerHTML = '<span class="icon">' + svg(icon) + '</span>';
     applyAccent();
   }
-  function applyLayout() { var l = state.layout; document.body.setAttribute('data-layout', (l === 'fit' || l === 'fullvp') ? l : 'scroll'); }
+  function applyLayout() { document.body.setAttribute('data-layout', state.layout || 'simple'); }
   function applyGrid() { els.bgGrid.hidden = !state.showGrid; }
   function applyShowCrypto() { els.cryptoCard.style.display = state.showCrypto ? '' : 'none'; }
 
-  function toggleTheme() { state.theme = state.theme === 'light' ? 'dark' : 'light'; applyTheme(); persist(); }
+  function toggleTheme() {
+    var idx = THEME_CYCLE.indexOf(state.theme);
+    state.theme = THEME_CYCLE[(idx + 1) % THEME_CYCLE.length];
+    applyTheme();
+    persist();
+  }
+
+  /* ----------------------------- Background ----------------------------- */
+  function applyBackground() {
+    var canvas = document.getElementById('shader-bg-canvas');
+    var stageRoot = document.querySelector('.stage-root');
+    var overlay = document.getElementById('bg-overlay');
+    if (state.bgMode === 'default') {
+      document.body.classList.remove('has-bg-image');
+      if (canvas) canvas.style.display = '';
+      if (stageRoot) stageRoot.style.backgroundImage = '';
+    } else {
+      document.body.classList.add('has-bg-image');
+      if (canvas) canvas.style.display = 'none';
+      var url = state.bgMode === 'gallery' ? GALLERY[state.bgIndex].file : state.bgImage;
+      if (url && stageRoot) stageRoot.style.backgroundImage = 'url("' + url + '")';
+    }
+  }
+
+  function updateBgPicker() {
+    var defBtn = document.getElementById('bg-opt-default');
+    if (defBtn) defBtn.classList.toggle('active', state.bgMode === 'default');
+    var thumbs = document.querySelectorAll('.bg-thumb');
+    thumbs.forEach(function(t) {
+      var i = parseInt(t.getAttribute('data-idx'));
+      t.classList.toggle('active', state.bgMode === 'gallery' && state.bgIndex === i);
+    });
+  }
+
+  function renderBgGallery() {
+    var el = document.getElementById('bg-gallery');
+    if (!el) return;
+    el.innerHTML = GALLERY.map(function(item, i) {
+      var active = (state.bgMode === 'gallery' && state.bgIndex === i) ? ' active' : '';
+      return '<button class="bg-thumb' + active + '" data-idx="' + i + '" title="' + item.label + '" style="background:' + item.gradient + '">' +
+        '<img src="' + item.file + '" alt="' + item.label + '" loading="lazy" ' +
+          'onerror="this.style.display=\'none\'" />' +
+        '<span class="bg-thumb-label">' + item.label + '</span>' +
+      '</button>';
+    }).join('');
+    el.querySelectorAll('.bg-thumb').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        state.bgMode = 'gallery';
+        state.bgIndex = parseInt(btn.getAttribute('data-idx'));
+        applyBackground();
+        updateBgPicker();
+        persist();
+      });
+    });
+  }
+
+  function initAutoTheme() {
+    var mq = window.matchMedia('(prefers-color-scheme: dark)');
+    if (mq.addEventListener) {
+      mq.addEventListener('change', function() { if (state.theme === 'auto') applyTheme(); });
+    } else if (mq.addListener) {
+      mq.addListener(function() { if (state.theme === 'auto') applyTheme(); });
+    }
+  }
 
   /* ----------------------------- Settings modal ----------------------------- */
+  function switchTab(name) {
+    document.querySelectorAll('.m-tab').forEach(function(t) {
+      t.classList.toggle('active', t.getAttribute('data-tab') === name);
+    });
+    document.querySelectorAll('.tab-panel').forEach(function(p) {
+      p.classList.toggle('active', p.id === 'tab-' + name);
+    });
+  }
   function openSettings() {
     els.setName.value = state.name;
     els.setEngine.value = state.engine;
@@ -388,6 +767,12 @@
     els.setGrid.checked = state.showGrid;
     syncSeg(els.setLayout, 'layout', state.layout);
     syncSwatches();
+    syncSeg(els.setThemeMode, 'theme', state.theme);
+    renderBgGallery();
+    updateBgPicker();
+    var defBtn = document.getElementById('bg-opt-default');
+    if (defBtn) defBtn.classList.toggle('active', state.bgMode === 'default');
+    switchTab('appearance');
     els.settingsModal.hidden = false;
   }
   function closeSettings() { els.settingsModal.hidden = true; persist(); }
@@ -414,8 +799,11 @@
       'precision highp float;',
       'uniform vec2 resolution;',
       'uniform float time;',
+      'uniform vec2 clickPos;',
+      'uniform float clickAge;',
       'void main(void){',
-      '  vec2 uv=(gl_FragCoord.xy*2.-resolution.xy)/min(resolution.x,resolution.y);',
+      '  float minRes=min(resolution.x,resolution.y);',
+      '  vec2 uv=(gl_FragCoord.xy*2.-resolution.xy)/minRes;',
       '  float t=time*0.05;',
       '  float lw=0.002;',
       '  vec3 color=vec3(0.);',
@@ -424,6 +812,13 @@
       '      color[j]+=lw*float(i*i)/abs(fract(t-0.01*float(j)+float(i)*0.01)*5.-length(uv)+mod(uv.x+uv.y,0.2));',
       '    }',
       '  }',
+      '  vec2 clickUv=(clickPos*2.-1.)*resolution/minRes;',
+      '  float cd=length(uv-clickUv);',
+      '  float fade=max(0.,1.-clickAge*0.72);',
+      '  float edge=0.0025/(abs(cd-clickAge*1.3)+0.004)*fade;',
+      '  float ripple=sin(cd*22.-clickAge*11.)*exp(-cd*3.2)*fade*0.1;',
+      '  color+=vec3(0.3,0.55,0.9)*(edge+max(0.,ripple));',
+      '  color=color/(color+vec3(0.9));',
       '  gl_FragColor=vec4(color[0],color[1],color[2],1.);',
       '}'
     ].join('');
@@ -447,9 +842,20 @@
     gl.enableVertexAttribArray(posLoc);
     gl.vertexAttribPointer(posLoc, 2, gl.FLOAT, false, 0, 0);
 
-    var timeLoc = gl.getUniformLocation(prog, 'time');
-    var resLoc = gl.getUniformLocation(prog, 'resolution');
+    var timeLoc     = gl.getUniformLocation(prog, 'time');
+    var resLoc      = gl.getUniformLocation(prog, 'resolution');
+    var clickPosLoc = gl.getUniformLocation(prog, 'clickPos');
+    var clickAgeLoc = gl.getUniformLocation(prog, 'clickAge');
+
+    var click = { x: -5, y: -5, age: 99 };
     var t = 0, rafId;
+
+    window.addEventListener('click', function (e) {
+      if (e.target.closest('button,a,input,select,textarea,.card,.sidebar,.modal-overlay,.topbar,.engines,.sparkle-canvas,.crypto-card,.markets-card,.quick-links,.sb-tab,.sec-hero,.hero-search-wrap')) return;
+      click.x = e.clientX / window.innerWidth;
+      click.y = 1.0 - e.clientY / window.innerHeight;
+      click.age = 0;
+    });
 
     function resize() {
       canvas.width = window.innerWidth;
@@ -458,8 +864,11 @@
     }
     function draw() {
       t += 0.05;
+      if (click.age < 1.4) click.age += 0.022;
       gl.uniform1f(timeLoc, t);
       gl.uniform2f(resLoc, canvas.width, canvas.height);
+      gl.uniform2f(clickPosLoc, click.x, click.y);
+      gl.uniform1f(clickAgeLoc, click.age);
       gl.drawArrays(gl.TRIANGLES, 0, 6);
       rafId = requestAnimationFrame(draw);
     }
@@ -473,12 +882,36 @@
     });
   }
 
+  /* ----------------------------- Spotlight border ----------------------------- */
+  function initSpotlight() {
+    var SEL = '.card, .tip-card, .tools-grid a, .icon-btn, .market-pill, .engines button, .quick-links a, .refresh-btn, .tip-next, .btn-primary';
+    function bind(el) {
+      if (el._sp) return;
+      el._sp = 1;
+      el.addEventListener('mousemove', function (e) {
+        var r = el.getBoundingClientRect();
+        el.style.setProperty('--mouse-x', (e.clientX - r.left) + 'px');
+        el.style.setProperty('--mouse-y', (e.clientY - r.top) + 'px');
+      });
+    }
+    function scan() { document.querySelectorAll(SEL).forEach(bind); }
+    scan();
+    new MutationObserver(scan).observe(document.body, { childList: true, subtree: true });
+  }
+
   /* ----------------------------- Sparkles ----------------------------- */
   function initSparkles() {
     const canvas = document.getElementById('sp-canvas');
     if (!canvas || !canvas.getContext) return;
     const ctx = canvas.getContext('2d');
     let W = 0, H = 0, particles = [], rafId;
+    var mx = -999, my = -999;
+
+    window.addEventListener('mousemove', function (e) {
+      var rect = canvas.getBoundingClientRect();
+      mx = e.clientX - rect.left;
+      my = e.clientY - rect.top;
+    });
 
     function resize() {
       W = canvas.parentElement.offsetWidth;
@@ -507,13 +940,24 @@
       ctx.clearRect(0, 0, W, H);
       var isLight = document.body.getAttribute('data-theme') === 'light';
       var rc = isLight ? 24 : 255, gc = isLight ? 90 : 255, bc = isLight ? 219 : 255;
+      var R = 80;
       for (var i = 0; i < particles.length; i++) {
         var p = particles[i];
         p.phase += p.freq;
+
+        var dx = p.x - mx, dy = p.y - my;
+        var d = Math.sqrt(dx * dx + dy * dy);
+        if (d < R && d > 0.1) {
+          var f = (1 - d / R) * 2.8;
+          p.x += (dx / d) * f;
+          p.y += (dy / d) * f;
+        }
+
         p.x += p.vx;
         p.y += p.vy;
         if (p.y < -4 || p.x < -6 || p.x > W + 6) { particles[i] = newParticle(false); continue; }
         var op = p.maxOp * ((Math.sin(p.phase) + 1) / 2);
+        if (d < R) op = Math.min(1, op + (1 - d / R) * 0.6);
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
         ctx.fillStyle = 'rgba(' + rc + ',' + gc + ',' + bc + ',' + op.toFixed(2) + ')';
@@ -534,14 +978,14 @@
   /* ----------------------------- Wire up ----------------------------- */
   function cacheEls() {
     [
-      'bg-grid', 'theme-btn', 'settings-btn', 'market-count',
+      'bg-grid', 'theme-btn', 'settings-btn', 'focus-btn',
       'hero-date', 'clock', 'hero-greeting', 'hero-active', 'hero-utc',
       'search-box', 'search-icon', 'search-input', 'scope-label', 'search-go', 'suggest', 'engines',
       'tools-grid', 'crypto-card', 'crypto-list', 'crypto-foot', 'crypto-refresh',
-      'ring-svg', 'ring-arcs', 'ring-hand', 'ring-tip', 'ring-count', 'session-list',
-      'tip-bg-ic', 'tip-tag', 'tip-text', 'tip-next', 'tip-next-ic',
+      'markets-wrap', 'markets-utc-badge',
       'quick-links', 'settings-modal', 'settings-panel', 'settings-close', 'settings-save',
-      'set-name', 'set-engine', 'set-layout', 'set-accent', 'set-grid', 'set-crypto', 'set-coins'
+      'set-name', 'set-engine', 'set-layout', 'set-accent', 'set-grid', 'set-crypto', 'set-coins',
+      'set-theme-mode', 'bg-picker', 'bg-opt-default', 'bg-gallery', 'bg-upload'
     ].forEach(function (id) {
       const camel = id.replace(/-([a-z])/g, function (_, c) { return c.toUpperCase(); });
       els[camel] = $(id);
@@ -555,16 +999,20 @@
     applyTheme();
     applyLayout();
     applyGrid();
+    applyBackground();
+    initAutoTheme();
 
     renderStaticIcons();
     renderTools();
     renderQuick();
     renderEngines();
     els.scopeLabel.textContent = ENGINES[state.activeEngine].label;
-    renderTip();
     renderCrypto();
     applyShowCrypto();
     renderTime();
+    loadNews();
+    initSidebars();
+    loadCommunityTab('hot');
 
     // top bar
     els.themeBtn.addEventListener('click', toggleTheme);
@@ -579,8 +1027,10 @@
     // crypto
     els.cryptoRefresh.addEventListener('click', function () { loadCrypto(); });
 
-    // tip
-    els.tipNext.addEventListener('click', function () { state.tipIndex = (state.tipIndex + 1) % TIPS.length; renderTip(); persist(); });
+    // tab switching
+    document.querySelectorAll('.m-tab').forEach(function(t) {
+      t.addEventListener('click', function() { switchTab(t.getAttribute('data-tab')); });
+    });
 
     // settings modal
     els.settingsClose.addEventListener('click', closeSettings);
@@ -602,7 +1052,51 @@
       b.addEventListener('click', function () { state.accent = b.getAttribute('data-accent'); applyAccent(); syncSwatches(); persist(); });
     });
 
-    document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !els.settingsModal.hidden) closeSettings(); });
+    // theme mode (4 options)
+    if (els.setThemeMode) {
+      Array.prototype.forEach.call(els.setThemeMode.querySelectorAll('button'), function (b) {
+        b.addEventListener('click', function () {
+          state.theme = b.getAttribute('data-theme');
+          applyTheme();
+          syncSeg(els.setThemeMode, 'theme', state.theme);
+          persist();
+        });
+      });
+    }
+
+    // background picker — default
+    var defBtn = document.getElementById('bg-opt-default');
+    if (defBtn) {
+      defBtn.addEventListener('click', function() {
+        state.bgMode = 'default';
+        applyBackground();
+        updateBgPicker();
+        persist();
+      });
+    }
+
+    // background picker — upload
+    if (els.bgUpload) {
+      els.bgUpload.addEventListener('change', function(e) {
+        var file = e.target.files[0];
+        if (!file) return;
+        var reader = new FileReader();
+        reader.onload = function(ev) {
+          state.bgMode = 'custom';
+          state.bgImage = ev.target.result;
+          try { localStorage.setItem(BG_IMAGE_KEY, state.bgImage); } catch (ex) {}
+          applyBackground();
+          updateBgPicker();
+          persist();
+        };
+        reader.readAsDataURL(file);
+        e.target.value = '';
+      });
+    }
+
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && !els.settingsModal.hidden) closeSettings();
+    });
 
     // timers
     setInterval(renderTime, 1000 * 20);
@@ -612,6 +1106,7 @@
     // focus search for quick typing
     els.searchInput.focus();
 
+    initSpotlight();
     initSparkles();
     initShaderBg();
   }

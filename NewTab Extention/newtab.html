@@ -1,415 +1,835 @@
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>ایران بروکر — تب جدید</title>
   <link rel="stylesheet" href="newtab.css" />
 </head>
-<body data-theme="dark">
 
+<body data-theme="dark" data-layout="simple">
   <div class="stage-root">
     <canvas id="shader-bg-canvas"></canvas>
+    <div class="bg-overlay" id="bg-overlay"></div>
     <div class="bg-grid" id="bg-grid"></div>
 
-    <div class="page-col">
+    <div class="layout-wrap">
 
-      <!-- ===== TOP BAR ===== -->
-      <header class="topbar" id="topbar">
-        <a class="brand" href="https://iranbroker.net/" title="ایران بروکر" target="_blank">
-          <svg class="wordmark" viewBox="0 0 156 28" height="27" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M14.7568 8.9103C18.3181 5.46578 19.363 4.33887 21.5808 2C22.5617 2.63787 23.6066 3.21196 24.6089 3.8711C22.8816 5.59336 21.3888 7.12425 19.8321 8.71894C21.794 8.71894 22.5404 8.7402 23.7346 8.71894C25.0354 8.7402 26.1869 8.59136 27.4238 9.05914C29.0871 9.67575 30.324 11.1429 30.7931 12.8439C31.3902 14.8213 30.8144 17.0326 29.4923 18.5847C28.3194 19.988 26.5281 20.5196 24.7582 20.6047C21.3249 20.6047 18.2328 20.6047 15.034 20.6047C13.1788 20.6684 11.2595 20.1156 9.85209 18.8824C9.40427 18.4997 9.04174 18.1169 8.55127 17.798C8.3167 18.4997 7.8902 19.1163 7.39973 19.6904C5.94964 21.4339 4.30762 22.986 2.68693 24.5807C1.79129 23.8365 0.916969 23.0924 0 22.412C1.38612 20.9449 2.85753 19.5628 4.26497 18.0957C5.11797 17.2027 6.16289 15.9694 5.52314 14.7575C5.05399 14.2897 4.58485 13.8007 4.1157 13.3116C4.92604 12.5037 5.75771 11.6957 6.54673 10.8664C8.08212 12.3336 9.55354 13.8432 11.025 15.3528C11.814 16.1821 12.7523 16.9688 13.9251 17.1176C15.1407 17.2877 23.7559 17.1176 25.5259 17.1176C26.8907 17.0326 28.1062 15.5442 27.9356 14.1621C27.7863 13.0777 26.8054 12.0997 25.6751 12.0997C24.0331 12.0784 18.9791 12.0571 16.1003 12.0571C15.5458 10.7601 15.3326 10.1648 14.7568 8.9103Z" fill="var(--logo-text)"></path>
-            <path d="M85.9179 5.18937C87.0694 5.23189 88.1783 5.18937 89.4151 5.18937C89.4151 10.4412 89.3938 15.9694 89.3938 20.5834C88.221 20.5834 87.0481 20.5834 85.8752 20.5834C85.8965 15.4379 85.8539 10.3136 85.9179 5.18937Z" fill="var(--logo-text)"></path>
-            <path d="M113.214 5.18937C114.365 5.18937 115.517 5.18937 116.668 5.18937C116.668 10.4625 116.69 15.0339 116.69 20.5834C115.517 20.5834 114.323 20.5834 113.15 20.5834C113.192 15.4379 113.214 10.4199 113.214 5.18937Z" fill="var(--logo-text)"></path>
-            <path d="M71.2464 6.20997C72.4832 6.20997 73.72 6.20997 74.9569 6.20997C74.9356 7.35814 74.9356 8.48505 74.9569 9.63322C73.72 9.65449 72.4832 9.63322 71.2464 9.65449C71.2464 8.50631 71.2677 7.35814 71.2464 6.20997Z" fill="var(--logo-text)"></path>
-            <path d="M32.3498 14.5661C32.2645 10.9728 36.5935 8.10233 39.7495 9.29302C42.7563 10.1648 44.6116 12.8226 43.8226 16.4372C43.5667 17.7555 41.4129 20.2219 39.8135 21.7528C38.8752 22.7096 37.9583 23.7515 36.9986 24.687C36.1243 23.9216 35.186 23.1987 34.2904 22.4545C36.4015 20.5196 38.3421 18.4146 40.2187 16.2458C41.2423 14.9701 40.6878 12.7588 39.0458 12.3548C37.4678 11.8233 35.6552 13.2904 35.8897 14.9063C36.4229 15.4379 37.2972 16.4372 37.8516 16.9475C37.0839 17.7555 36.7214 18.0744 35.4846 19.3502C34.2051 18.1595 32.3498 16.501 32.3498 14.5661Z" fill="var(--logo-text)"></path>
-            <path d="M80.0962 9.97342C81.2904 9.95216 82.4846 9.97342 83.6788 9.95216C83.7214 11.1216 83.6788 12.3123 83.7001 13.503C83.7001 17.6066 83.2949 20.392 81.0771 21.9654C78.966 23.5389 73.6561 24.113 70.5853 22.2844C68.922 21.2 67.7917 19.3289 67.6211 17.3728C67.4079 15.2678 67.6211 13.099 67.5572 10.994C68.73 11.0153 69.9242 10.994 71.0971 10.994C71.0971 12.9076 71.0758 14.8213 71.0971 16.7136C71.0971 17.7342 71.5662 18.7973 72.4406 19.3714C73.6987 20.307 75.3621 20.1156 76.8335 20.0731C78.1769 20.0518 79.4351 19.1375 79.8403 17.8618C80.0535 16.9262 80.0962 15.9482 80.0749 14.9914C80.1175 13.3329 80.1388 11.6532 80.0962 9.97342Z" fill="var(--logo-text)"></path>
-            <path d="M60.9038 10.8239C62.098 10.8027 63.2922 10.8239 64.4864 10.8239C64.4224 12.1635 64.7423 15.1827 63.5907 17.0751C62.6524 18.7973 60.7332 19.9668 58.8353 20.3708C56.8734 20.7535 54.7409 20.6259 52.9496 19.7116C52.054 19.2651 51.3289 18.5635 50.5826 17.9043C50.1987 19.01 49.3244 19.8179 48.8979 20.3495C47.4478 22.1568 46.4456 23.0924 44.7822 24.7296C43.8652 24.0279 42.9909 23.2625 42.0953 22.5608C43.524 21.0937 45.0168 19.6904 46.4242 18.202C47.2559 17.309 48.3221 15.8844 47.5331 14.8213C47.1279 14.3535 46.6588 13.9282 46.211 13.4817C47.0213 12.6525 47.853 11.8445 48.6847 11.0153C50.412 12.695 52.054 14.4385 53.76 16.1395C54.9115 17.2452 56.6388 17.1814 58.1316 17.0113C59.3258 16.8625 60.328 15.9482 60.7119 14.8213C60.9678 13.5243 60.9251 12.1635 60.9038 10.8239Z" fill="var(--logo-text)"></path>
-            <path d="M107.52 10.8239C108.714 10.8027 109.908 10.8239 111.103 10.8239C111.039 12.1635 111.358 15.1827 110.207 17.0751C109.29 18.7973 107.349 19.9668 105.451 20.3708C103.49 20.7535 101.357 20.6259 99.5658 19.7116C98.6701 19.2651 97.9451 18.5635 97.1987 17.9043C96.8149 19.01 95.9406 19.8179 95.5141 20.3495C94.064 22.1568 93.0617 23.0924 91.3984 24.7296C90.4814 24.0279 89.6071 23.2625 88.7114 22.5608C90.1402 21.0937 91.6329 19.6904 93.0404 18.202C93.872 17.309 94.9383 15.8844 94.1493 14.8213C93.7441 14.3535 93.2749 13.9282 92.8271 13.4817C93.6375 12.6525 94.4691 11.8445 95.3008 11.0153C97.0281 12.695 98.6701 14.4385 100.376 16.1395C101.528 17.2452 103.255 17.1814 104.748 17.0113C105.942 16.8625 106.944 15.9482 107.328 14.8213C107.584 13.5243 107.541 12.1635 107.52 10.8239Z" fill="var(--logo-text)"></path>
-            <path d="M60.9038 22.6033C62.1193 22.6033 63.3562 22.6033 64.5717 22.6033C64.5717 23.7302 64.5504 24.8571 64.5717 25.9841C63.3348 26.0053 62.1193 26.0053 60.8825 25.9841C60.9251 24.8571 60.9251 23.7302 60.9038 22.6033Z" fill="var(--logo-text)"></path>
-            <path d="M102.828 22.6033C105.579 22.6033 108.33 22.6033 111.081 22.6033C111.081 23.7302 111.06 24.8571 111.081 25.9841C108.33 26.0053 105.579 25.9841 102.828 25.9841C102.828 24.8571 102.828 23.7302 102.828 22.6033Z" fill="var(--logo-text)"></path>
-            <path d="M137.502 0.350075C140.334 -0.328325 143.349 0.000596404 145.997 1.15182C145.59 2.0358 145.162 2.94033 144.734 3.8243C142.351 2.79643 139.621 2.67308 137.156 3.45427C134.793 4.2149 132.776 5.88006 131.391 7.93582C129.7 10.485 129.273 13.7742 130.006 16.7345C130.678 19.4686 132.532 21.8122 134.854 23.3129C137.34 24.8958 140.456 25.2658 143.288 24.5874C147.83 23.4362 151.294 19.078 151.497 14.3703C152.455 14.4731 153.412 14.5142 154.37 14.617C154.227 16.7139 153.697 18.7902 152.638 20.6198C150.744 24.1763 147.138 26.7049 143.247 27.5477C139.132 28.4728 134.671 27.1571 131.493 24.423C131.249 24.1763 130.984 24.1763 130.658 24.5669C129.619 25.7181 128.539 26.8282 127.521 28C126.808 27.3422 126.095 26.6638 125.382 25.9854C126.543 24.7313 127.704 23.4568 128.886 22.2028C129.171 21.8533 129.089 21.5655 128.906 21.3188C127.541 19.1191 126.808 16.5289 126.747 13.9386C126.808 10.9372 127.786 7.95637 129.558 5.55114C131.452 2.91977 134.386 1.13126 137.502 0.350075Z" fill="var(--logo-mark)"></path>
-            <path d="M149.705 3.84486C151.375 3.45427 152.964 3.12535 154.716 2.8581C155.612 2.75531 156.02 3.22813 155.999 3.84486C155.938 5.79783 155.816 7.19574 155.632 8.90202C155.551 9.80656 154.675 10.2588 154.044 9.76544C153.473 9.49819 152.862 8.49087 152.455 8.75812C152.088 8.9637 151.864 9.33373 151.579 9.64209C149.419 12.1912 147.219 14.6993 145.04 17.2278C144.51 17.8446 143.553 17.9062 142.962 17.3512C141.638 16.0972 140.395 14.7404 139.071 13.4658C138.888 13.2602 138.623 13.3836 138.48 13.548C137.319 14.7198 136.158 15.8916 134.997 17.0634C134.325 16.3644 133.652 15.6449 132.939 14.9871C134.447 13.4247 135.995 11.9034 137.502 10.3616C137.849 9.99157 138.338 9.64209 138.806 9.64209C139.295 9.60098 139.703 9.9299 140.028 10.2588C141.169 11.41 142.31 12.5818 143.451 13.7125C143.593 13.9181 143.879 14.1236 144.082 13.8564C146.16 11.5539 148.177 9.14871 150.214 6.76404C150.54 6.37344 149.236 5.61281 149.012 5.28389C148.625 4.76995 149.053 3.94765 149.705 3.84486Z" fill="var(--logo-mark)"></path>
-          </svg>
-          <span class="brand-tag">پلی به دنیای مالی</span>
-        </a>
+      <div class="page-col">
 
-        <div class="top-actions">
-          <div class="radar-badge" id="radar-badge" title="رادار بروکر من">
-            <span class="radar-dot" id="radar-dot"></span>
-            <span id="radar-label">بروکر من</span>
+        <!-- ===== TOP BAR ===== -->
+        <header class="topbar">
+          <a class="brand" href="https://iranbroker.net/" title="ایران بروکر">
+            <svg class="wordmark" viewBox="0 0 156 28" height="27" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path
+                d="M14.7568 8.9103C18.3181 5.46578 19.363 4.33887 21.5808 2C22.5617 2.63787 23.6066 3.21196 24.6089 3.8711C22.8816 5.59336 21.3888 7.12425 19.8321 8.71894C21.794 8.71894 22.5404 8.7402 23.7346 8.71894C25.0354 8.7402 26.1869 8.59136 27.4238 9.05914C29.0871 9.67575 30.324 11.1429 30.7931 12.8439C31.3902 14.8213 30.8144 17.0326 29.4923 18.5847C28.3194 19.988 26.5281 20.5196 24.7582 20.6047C21.3249 20.6047 18.2328 20.6047 15.034 20.6047C13.1788 20.6684 11.2595 20.1156 9.85209 18.8824C9.40427 18.4997 9.04174 18.1169 8.55127 17.798C8.3167 18.4997 7.8902 19.1163 7.39973 19.6904C5.94964 21.4339 4.30762 22.986 2.68693 24.5807C1.79129 23.8365 0.916969 23.0924 0 22.412C1.38612 20.9449 2.85753 19.5628 4.26497 18.0957C5.11797 17.2027 6.16289 15.9694 5.52314 14.7575C5.05399 14.2897 4.58485 13.8007 4.1157 13.3116C4.92604 12.5037 5.75771 11.6957 6.54673 10.8664C8.08212 12.3336 9.55354 13.8432 11.025 15.3528C11.814 16.1821 12.7523 16.9688 13.9251 17.1176C15.1407 17.2877 23.7559 17.1176 25.5259 17.1176C26.8907 17.0326 28.1062 15.5442 27.9356 14.1621C27.7863 13.0777 26.8054 12.0997 25.6751 12.0997C24.0331 12.0784 18.9791 12.0571 16.1003 12.0571C15.5458 10.7601 15.3326 10.1648 14.7568 8.9103Z"
+                fill="var(--logo-text)"></path>
+              <path
+                d="M85.9179 5.18937C87.0694 5.23189 88.1783 5.18937 89.4151 5.18937C89.4151 10.4412 89.3938 15.9694 89.3938 20.5834C88.221 20.5834 87.0481 20.5834 85.8752 20.5834C85.8965 15.4379 85.8539 10.3136 85.9179 5.18937Z"
+                fill="var(--logo-text)"></path>
+              <path
+                d="M113.214 5.18937C114.365 5.18937 115.517 5.18937 116.668 5.18937C116.668 10.4625 116.69 15.0339 116.69 20.5834C115.517 20.5834 114.323 20.5834 113.15 20.5834C113.192 15.4379 113.214 10.4199 113.214 5.18937Z"
+                fill="var(--logo-text)"></path>
+              <path
+                d="M71.2464 6.20997C72.4832 6.20997 73.72 6.20997 74.9569 6.20997C74.9356 7.35814 74.9356 8.48505 74.9569 9.63322C73.72 9.65449 72.4832 9.63322 71.2464 9.65449C71.2464 8.50631 71.2677 7.35814 71.2464 6.20997Z"
+                fill="var(--logo-text)"></path>
+              <path
+                d="M32.3498 14.5661C32.2645 10.9728 36.5935 8.10233 39.7495 9.29302C42.7563 10.1648 44.6116 12.8226 43.8226 16.4372C43.5667 17.7555 41.4129 20.2219 39.8135 21.7528C38.8752 22.7096 37.9583 23.7515 36.9986 24.687C36.1243 23.9216 35.186 23.1987 34.2904 22.4545C36.4015 20.5196 38.3421 18.4146 40.2187 16.2458C41.2423 14.9701 40.6878 12.7588 39.0458 12.3548C37.4678 11.8233 35.6552 13.2904 35.8897 14.9063C36.4229 15.4379 37.2972 16.4372 37.8516 16.9475C37.0839 17.7555 36.7214 18.0744 35.4846 19.3502C34.2051 18.1595 32.3498 16.501 32.3498 14.5661Z"
+                fill="var(--logo-text)"></path>
+              <path
+                d="M80.0962 9.97342C81.2904 9.95216 82.4846 9.97342 83.6788 9.95216C83.7214 11.1216 83.6788 12.3123 83.7001 13.503C83.7001 17.6066 83.2949 20.392 81.0771 21.9654C78.966 23.5389 73.6561 24.113 70.5853 22.2844C68.922 21.2 67.7917 19.3289 67.6211 17.3728C67.4079 15.2678 67.6211 13.099 67.5572 10.994C68.73 11.0153 69.9242 10.994 71.0971 10.994C71.0971 12.9076 71.0758 14.8213 71.0971 16.7136C71.0971 17.7342 71.5662 18.7973 72.4406 19.3714C73.6987 20.307 75.3621 20.1156 76.8335 20.0731C78.1769 20.0518 79.4351 19.1375 79.8403 17.8618C80.0535 16.9262 80.0962 15.9482 80.0749 14.9914C80.1175 13.3329 80.1388 11.6532 80.0962 9.97342Z"
+                fill="var(--logo-text)"></path>
+              <path
+                d="M60.9038 10.8239C62.098 10.8027 63.2922 10.8239 64.4864 10.8239C64.4224 12.1635 64.7423 15.1827 63.5907 17.0751C62.6524 18.7973 60.7332 19.9668 58.8353 20.3708C56.8734 20.7535 54.7409 20.6259 52.9496 19.7116C52.054 19.2651 51.3289 18.5635 50.5826 17.9043C50.1987 19.01 49.3244 19.8179 48.8979 20.3495C47.4478 22.1568 46.4456 23.0924 44.7822 24.7296C43.8652 24.0279 42.9909 23.2625 42.0953 22.5608C43.524 21.0937 45.0168 19.6904 46.4242 18.202C47.2559 17.309 48.3221 15.8844 47.5331 14.8213C47.1279 14.3535 46.6588 13.9282 46.211 13.4817C47.0213 12.6525 47.853 11.8445 48.6847 11.0153C50.412 12.695 52.054 14.4385 53.76 16.1395C54.9115 17.2452 56.6388 17.1814 58.1316 17.0113C59.3258 16.8625 60.328 15.9482 60.7119 14.8213C60.9678 13.5243 60.9251 12.1635 60.9038 10.8239Z"
+                fill="var(--logo-text)"></path>
+              <path
+                d="M107.52 10.8239C108.714 10.8027 109.908 10.8239 111.103 10.8239C111.039 12.1635 111.358 15.1827 110.207 17.0751C109.29 18.7973 107.349 19.9668 105.451 20.3708C103.49 20.7535 101.357 20.6259 99.5658 19.7116C98.6701 19.2651 97.9451 18.5635 97.1987 17.9043C96.8149 19.01 95.9406 19.8179 95.5141 20.3495C94.064 22.1568 93.0617 23.0924 91.3984 24.7296C90.4814 24.0279 89.6071 23.2625 88.7114 22.5608C90.1402 21.0937 91.6329 19.6904 93.0404 18.202C93.872 17.309 94.9383 15.8844 94.1493 14.8213C93.7441 14.3535 93.2749 13.9282 92.8271 13.4817C93.6375 12.6525 94.4691 11.8445 95.3008 11.0153C97.0281 12.695 98.6701 14.4385 100.376 16.1395C101.528 17.2452 103.255 17.1814 104.748 17.0113C105.942 16.8625 106.944 15.9482 107.328 14.8213C107.584 13.5243 107.541 12.1635 107.52 10.8239Z"
+                fill="var(--logo-text)"></path>
+              <path
+                d="M60.9038 22.6033C62.1193 22.6033 63.3562 22.6033 64.5717 22.6033C64.5717 23.7302 64.5504 24.8571 64.5717 25.9841C63.3348 26.0053 62.1193 26.0053 60.8825 25.9841C60.9251 24.8571 60.9251 23.7302 60.9038 22.6033Z"
+                fill="var(--logo-text)"></path>
+              <path
+                d="M102.828 22.6033C105.579 22.6033 108.33 22.6033 111.081 22.6033C111.081 23.7302 111.06 24.8571 111.081 25.9841C108.33 26.0053 105.579 25.9841 102.828 25.9841C102.828 24.8571 102.828 23.7302 102.828 22.6033Z"
+                fill="var(--logo-text)"></path>
+              <path
+                d="M137.502 0.350075C140.334 -0.328325 143.349 0.000596404 145.997 1.15182C145.59 2.0358 145.162 2.94033 144.734 3.8243C142.351 2.79643 139.621 2.67308 137.156 3.45427C134.793 4.2149 132.776 5.88006 131.391 7.93582C129.7 10.485 129.273 13.7742 130.006 16.7345C130.678 19.4686 132.532 21.8122 134.854 23.3129C137.34 24.8958 140.456 25.2658 143.288 24.5874C147.83 23.4362 151.294 19.078 151.497 14.3703C152.455 14.4731 153.412 14.5142 154.37 14.617C154.227 16.7139 153.697 18.7902 152.638 20.6198C150.744 24.1763 147.138 26.7049 143.247 27.5477C139.132 28.4728 134.671 27.1571 131.493 24.423C131.249 24.1763 130.984 24.1763 130.658 24.5669C129.619 25.7181 128.539 26.8282 127.521 28C126.808 27.3422 126.095 26.6638 125.382 25.9854C126.543 24.7313 127.704 23.4568 128.886 22.2028C129.171 21.8533 129.089 21.5655 128.906 21.3188C127.541 19.1191 126.808 16.5289 126.747 13.9386C126.808 10.9372 127.786 7.95637 129.558 5.55114C131.452 2.91977 134.386 1.13126 137.502 0.350075Z"
+                fill="var(--logo-mark)"></path>
+              <path
+                d="M149.705 3.84486C151.375 3.45427 152.964 3.12535 154.716 2.8581C155.612 2.75531 156.02 3.22813 155.999 3.84486C155.938 5.79783 155.816 7.19574 155.632 8.90202C155.551 9.80656 154.675 10.2588 154.044 9.76544C153.473 9.49819 152.862 8.49087 152.455 8.75812C152.088 8.9637 151.864 9.33373 151.579 9.64209C149.419 12.1912 147.219 14.6993 145.04 17.2278C144.51 17.8446 143.553 17.9062 142.962 17.3512C141.638 16.0972 140.395 14.7404 139.071 13.4658C138.888 13.2602 138.623 13.3836 138.48 13.548C137.319 14.7198 136.158 15.8916 134.997 17.0634C134.325 16.3644 133.652 15.6449 132.939 14.9871C134.447 13.4247 135.995 11.9034 137.502 10.3616C137.849 9.99157 138.338 9.64209 138.806 9.64209C139.295 9.60098 139.703 9.9299 140.028 10.2588C141.169 11.41 142.31 12.5818 143.451 13.7125C143.593 13.9181 143.879 14.1236 144.082 13.8564C146.16 11.5539 148.177 9.14871 150.214 6.76404C150.54 6.37344 149.236 5.61281 149.012 5.28389C148.625 4.76995 149.053 3.94765 149.705 3.84486Z"
+                fill="var(--logo-mark)"></path>
+            </svg>
+            <!-- <span class="brand-tag">پلی به دنیای مالی</span> -->
+          </a>
+
+          <div class="top-actions">
+            <button class="icon-btn" id="focus-btn" title="حالت تمرکز" aria-label="حالت تمرکز"></button>
+            <button class="icon-btn" id="theme-btn" title="تغییر تم" aria-label="تغییر تم"></button>
+            <button class="icon-btn" id="settings-btn" title="تنظیمات" aria-label="تنظیمات"></button>
           </div>
-          <button class="icon-btn topbar-timer-btn" id="timer-topbar-btn" title="تایمر سشن">
-            <span class="icon" id="timer-topbar-icon"></span>
-            <span class="timer-countdown" id="timer-countdown" hidden></span>
-          </button>
-          <button class="icon-btn topbar-note-btn" id="note-topbar-btn" title="یادداشت سریع" aria-label="یادداشت سریع">
-            <span class="icon" id="note-topbar-icon"></span>
-            <span class="note-dot" id="note-dot" hidden></span>
-          </button>
-          <div class="market-pill">
-            <span class="dot"></span>
-            <span id="market-count">— بازار فعال</span>
-          </div>
-          <button class="icon-btn" id="theme-btn" title="تغییر تم" aria-label="تغییر تم">
-            <span class="icon" id="theme-icon"></span>
-          </button>
-          <button class="icon-btn" id="settings-btn" title="تنظیمات" aria-label="تنظیمات">
-            <span class="icon" id="settings-icon"></span>
-          </button>
-        </div>
-      </header>
+        </header>
 
-      <!-- ===== SESSION TIMER BAR ===== -->
-      <div class="session-bar" id="session-bar" hidden></div>
+        <!-- ===== HERO + SEARCH ===== -->
+        <!-- Hub layout (areas):  [cal | hero | notes]  /  [cal | quick | notes]
+           cal = weather+calendar (right, RTL) · notes = tasks (left, RTL) -->
+        <div class="hero-search-wrap">
 
-      <!-- ===== 3-COLUMN DASHBOARD GRID ===== -->
-      <div class="main-grid">
+          <!-- ░░ HUB area "notes": daily tasks (left in RTL) ░░ -->
+          <aside class="hub-aside hub-aside-tasks" id="hub-tasks-box"></aside>
 
-        <!-- ── LEFT COLUMN: Context & Sessions ── -->
-        <aside class="col-left">
-
-          <!-- Iran Market Rates -->
-          <div class="iran-market-strip card" id="iran-market-strip">
-            <div class="im-header">
-              <span class="im-title">بازار ایران</span>
-              <span class="im-status" id="im-status"></span>
-            </div>
-            <div class="im-items" id="im-items">
-              <div class="widget-loading">در حال بارگذاری…</div>
-            </div>
-          </div>
-
-          <!-- Tips -->
-          <div class="tip-card" id="tip-card">
-            <span class="bg-ic" id="tip-bg-ic"></span>
-            <div class="card-head">
-              <h3>نکتهٔ امروز</h3>
-              <span class="tag" id="tip-tag">آگاهی</span>
-            </div>
-            <p class="tip-text" id="tip-text">…</p>
-            <button class="tip-next" id="tip-next">نکتهٔ بعدی <span id="tip-next-ic"></span></button>
-          </div>
-
-          <!-- Quick Links -->
-          <div class="card quick-links-card" id="quick-links-card">
-            <h3 class="ql-title">دسترسی سریع</h3>
-            <div class="quick-links" id="quick-links"></div>
-          </div>
-
-        </aside>
-
-        <!-- ── CENTER COLUMN: Tools & Content ── -->
-        <div class="col-center">
-
-          <!-- Search + Hero -->
-          <section class="sec-search" id="sec-search">
-            <div class="hero-row">
+          <!-- center top: hero + search (display:contents outside hub mode) -->
+          <div class="hero-center">
+            <section class="sec-hero">
               <div class="hero-date" id="hero-date">—</div>
+              <div class="hero-greeting" id="hero-greeting">سلام رفیق</div>
               <div class="clock" id="clock">--:--</div>
-              <div class="hero-greeting" id="hero-greeting">سلام معامله‌گر</div>
-              <div class="hero-session">جلسهٔ فعال: <b id="hero-active">—</b> · <span id="hero-utc">—</span> UTC</div>
+              <div class="hero-session">جلسهٔ فعال: <b id="hero-active">—</b> · <span id="hero-utc">—</span> به وقت
+                جهانی</div>
+            </section>
+
+            <section class="sec-search">
+              <div class="search-box" id="search-box">
+                <span class="s-ic" id="search-icon"></span>
+                <input type="text" id="search-input" placeholder="جستجو در گوگل یا ابزارهای ایران بروکر…"
+                  autocomplete="off" spellcheck="false" />
+                <span class="scope-label" id="scope-label">گوگل</span>
+                <button class="search-go" id="search-go" title="جستجو" aria-label="جستجو"></button>
+              </div>
+              <ul class="suggest" id="suggest" hidden></ul>
+              <div class="engines" id="engines"></div>
+              <div class="sparkles-strip" aria-hidden="true">
+                <div class="sp-glow-a"></div>
+                <div class="sp-glow-b"></div>
+                <canvas id="sp-canvas"></canvas>
+              </div>
+            </section>
+          </div>
+
+          <!-- center bottom: quick-access grid (3-col, hub mode only) -->
+          <section id="hub-quick" class="hub-quick">
+            <div class="hub-quick-head">
+              <h2>دسترسی سریع</h2>
+              <span class="hint">میان‌برهای دلخواه خودت را اضافه کن</span>
             </div>
-            <div class="search-box" id="search-box">
-              <span class="s-ic" id="search-icon"></span>
-              <input type="text" id="search-input" placeholder="جستجو در گوگل یا ابزارهای ایران بروکر…" autocomplete="off" spellcheck="false" />
-              <span class="scope-label" id="scope-label">گوگل</span>
-              <button class="search-go" id="search-go" title="جستجو" aria-label="جستجو"></button>
-            </div>
-            <ul class="suggest" id="suggest" hidden></ul>
-            <div class="engines" id="engines"></div>
-            <div class="sparkles-strip" aria-hidden="true">
-              <div class="sp-glow-a"></div>
-              <div class="sp-glow-b"></div>
-              <canvas id="sp-canvas"></canvas>
-            </div>
+            <div class="hub-quick-grid" id="hub-quick-grid"></div>
           </section>
 
-          <!-- Tools Grid -->
-          <div class="sec-tools" id="sec-tools">
+          <!-- ░░ HUB area "cal": weather (top) + calendar (bottom), right in RTL ░░ -->
+          <aside class="hub-aside hub-aside-cal" id="hub-cal-box"></aside>
+
+        </div><!-- /hero-search-wrap -->
+
+        <!-- ===== CONTENT BLOCK (tools + bento) ===== -->
+        <div class="content-block">
+
+          <!-- ===== TOOLS ===== -->
+          <section class="sec-tools">
             <div class="tools-head">
               <h2>ابزارهای ایران بروکر</h2>
-              <span class="hint">دسترسی سریع</span>
+              <span class="hint">دسترسی سریع به مقایسه‌ها و داده‌ها</span>
             </div>
             <div class="tools-grid" id="tools-grid"></div>
-          </div>
+          </section>
 
-          <!-- Content Feed -->
-          <section class="sec-feed" id="sec-feed">
-            <div class="feed-header">
-              <div class="h-title">
-                <span class="feed-icon">📰</span>
-                <h3>آخرین مطالب ایران بروکر</h3>
+          <!-- ===== BENTO ===== -->
+          <section class="sec-bento">
+
+            <!-- crypto -->
+            <div class="card crypto-card" id="crypto-card">
+              <div class="card-head">
+                <div class="h-title">
+                  <span class="dot"></span>
+                  <h3>قیمت لحظه‌ای ارز دیجیتال</h3>
+                </div>
+                <button class="refresh-btn" id="crypto-refresh" title="بروزرسانی" aria-label="بروزرسانی"></button>
               </div>
-              <a class="feed-more" href="https://iranbroker.net/news/" target="_blank">بیشتر ›</a>
+              <div class="crypto-list" id="crypto-list"></div>
+              <div class="crypto-foot" id="crypto-foot"></div>
             </div>
-            <div class="feed-cats" id="feed-cats"></div>
-            <div class="feed-scroll" id="feed-scroll">
-              <div class="widget-loading">در حال بارگذاری…</div>
+
+            <!-- market timeline -->
+            <div class="card markets-card">
+              <div class="card-head">
+                <div class="h-title">
+                  <span class="dot"></span>
+                  <h3>ساعات بازار جهانی</h3>
+                </div>
+                <span class="markets-utc-badge" id="markets-utc-badge">--:-- UTC</span>
+              </div>
+              <div class="markets-wrap" id="markets-wrap"></div>
+            </div>
+
+            <!-- news bento card -->
+            <div class="card bento-news-card" id="bento-news-card">
+              <div class="card-head">
+                <div class="h-title">
+                  <span class="dot"></span>
+                  <h3>اخبار بازار</h3>
+                </div>
+                <a class="bento-news-all" href="https://iranbroker.net/news/" target="_blank" rel="noopener">همه
+                  اخبار</a>
+              </div>
+              <div class="bento-news-list" id="bento-news-list"></div>
             </div>
           </section>
 
-          <!-- Bottom Duo: Sessions Ring + Economic Calendar -->
-          <div class="bottom-duo">
-
-            <div class="card ring-card" id="ring-card">
-              <h3 class="duo-title">ساعت بازارهای جهانی</h3>
-              <div class="ring-duo-inner">
-                <div class="ring-wrap">
-                  <svg class="ring-svg" id="ring-svg" viewBox="0 0 200 200">
-                    <circle cx="100" cy="100" r="86" fill="none" stroke="var(--border)" stroke-width="1"></circle>
-                    <circle cx="100" cy="100" r="40" fill="none" stroke="var(--border)" stroke-width="1"></circle>
-                    <g id="ring-arcs"></g>
-                    <line id="ring-hand" x1="100" y1="100" x2="100" y2="20" stroke="var(--text)" stroke-width="2" stroke-linecap="round"></line>
-                    <circle cx="100" cy="100" r="3.4" fill="var(--text)"></circle>
-                    <circle id="ring-tip" cx="100" cy="20" r="3" fill="var(--primary)"></circle>
-                  </svg>
-                  <div class="ring-center">
-                    <span class="num" id="ring-count">—</span>
-                    <span class="lbl">بازار باز</span>
-                  </div>
-                </div>
-                <div class="session-list" id="session-list"></div>
-              </div>
-            </div>
-
-            <div class="card calendar-card" id="calendar-card">
-              <div class="card-head">
-                <div class="h-title">
-                  <span class="cal-icon">📅</span>
-                  <h3>تقویم اقتصادی</h3>
-                </div>
-                <button class="refresh-btn" id="calendar-refresh" title="بروزرسانی" aria-label="بروزرسانی"></button>
-              </div>
-              <div class="calendar-list" id="calendar-list">
-                <div class="widget-loading">در حال بارگذاری…</div>
-              </div>
-            </div>
-
-          </div><!-- /.bottom-duo -->
-
         </div>
 
-        <!-- ── RIGHT COLUMN: Live Data ── -->
-        <aside class="col-right">
+      </div>
 
-          <!-- Watchlist -->
-          <div class="card watchlist-card" id="watchlist-card">
-            <div class="card-head">
-              <div class="h-title">
-                <span class="dot"></span>
-                <h3>واچ‌لیست من</h3>
-              </div>
-              <button class="icon-btn-sm" id="watchlist-add-btn" title="افزودن دارایی" aria-label="افزودن دارایی">+</button>
-            </div>
-            <div class="watchlist-table" id="watchlist-table">
-              <div class="watchlist-empty" id="watchlist-empty">
-                <p>واچ‌لیست شما خالی است</p>
-                <span>برای افزودن دارایی روی + کلیک کنید</span>
-              </div>
-            </div>
+
+    </div><!-- /layout-wrap -->
+
+    <!-- Community sidebar: fixed overlay panel -->
+    <aside class="sidebar sidebar-community" id="sb-community">
+      <button class="sb-tab" id="sb-comm-tab" aria-label="باز کردن جامعه">
+        <span>تاپیک‌های کامیونیتی ایران بروکر</span>
+      </button>
+      <div class="sb-content">
+        <div class="sb-head">
+          <div class="sb-head-info">
+            <span class="sb-dot"></span>
+            <span class="sb-title">جامعه ایران بروکر</span>
           </div>
-
-          <!-- Crypto Prices -->
-          <div class="card crypto-card" id="crypto-card">
-            <div class="card-head">
-              <div class="h-title">
-                <span class="dot"></span>
-                <h3>قیمت لحظه‌ای ارز دیجیتال</h3>
-              </div>
-              <button class="refresh-btn" id="crypto-refresh" title="بروزرسانی" aria-label="بروزرسانی"></button>
-            </div>
-            <div class="crypto-list" id="crypto-list"></div>
-            <div class="crypto-foot" id="crypto-foot"></div>
-          </div>
-
-          <!-- Community Hot Topics -->
-          <div class="card community-card" id="community-card">
-            <div class="card-head">
-              <div class="h-title">
-                <span class="fire-ic">🔥</span>
-                <h3>داغ‌ترین بحث‌ها</h3>
-              </div>
-            </div>
-            <div class="community-list" id="community-list">
-              <div class="widget-loading">در حال بارگذاری…</div>
-            </div>
-          </div>
-
-        </aside>
-
-      </div><!-- /.main-grid -->
-
-    </div><!-- /.page-col -->
-
-    <!-- ===== WATCHLIST ADD MODAL ===== -->
-    <div class="modal-overlay" id="watchlist-modal" hidden>
-      <div class="modal modal-sm" id="watchlist-panel">
-        <div class="modal-head">
-          <h3>افزودن به واچ‌لیست</h3>
-          <button class="icon-btn" id="watchlist-modal-close" aria-label="بستن"><span class="icon" id="watchlist-close-icon"></span></button>
+          <button class="sb-toggle" id="sb-comm-toggle" aria-label="جمع کردن">
+            <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M10 12L6 8l4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                stroke-linejoin="round" />
+            </svg>
+          </button>
         </div>
-        <div class="modal-body">
-          <input type="text" id="watchlist-search-input" placeholder="جستجو: BTC، EURUSD، طلا…" autocomplete="off" />
-          <ul class="watchlist-results" id="watchlist-results"></ul>
+        <div class="comm-tabs" id="comm-tabs">
+          <button class="comm-tab active" data-tab="hot">داغ‌ترین</button>
+          <button class="comm-tab" data-tab="latest">آخرین</button>
+          <button class="comm-tab" data-tab="cats">دسته‌بندی</button>
+        </div>
+        <div class="sb-list" id="sb-comm-list"></div>
+        <div class="sb-footer">
+          <a class="sb-more" href="https://iranbroker.net/" target="_blank" rel="noopener">مشارکت در گفتگو</a>
         </div>
       </div>
-    </div>
-
-    <!-- ===== ALERT POPOVER ===== -->
-    <div class="alert-popover" id="alert-popover" hidden>
-      <div class="alert-pop-head">
-        <span id="alert-pop-label">تعریف هشدار</span>
-        <button id="alert-pop-close" class="icon-btn-xs" aria-label="بستن">✕</button>
-      </div>
-      <div class="alert-pop-body">
-        <select id="alert-pop-dir">
-          <option value="above">بالاتر از</option>
-          <option value="below">پایین‌تر از</option>
-        </select>
-        <input type="number" id="alert-pop-price" placeholder="قیمت هدف" step="any" />
-      </div>
-      <div class="alert-pop-foot">
-        <button id="alert-pop-save" class="btn-primary-sm">ذخیره</button>
-        <button id="alert-pop-clear" class="btn-ghost-sm">حذف هشدار</button>
-      </div>
-    </div>
-
-    <!-- ===== TOAST NOTIFICATIONS ===== -->
-    <div class="toast-container" id="toast-container"></div>
-
-    <!-- ===== CALCULATOR PANEL ===== -->
-    <div class="calc-panel" id="calc-panel" hidden>
-      <div class="calc-head">
-        <h3>ماشین‌حساب معامله‌گری</h3>
-        <button class="icon-btn-xs" id="calc-close" aria-label="بستن">✕</button>
-      </div>
-      <div class="calc-tabs" id="calc-tabs">
-        <button class="calc-tab active" data-tab="lotsize">حجم معامله</button>
-        <button class="calc-tab" data-tab="pipvalue">ارزش پیپ</button>
-        <button class="calc-tab" data-tab="margin">مارجین</button>
-      </div>
-      <div class="calc-body" id="calc-body"></div>
-      <div class="calc-history" id="calc-history"></div>
-    </div>
-    <button class="calc-fab" id="calc-fab" title="ماشین‌حساب معامله‌گری" aria-label="ماشین‌حساب">🧮</button>
-
-    <!-- ===== QUICK NOTE DRAWER ===== -->
-    <div class="note-drawer" id="note-drawer" hidden>
-      <div class="note-drawer-head">
-        <h3>📝 یادداشت سریع</h3>
-        <button class="icon-btn-xs" id="note-drawer-close" aria-label="بستن">✕</button>
-      </div>
-      <textarea id="note-textarea" maxlength="5000" placeholder="سطوح کلیدی امروز، ایده معاملاتی یا قوانین پلنت رو اینجا بنویس…"></textarea>
-      <div class="note-drawer-foot">
-        <span class="note-save-time" id="note-save-time"></span>
-        <button class="btn-ghost-sm" id="note-clear-btn">پاک کردن</button>
-      </div>
-    </div>
-
-    <!-- ===== SESSION TIMER MODAL ===== -->
-    <div class="modal-overlay" id="timer-modal" hidden>
-      <div class="modal modal-sm" id="timer-panel">
-        <div class="modal-head">
-          <h3>⏱️ تایمر سشن معامله‌گری</h3>
-          <button class="icon-btn" id="timer-modal-close" aria-label="بستن"><span class="icon" id="timer-close-icon"></span></button>
-        </div>
-        <div class="modal-body">
-          <label class="set-row">ساعت شروع سشن
-            <input type="time" id="timer-start" />
-          </label>
-          <label class="set-row">ساعت پایان سشن
-            <input type="time" id="timer-end" />
-          </label>
-          <label class="set-row toggle">فعال‌سازی Pomodoro (یادآوری هر ۲۵ دقیقه)
-            <input type="checkbox" id="timer-pomodoro" />
-          </label>
-          <button class="btn-primary" id="timer-save">فعال کردن سشن</button>
-          <button class="btn-ghost" id="timer-stop" hidden>پایان دادن به سشن</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- ===== POMODORO OVERLAY ===== -->
-    <div class="pomodoro-overlay" id="pomodoro-overlay" hidden>
-      <div class="pomodoro-box">
-        <div class="pomodoro-icon">⏸️</div>
-        <p class="pomodoro-q">آیا این معامله طبق پلن است؟</p>
-        <div class="pomodoro-actions">
-          <button class="btn-primary-sm" id="pomo-yes">بله</button>
-          <button class="btn-ghost-sm" id="pomo-no">خیر</button>
-          <button class="btn-ghost-sm" id="pomo-close">بستن</button>
-        </div>
-      </div>
-    </div>
+    </aside>
 
     <!-- ===== SETTINGS MODAL ===== -->
     <div class="modal-overlay" id="settings-modal" hidden>
       <div class="modal" id="settings-panel">
+
+        <!-- Head -->
         <div class="modal-head">
-          <h3>تنظیمات تب جدید</h3>
-          <button class="icon-btn" id="settings-close" aria-label="بستن"><span class="icon" id="settings-close-icon"></span></button>
+          <div class="mh-brand">
+            <div class="mh-logo">IB</div>
+            <div class="mh-titles">
+              <div class="mh-title">تنظیمات</div>
+              <div class="mh-sub">ایران بروکر · تب جدید</div>
+            </div>
+          </div>
+          <button class="mh-close" id="settings-close" aria-label="بستن">
+            <svg viewBox="0 0 20 20" fill="none">
+              <path d="M5 5l10 10M15 5L5 15" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+            </svg>
+          </button>
         </div>
+
+        <!-- Tabs -->
+        <nav class="modal-tabs">
+          <button class="m-tab active" data-tab="appearance">
+            <svg viewBox="0 0 20 20" fill="none">
+              <circle cx="10" cy="10" r="7.5" stroke="currentColor" stroke-width="1.6" />
+              <path d="M10 2.5a7.5 7.5 0 0 1 0 15V2.5z" fill="currentColor" />
+            </svg>
+            ظاهر
+          </button>
+          <button class="m-tab" data-tab="display">
+            <svg viewBox="0 0 20 20" fill="none">
+              <rect x="1.5" y="3.5" width="17" height="11" rx="1.5" stroke="currentColor" stroke-width="1.6" />
+              <path d="M7 18h6M10 14.5V18" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
+            </svg>
+            نمایش
+          </button>
+          <button class="m-tab" data-tab="data">
+            <svg viewBox="0 0 20 20" fill="none">
+              <path d="M2.5 5.5h15M2.5 10h15M2.5 14.5h15" stroke="currentColor" stroke-width="1.5"
+                stroke-linecap="round" />
+              <circle cx="7" cy="5.5" r="2" fill="currentColor" />
+              <circle cx="13" cy="10" r="2" fill="currentColor" />
+              <circle cx="6" cy="14.5" r="2" fill="currentColor" />
+            </svg>
+            داده
+          </button>
+        </nav>
+
+        <!-- Body -->
         <div class="modal-body">
-          <label class="set-row">نام شما (برای خوش‌آمدگویی)
-            <input type="text" id="set-name" placeholder="مثلاً مهدی" maxlength="20" />
-          </label>
-          <label class="set-row">موتور جستجوی پیش‌فرض
-            <select id="set-engine">
-              <option value="google">گوگل</option>
-              <option value="ib">ایران بروکر</option>
-              <option value="tv">تریدینگ‌ویو</option>
-            </select>
-          </label>
-          <div class="set-row">
-            <span>حالت نمایش صفحه</span>
-            <div class="seg-group" id="set-layout">
-              <button data-layout="scroll">اسکرول</button>
-              <button data-layout="fit">فشرده</button>
-              <button data-layout="fullvp">تمام‌صفحه</button>
+
+          <!-- ═══ TAB: ظاهر ═══ -->
+          <div class="tab-panel active" id="tab-appearance">
+
+            <div class="s-section">
+              <div class="s-section-label">حالت رنگی</div>
+              <div class="theme-cards" id="set-theme-mode">
+                <button class="tc" data-theme="dark">
+                  <div class="tc-preview tc-dark"></div>
+                  <span>تاریک</span>
+                </button>
+                <button class="tc" data-theme="light">
+                  <div class="tc-preview tc-light"></div>
+                  <span>روشن</span>
+                </button>
+                <button class="tc" data-theme="auto">
+                  <div class="tc-preview tc-auto"></div>
+                  <span>خودکار</span>
+                </button>
+                <button class="tc" data-theme="glass">
+                  <div class="tc-preview tc-glass"></div>
+                  <span>شیشه‌ای</span>
+                </button>
+              </div>
             </div>
-          </div>
-          <label class="set-row">ارزهای دیجیتال نمایشی (با کاما جدا کنید)
-            <input type="text" id="set-coins" placeholder="bitcoin,ethereum,tether" />
-          </label>
-          <label class="set-row toggle">نمایش ویجت ارز دیجیتال
-            <input type="checkbox" id="set-crypto" />
-          </label>
-          <label class="set-row toggle">نمایش گرید پس‌زمینه
-            <input type="checkbox" id="set-grid" />
-          </label>
-          <div class="set-section-title">فید محتوا — دسته‌بندی‌ها</div>
-          <div class="set-feed-cats" id="set-feed-cats">
-            <label class="cat-toggle"><input type="checkbox" data-cat="forex" /> 📰 اخبار فارکس</label>
-            <label class="cat-toggle"><input type="checkbox" data-cat="crypto" /> 🪙 ارز دیجیتال</label>
-            <label class="cat-toggle"><input type="checkbox" data-cat="broker" /> 🏦 بروکرها</label>
-            <label class="cat-toggle"><input type="checkbox" data-cat="fraud" /> 🛡️ هشدار کلاهبرداری</label>
-            <label class="cat-toggle"><input type="checkbox" data-cat="education" /> 📚 آموزش</label>
-            <label class="cat-toggle"><input type="checkbox" data-cat="prop" /> 🏆 پراپ‌فرم</label>
-          </div>
-          <div class="set-section-title">بروکر من — رادار اتصال</div>
-          <label class="set-row">انتخاب بروکر
-            <select id="set-broker">
-              <option value="">— انتخاب کنید —</option>
-            </select>
-          </label>
-          <div class="set-row">رنگ تأکید
-            <div class="swatches" id="set-accent">
-              <button data-accent="#185adb" style="background:#185adb" title="آبی"></button>
-              <button data-accent="#1f9d55" style="background:#1f9d55" title="سبز"></button>
-              <button data-accent="#7c4dff" style="background:#7c4dff" title="بنفش"></button>
-              <button data-accent="#e8590c" style="background:#e8590c" title="نارنجی"></button>
+
+            <div class="s-section">
+              <div class="s-section-label">رنگ تأکید</div>
+              <div class="accent-row" id="set-accent">
+                <button class="ac-btn" data-accent="#185adb" style="background:#185adb" title="آبی سرویس"></button>
+                <button class="ac-btn" data-accent="#1f9d55" style="background:#1f9d55" title="سبز بازار"></button>
+                <button class="ac-btn" data-accent="#7c4dff" style="background:#7c4dff" title="بنفش نئون"></button>
+                <button class="ac-btn" data-accent="#e8590c" style="background:#e8590c" title="نارنجی آتش"></button>
+              </div>
             </div>
+
+            <div class="s-section">
+              <div class="s-section-label">پس‌زمینه</div>
+              <div class="bg-picker" id="bg-picker">
+                <button class="bg-opt-default" id="bg-opt-default">
+                  <span class="bg-default-swatch"></span>
+                  <span>پیش‌فرض — انیمیشن شیدر</span>
+                </button>
+                <div class="bg-gallery" id="bg-gallery"></div>
+                <label class="bg-upload-btn">
+                  <input type="file" id="bg-upload" accept="image/*" />
+                  آپلود تصویر از سیستم
+                </label>
+              </div>
+            </div>
+
           </div>
-        </div>
+
+          <!-- ═══ TAB: نمایش ═══ -->
+          <div class="tab-panel" id="tab-display">
+
+            <div class="s-section">
+              <div class="s-section-label">چیدمان صفحه</div>
+              <div class="layout-cards" id="set-layout">
+                <button class="lc" data-layout="simple">
+                  <div class="lc-preview lcp-fit">
+                    <div class="lcp-bar" style="width:70%;margin:auto"></div>
+                    <div class="lcp-bar" style="width:90%;margin:auto"></div>
+                  </div>
+                  <span>ساده</span>
+                </button>
+                <button class="lc" data-layout="data">
+                  <div class="lc-preview">
+                    <div class="lcp-bar" style="width:80%"></div>
+                    <div class="lcp-bar" style="width:60%"></div>
+                    <div class="lcp-bar" style="width:90%"></div>
+                    <div class="lcp-bar" style="width:50%"></div>
+                  </div>
+                  <span>دیتا محور</span>
+                </button>
+                <button class="lc" data-layout="hub">
+                  <div class="lc-preview lcp-hub">
+                    <div class="lcp-hub-col">
+                      <div class="lcp-hub-cell" style="height:18px;opacity:.5"></div>
+                      <div class="lcp-hub-cell" style="height:5px"></div>
+                      <div class="lcp-hub-cell" style="height:5px"></div>
+                      <div class="lcp-hub-cell" style="height:5px"></div>
+                    </div>
+                    <div class="lcp-hub-col">
+                      <div class="lcp-hub-cell" style="height:5px;opacity:.6"></div>
+                      <div class="lcp-hub-cell" style="height:5px"></div>
+                      <div class="lcp-hub-cell" style="height:5px"></div>
+                      <div class="lcp-hub-cell" style="height:5px"></div>
+                    </div>
+                    <div class="lcp-hub-col">
+                      <div class="lcp-hub-cell" style="height:10px;opacity:.5"></div>
+                      <div class="lcp-hub-cell" style="height:10px"></div>
+                    </div>
+                  </div>
+                  <span>هاب</span>
+                </button>
+              </div>
+            </div>
+
+            <div class="s-section">
+              <div class="s-section-label">نمایش</div>
+              <div class="tog-list">
+                <label class="tog-row" for="set-grid">
+                  <div class="tog-info">
+                    <span class="tog-title">گرید پس‌زمینه</span>
+                    <span class="tog-desc">الگوی شبکه‌ای روی پس‌زمینه</span>
+                  </div>
+                  <div class="ios-tog">
+                    <input type="checkbox" id="set-grid" checked />
+                    <span class="ios-track"></span>
+                  </div>
+                </label>
+                <label class="tog-row" for="set-crypto">
+                  <div class="tog-info">
+                    <span class="tog-title">ویجت ارز دیجیتال</span>
+                    <span class="tog-desc">قیمت لحظه‌ای ارزها در داشبورد</span>
+                  </div>
+                  <div class="ios-tog">
+                    <input type="checkbox" id="set-crypto" checked />
+                    <span class="ios-track"></span>
+                  </div>
+                </label>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- ═══ TAB: داده ═══ -->
+          <div class="tab-panel" id="tab-data">
+
+            <div class="s-section">
+              <div class="s-section-label">نام شما</div>
+              <input class="s-input" type="text" id="set-name" placeholder="مثلاً مهدی" maxlength="20" />
+              <div class="s-hint">برای خوش‌آمدگویی شخصی استفاده می‌شود</div>
+            </div>
+
+            <div class="s-section">
+              <div class="s-section-label">موتور جستجو</div>
+              <div class="s-select-wrap">
+                <select class="s-select" id="set-engine">
+                  <option value="google">گوگل</option>
+                  <option value="ib">ایران بروکر</option>
+                  <option value="tv">تریدینگ‌ویو</option>
+                </select>
+                <svg class="s-select-arrow" viewBox="0 0 16 16" fill="none">
+                  <path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                    stroke-linejoin="round" />
+                </svg>
+              </div>
+            </div>
+
+            <div class="s-section">
+              <div class="s-section-label">ارزهای دیجیتال نمایشی</div>
+              <input class="s-input" type="text" id="set-coins" placeholder="bitcoin,ethereum,tether" />
+              <div class="s-hint">با کاما جدا کنید — حداکثر ۶ ارز</div>
+            </div>
+
+          </div>
+
+        </div><!-- /modal-body -->
+
         <div class="modal-foot">
-          <button class="btn-primary" id="settings-save">انجام شد</button>
+          <span class="mf-ver">v2.0</span>
+          <button class="btn-primary" id="settings-save">ذخیره تغییرات</button>
         </div>
+
       </div>
     </div>
 
-  </div><!-- /.stage-root -->
+    <!-- ===== FOCUS MODE CONTAINER ===== -->
+    <div id="focus-container" hidden>
 
-  <script type="module" src="js/main.js"></script>
+      <!-- decorative background -->
+      <div class="fc-bg-grid" aria-hidden="true"></div>
+      <div class="fc-bg-glow" aria-hidden="true"></div>
+
+      <!-- persistent top toolbar (always visible) -->
+      <div class="fc-toolbar-left">
+        <button id="fc-theme-btn" class="fc-icon-btn" title="تغییر تم" aria-label="تغییر تم">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"
+            stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="9" />
+            <path d="M12 3a9 9 0 0 0 0 18z" fill="currentColor" stroke="none" />
+          </svg>
+        </button>
+        <button id="fc-close-btn" class="fc-icon-btn" title="بستن (Esc)" aria-label="بستن">
+          <svg width="15" height="15" viewBox="0 0 20 20" fill="none">
+            <path d="M5 5l10 10M15 5L5 15" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+          </svg>
+        </button>
+      </div>
+      <div class="fc-toolbar-right">
+        <span class="fc-brand-dot"></span>
+        <span class="fc-brand-name">ایران بروکر</span>
+      </div>
+
+      <!-- State 1: Setup -->
+      <div id="focus-setup" class="focus-state" hidden>
+        <div class="fc-modal">
+          <div class="fc-modal-head-new">
+            <div class="fc-modal-eyebrow">حالت تمرکز</div>
+            <h1 class="fc-modal-title-new">یک جلسه‌ی تمرکز بساز</h1>
+          </div>
+
+          <!-- Mode cards -->
+          <div class="fc-mode-cards">
+            <button class="fc-mode-card selected" id="mode-pomodoro">
+              <span class="fc-mc-ring"></span>
+              <span class="fc-mc-icon-wrap">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="8" stroke-dasharray="4 3.2" />
+                  <circle cx="12" cy="12" r="2.2" fill="currentColor" stroke="none" />
+                </svg>
+              </span>
+              <div>
+                <div class="fc-mc-title">پومودورو</div>
+                <div class="fc-mc-desc">چرخه‌ی کار و استراحت</div>
+              </div>
+            </button>
+            <button class="fc-mode-card" id="mode-custom">
+              <span class="fc-mc-ring"></span>
+              <span class="fc-mc-icon-wrap">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round">
+                  <circle cx="12" cy="13" r="8" />
+                  <path d="M12 9v4l2.5 1.6" />
+                  <path d="M9 2h6" />
+                </svg>
+              </span>
+              <div>
+                <div class="fc-mc-title">زمان دلخواه</div>
+                <div class="fc-mc-desc">یک بازه‌ی پیوسته</div>
+              </div>
+            </button>
+            <button class="fc-mode-card" id="mode-session">
+              <span class="fc-mc-ring"></span>
+              <span class="fc-mc-icon-wrap">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round">
+                  <path d="M7 4v16" />
+                  <rect x="5" y="8" width="4" height="7" rx="1.2" fill="currentColor" stroke="none" />
+                  <path d="M16 6v12" />
+                  <rect x="14" y="10" width="4" height="5" rx="1.2" fill="currentColor" stroke="none" />
+                </svg>
+              </span>
+              <div>
+                <div class="fc-mc-title">سشن معاملاتی</div>
+                <div class="fc-mc-desc">هم‌سو با بازار</div>
+              </div>
+            </button>
+          </div>
+
+          <!-- Pomodoro config -->
+          <div id="pom-config" class="fc-sub-config">
+            <div class="fc-steppers-row">
+              <div class="fc-stepper-box">
+                <div class="fc-stepper-label">تمرکز</div>
+                <div class="fc-stepper-ctrl">
+                  <button class="fc-step-btn" id="dec-work">−</button>
+                  <span class="fc-step-val" id="pom-work-val">۲۵</span>
+                  <button class="fc-step-btn" id="inc-work">+</button>
+                </div>
+                <div class="fc-stepper-unit">دقیقه</div>
+              </div>
+              <div class="fc-stepper-box">
+                <div class="fc-stepper-label">استراحت</div>
+                <div class="fc-stepper-ctrl">
+                  <button class="fc-step-btn" id="dec-short">−</button>
+                  <span class="fc-step-val" id="pom-short-val">۵</span>
+                  <button class="fc-step-btn" id="inc-short">+</button>
+                </div>
+                <div class="fc-stepper-unit">دقیقه</div>
+              </div>
+              <div class="fc-stepper-box">
+                <div class="fc-stepper-label">استراحت بلند</div>
+                <div class="fc-stepper-ctrl">
+                  <button class="fc-step-btn" id="dec-long">−</button>
+                  <span class="fc-step-val" id="pom-long-val">۱۵</span>
+                  <button class="fc-step-btn" id="inc-long">+</button>
+                </div>
+                <div class="fc-stepper-unit">دقیقه</div>
+              </div>
+            </div>
+            <div class="fc-rounds-row">
+              <span>هر</span>
+              <button class="fc-step-btn fc-step-sm" id="dec-rounds">−</button>
+              <span class="fc-step-val" id="pom-rounds-val">۴</span>
+              <button class="fc-step-btn fc-step-sm" id="inc-rounds">+</button>
+              <span>دور، یک استراحت بلند</span>
+            </div>
+          </div>
+
+          <!-- Custom time config -->
+          <div id="custom-config" class="fc-sub-config" hidden>
+            <div class="fc-preset-chips">
+              <button class="preset-chip" data-mins="15">۱۵ دقیقه</button>
+              <button class="preset-chip" data-mins="30">۳۰ دقیقه</button>
+              <button class="preset-chip" data-mins="45">۴۵ دقیقه</button>
+              <button class="preset-chip" data-mins="60">۱ ساعت</button>
+              <button class="preset-chip" data-mins="120">۲ ساعت</button>
+            </div>
+            <div class="fc-custom-stepper">
+              <button class="fc-step-btn fc-step-lg" id="dec-custom">−</button>
+              <div class="fc-custom-val-wrap">
+                <span class="fc-step-val fc-custom-val" id="custom-mins-val">۴۵</span>
+                <div class="fc-stepper-unit">دقیقه</div>
+              </div>
+              <button class="fc-step-btn fc-step-lg" id="inc-custom">+</button>
+            </div>
+          </div>
+
+          <!-- Session config -->
+          <div id="session-config" class="fc-sub-config" hidden>
+            <div class="fc-sess-chips">
+              <button class="sess-chip" data-key="sydney" data-start="02:30" data-end="04:30"><span
+                  class="sess-chip-name">سیدنی</span><span class="sess-chip-sub">۰۲:۳۰–۰۴:۳۰</span></button>
+              <button class="sess-chip" data-key="tokyo" data-start="03:30" data-end="05:30"><span
+                  class="sess-chip-name">توکیو</span><span class="sess-chip-sub">۰۳:۳۰–۰۵:۳۰</span></button>
+              <button class="sess-chip" data-key="london" data-start="10:30" data-end="12:30"><span
+                  class="sess-chip-name">لندن</span><span class="sess-chip-sub">۱۰:۳۰–۱۲:۳۰</span></button>
+              <button class="sess-chip" data-key="newyork" data-start="15:30" data-end="17:30"><span
+                  class="sess-chip-name">نیویورک</span><span class="sess-chip-sub">۱۵:۳۰–۱۷:۳۰</span></button>
+            </div>
+            <div class="fc-sess-time-row">
+              <label class="fc-sess-time-lbl">از <input id="sess-start-input" type="time" value="10:30" /></label>
+              <label class="fc-sess-time-lbl">تا <input id="sess-end-input" type="time" value="12:30" /></label>
+              <span id="sess-dur-label" class="fc-sess-dur"></span>
+            </div>
+          </div>
+
+          <!-- Intention -->
+          <input id="fc-intention" class="fc-intention-input" type="text"
+            placeholder="روی چه کاری تمرکز داری؟ (اختیاری)" maxlength="60" />
+
+          <!-- Sound + volume -->
+          <div class="fc-sound-row">
+            <div class="fc-sound-chips">
+              <button class="sound-chip sc-setup" data-sound="rain"><svg width="14" height="14" viewBox="0 0 24 24"
+                  fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                  <path d="M5 14a4 4 0 0 1 .9-7.9A5 5 0 0 1 18.5 8 3.4 3.4 0 0 1 18 14.8H6" />
+                  <path d="M8 18l-1 2.5M12 18l-1 2.5M16 18l-1 2.5" />
+                </svg>باران</button>
+              <button class="sound-chip sc-setup" data-sound="ocean"><svg width="14" height="14" viewBox="0 0 24 24"
+                  fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M2 8c2 0 2-2 4-2s2 2 4 2 2-2 4-2 2 2 4 2 2-2 4-2" />
+                  <path d="M2 13c2 0 2-2 4-2s2 2 4 2 2-2 4-2 2 2 4 2 2-2 4-2" />
+                </svg>دریا</button>
+              <button class="sound-chip sc-setup" data-sound="forest"><svg width="14" height="14" viewBox="0 0 24 24"
+                  fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M12 3l5 8h-3l3 5h-4v5h-2v-5H8l3-5H8l4-8z" />
+                </svg>جنگل</button>
+              <button class="sound-chip sc-setup active" data-sound="none">بی‌صدا</button>
+            </div>
+            <input class="fc-vol-slider" type="range" id="setup-volume" min="0" max="100" value="60"
+              aria-label="ولوم" />
+          </div>
+
+          <!-- Start -->
+          <button class="fc-start-btn" id="start-focus-btn">شروع تمرکز</button>
+
+          <!-- Streak row -->
+          <div class="fc-streak-row">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="#f6a723">
+              <path d="M12 2c0 4-5 5-5 10a5 5 0 0 0 10 0c0-2-1-3-1-3 0 2-1 3-2 3 1-3-2-6-2-10z" />
+            </svg>
+            <span id="fc-streak-count">۰</span> روز پیاپی
+            <span class="fc-streak-sep">·</span>
+            امروز <span id="fc-today-mins">۰</span> دقیقه
+          </div>
+        </div>
+      </div>
+
+      <!-- State 2: Intro / Quote -->
+      <div id="focus-quote-screen" class="focus-state" hidden>
+        <div class="fc-quote-inner">
+          <span class="fc-quote-brand">ایران بروکر</span>
+          <p class="fc-quote-text" id="fq-text"></p>
+          <span class="fc-quote-author" id="fq-author"></span>
+          <span class="fc-quote-hint">چند لحظه نفس بکش · برای شروع کلیک کن</span>
+        </div>
+      </div>
+
+      <!-- State 3: Timer -->
+      <div id="focus-timer-screen" class="focus-state" hidden>
+        <div id="fc-intention-badge" class="fc-intention-badge" hidden></div>
+
+        <div class="fc-ring-wrap">
+          <svg id="focus-ring-svg" viewBox="0 0 320 320" aria-hidden="true">
+            <circle id="focus-ring-track" cx="160" cy="160" r="140" />
+            <circle id="focus-ring-progress" cx="160" cy="160" r="140" />
+            <circle id="focus-ring-dot" cx="160" cy="20" r="5.5" />
+          </svg>
+          <div class="fc-center">
+            <span class="fc-mode-label" id="focus-mode-label">تمرکز</span>
+            <div class="fc-countdown" id="focus-countdown">25:00</div>
+            <div class="fc-round-indicator" id="focus-round-indicator" hidden></div>
+            <span class="fc-paused-lbl" id="fc-paused-lbl" hidden>متوقف</span>
+          </div>
+        </div>
+
+        <div class="fc-controls">
+          <button class="fc-ctrl fc-ctrl-sec" id="focus-reset-btn" title="ریست" aria-label="ریست">
+            <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 12a9 9 0 1 0 3-6.7L3 8" />
+              <path d="M3 3v5h5" />
+            </svg>
+          </button>
+          <button class="fc-ctrl fc-ctrl-main" id="focus-toggle" aria-label="توقف/ادامه">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="#fff">
+              <path d="M8 5.5v13l11-6.5z" />
+            </svg>
+          </button>
+          <button class="fc-ctrl fc-ctrl-sec" id="focus-skip-btn" title="رد کردن مرحله" aria-label="رد کردن" hidden>
+            <svg width="19" height="19" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M6 5v14l9-7zM16 5h2v14h-2z" />
+            </svg>
+          </button>
+        </div>
+
+        <div class="fc-timer-bottom">
+          <button class="extend-chip" data-add="5">+۵</button>
+          <button class="extend-chip" data-add="15">+۱۵</button>
+          <div class="fc-bottom-sep"></div>
+          <button class="sound-chip-sm sc-timer" data-sound="rain" title="باران"><svg width="14" height="14"
+              viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+              <path d="M5 14a4 4 0 0 1 .9-7.9A5 5 0 0 1 18.5 8 3.4 3.4 0 0 1 18 14.8H6" />
+              <path d="M8 18l-1 2.5M12 18l-1 2.5M16 18l-1 2.5" />
+            </svg></button>
+          <button class="sound-chip-sm sc-timer" data-sound="ocean" title="دریا"><svg width="14" height="14"
+              viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+              stroke-linejoin="round">
+              <path d="M2 8c2 0 2-2 4-2s2 2 4 2 2-2 4-2 2 2 4 2 2-2 4-2" />
+              <path d="M2 13c2 0 2-2 4-2s2 2 4 2 2-2 4-2 2 2 4 2 2-2 4-2" />
+            </svg></button>
+          <button class="sound-chip-sm sc-timer" data-sound="forest" title="جنگل"><svg width="14" height="14"
+              viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+              stroke-linejoin="round">
+              <path d="M12 3l5 8h-3l3 5h-4v5h-2v-5H8l3-5H8l4-8z" />
+            </svg></button>
+          <button class="sound-chip-sm sc-timer active" data-sound="none" title="بی‌صدا"><svg width="14" height="14"
+              viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+              stroke-linejoin="round">
+              <path d="M4 9v6h4l5 4V5L8 9H4z" />
+              <path d="M16 9l5 6M21 9l-5 6" />
+            </svg></button>
+        </div>
+
+        <span class="fc-kbd-hint">Space توقف/ادامه · Esc خروج</span>
+      </div>
+
+      <!-- State 4: Break -->
+      <div id="focus-break-screen" class="focus-state" hidden>
+        <span class="fc-break-status">استراحت</span>
+        <h2 id="focus-break-title" class="fc-break-title"></h2>
+        <div class="fc-breathe-wrap">
+          <div class="fc-breathe-circle"></div>
+          <span id="fc-breath-label" class="fc-breath-label">دم بگیر</span>
+        </div>
+        <span class="fc-break-time" id="focus-break-time">05:00</span>
+        <div class="fc-break-progress">
+          <div class="fc-break-fill" id="focus-break-fill"></div>
+        </div>
+        <div class="fc-break-tip">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="#1fc16b" style="flex-shrink:0;margin-top:2px">
+            <path d="M9 21h6v-1H9v1zm3-19a7 7 0 0 0-4 12.7V17h8v-2.3A7 7 0 0 0 12 2z" />
+          </svg>
+          <span id="focus-break-tip"></span>
+        </div>
+        <button class="fc-skip-break-btn" id="focus-skip-break">رد کردن استراحت</button>
+      </div>
+
+      <!-- State 5: End -->
+      <div id="focus-end-screen" class="focus-state" hidden>
+        <div class="fc-end-inner">
+          <div class="fc-end-check">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"
+              stroke-linecap="round" stroke-linejoin="round">
+              <path d="M5 13l4 4L19 7" />
+            </svg>
+          </div>
+          <h2 class="fc-end-title">جلسه کامل شد</h2>
+          <p class="fc-end-sub">آفرین — تمرکزت رو تا آخر حفظ کردی</p>
+          <div class="fc-end-stats-grid">
+            <div class="fc-end-stat">
+              <div id="es-duration" class="fc-end-stat-val fc-end-stat-blue">—</div>
+              <div class="fc-end-stat-label">دقیقه تمرکز</div>
+            </div>
+            <div class="fc-end-stat">
+              <div id="es-rounds" class="fc-end-stat-val">—</div>
+              <div class="fc-end-stat-label">دور تکمیل‌شده</div>
+            </div>
+            <div class="fc-end-stat">
+              <div id="es-pauses" class="fc-end-stat-val">—</div>
+              <div id="es-pauses-label" class="fc-end-stat-label">توقف</div>
+            </div>
+            <div class="fc-end-stat">
+              <div id="es-streak" class="fc-end-stat-val fc-end-stat-amber">—</div>
+              <div class="fc-end-stat-label">روز پیاپی</div>
+            </div>
+          </div>
+          <div class="fc-end-actions">
+            <button class="fc-end-btn-sec" id="focus-restart-btn">جلسه‌ی جدید</button>
+            <button class="fc-end-btn-pri" id="focus-done-btn">تمام</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Preview / state switcher bar -->
+      <div class="fc-preview-bar">
+        <span class="fc-preview-label">پیش‌نمایش</span>
+        <button class="fc-preview-pill" data-screen="focus-setup">تنظیمات</button>
+        <button class="fc-preview-pill" data-screen="focus-quote-screen">مقدمه</button>
+        <button class="fc-preview-pill" data-screen="focus-timer-screen">تایمر</button>
+        <button class="fc-preview-pill" data-screen="focus-break-screen">استراحت</button>
+        <button class="fc-preview-pill" data-screen="focus-end-screen">پایان</button>
+      </div>
+
+    </div><!-- /focus-container -->
+  </div>
+
+  <!-- ===== QUICK-ACCESS ADD MODAL (hub mode) ===== -->
+  <div id="hub-qa-modal" class="hub-modal-bg" hidden>
+    <div class="hub-modal">
+      <div class="hub-modal-head">
+        <span id="hub-qa-modal-title">میان‌بر جدید</span>
+        <button id="hub-qa-modal-x" class="hub-modal-x" aria-label="بستن">×</button>
+      </div>
+      <div class="hub-modal-body">
+        <div class="hub-qa-preview" id="hub-qa-preview">
+          <span class="hqa-prev-ic" id="hub-qa-prev-ic">+</span>
+        </div>
+
+        <label class="hub-modal-lbl" for="hub-qa-inp-url">آدرس سایت</label>
+        <input type="text" id="hub-qa-inp-url" class="hub-modal-inp" placeholder="example.com" autocomplete="off"
+          inputmode="url" dir="ltr" />
+
+        <label class="hub-modal-lbl" for="hub-qa-inp-title">عنوان</label>
+        <input type="text" id="hub-qa-inp-title" class="hub-modal-inp" placeholder="نام میان‌بر" maxlength="22"
+          autocomplete="off" />
+
+        <label class="hub-modal-lbl" for="hub-qa-inp-icon">ایموجی (اختیاری)</label>
+        <input type="text" id="hub-qa-inp-icon" class="hub-modal-inp hub-modal-inp-icon" placeholder="🌐" maxlength="2"
+          autocomplete="off" />
+
+        <label class="hub-modal-lbl">رنگ کارت</label>
+        <div class="hub-qa-colors" id="hub-qa-colors"></div>
+      </div>
+      <div class="hub-modal-foot">
+        <button id="hub-qa-modal-cancel" class="hub-modal-cancel">انصراف</button>
+        <button id="hub-qa-modal-save" class="hub-modal-save">افزودن</button>
+      </div>
+    </div>
+
+  <!-- ===== CALENDAR DAY-DETAIL MODAL (hub mode) ===== -->
+  <div id="hub-day-modal" class="hub-modal-bg" hidden>
+    <div class="hub-modal hub-day-modal">
+      <div class="hub-modal-head">
+        <span id="hub-day-title">—</span>
+        <button id="hub-day-modal-x" class="hub-modal-x" aria-label="بستن">×</button>
+      </div>
+      <div class="hub-modal-body" id="hub-day-body"></div>
+    </div>
+  </div>
+
+  <script src="newtab.js"></script>
+  <script src="js/focus.js"></script>
+  <script src="js/journal.js"></script>
+  <script src="js/hub.js"></script>
+  <script src="js/tour.js"></script>
 </body>
+
 </html>
