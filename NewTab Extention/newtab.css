@@ -6584,8 +6584,6 @@ body[data-layout="hub"] .hub-aside-cal { gap: 16px }
   margin-bottom: 4px
 }
 .hqa-prev-ic {
-  position: relative;
-  overflow: hidden;
   width: 58px; height: 58px;
   border-radius: 16px;
   background: var(--qac, #185adb);
@@ -6596,7 +6594,6 @@ body[data-layout="hub"] .hub-aside-cal { gap: 16px }
   box-shadow: 0 8px 22px rgba(0,0,0,.3);
   transition: background .2s
 }
-.hqa-prev-ic .hqa-fav { padding: 11px }
 
 .hub-qa-colors {
   display: flex;

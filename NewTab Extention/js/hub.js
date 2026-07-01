@@ -592,10 +592,11 @@
     var grid=$('hub-quick-grid'); if(!grid) return;
     var html='';
 
-    /* pinned IranBroker tile with logo mark */
+    /* pinned IranBroker tile — real site favicon */
     html+='<a class="hqa-tile hqa-brand" href="'+IB_BRAND.url+'" target="_blank" rel="noopener" title="ایران بروکر">'+
-            '<span class="hqa-ic hqa-ic-brand">'+
-              '<svg viewBox="0 0 32 28" width="22" height="20" fill="none"><path d="M14.76 8.91c3.56-3.44 4.6-4.57 6.82-6.91.98.64 2.02 1.21 3.03 1.87-1.73 1.72-3.22 3.25-4.78 4.85 1.96 0 2.71.02 3.9 0 1.3.02 2.45-.13 3.69.34 1.66.62 2.9 2.09 3.37 3.79.6 1.98.02 4.19-1.3 5.74-1.17 1.4-2.96 1.94-4.73 2.02-3.43 0-6.53 0-9.72 0-1.86.07-3.78-.49-5.19-1.72-.45-.38-.81-.77-1.3-1.08-.24.7-.66 1.31-1.16 1.89-1.45 1.74-3.09 3.29-4.71 4.89-.9-.74-1.77-1.49-2.69-2.17 1.39-1.47 2.86-2.85 4.27-4.32.85-.89 1.9-2.12 1.26-3.34-.47-.47-.94-.96-1.41-1.45.81-.81 1.64-1.61 2.43-2.45 1.54 1.47 3.01 2.98 4.48 4.49.79.83 1.73 1.62 2.9 1.77 1.22.17 9.83 0 11.6 0 1.37-.08 2.58-1.57 2.41-2.95-.15-1.08-1.13-2.06-2.26-2.06-1.64-.02-6.7-.04-9.58-.04-.55-1.3-.76-1.89-1.34-3.15z" fill="#fff"/></svg>'+
+            '<span class="hqa-ic hqa-ic-brand hqa-ic-fav">'+
+              '<span class="hqa-ic-txt">ا</span>'+
+              '<img class="hqa-fav" alt="" src="'+escA(faviconUrl(IB_BRAND.url))+'">'+
             '</span>'+
             '<span class="hqa-name">ایران بروکر</span>'+
           '</a>';
