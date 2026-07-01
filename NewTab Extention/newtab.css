@@ -5,13 +5,6 @@
 
 @font-face {
   font-family: 'Estedad';
-  src: url('assets/fonts/Estedad-Thin.woff2') format('woff2');
-  font-weight: 100;
-  font-display: swap
-}
-
-@font-face {
-  font-family: 'Estedad';
   src: url('assets/fonts/Estedad-Light.woff2') format('woff2');
   font-weight: 300;
   font-display: swap
@@ -1531,38 +1524,6 @@ body[data-theme="glass"] .sidebar {
   background: var(--primary)
 }
 
-.trust-badges {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 14px;
-  margin-top: 0
-}
-
-.trust-badges a {
-  display: inline-flex;
-  opacity: .92;
-  transition: opacity .2s
-}
-
-.trust-badges a:hover {
-  opacity: 1
-}
-
-.trust-badges img {
-  height: 46px;
-  width: auto;
-  border-radius: 8px
-}
-
-.disclaimer {
-  max-width: 680px;
-  font-size: 11px;
-  line-height: 1.9;
-  color: var(--soft);
-  text-align: center;
-  margin: 0
-}
 
 /* ===== Settings modal ===== */
 .modal-overlay {
@@ -1963,14 +1924,7 @@ body[data-layout="data"] .quick-links a {
   padding: 6px 13px
 }
 
-body[data-layout="data"] .trust-badges img {
-  height: 34px
-}
 
-body[data-layout="data"] .disclaimer {
-  font-size: 10px;
-  line-height: 1.5
-}
 
 /* ===== Responsive ===== */
 @media (max-width:1000px) {
