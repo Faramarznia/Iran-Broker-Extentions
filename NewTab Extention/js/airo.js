@@ -2,7 +2,8 @@
    آیرو — هوش مصنوعی ایران بروکر
    Centered chat modal launched from the search box. Streams answers
    from a configurable backend (GapGPT by default, Claude as a drop-in
-   alternative) with a living-orb avatar and quick-prompt chips.
+   alternative) with a living-orb avatar, quick-prompt chips, saved
+   conversation history, and branded Iran Broker CTAs inline in answers.
    Exposed as window.AiroChat = { open, close, ask, isOpen }.
    =================================================================== */
 (function () {
@@ -38,6 +39,58 @@
   };
   /* =================================================================== */
 
+  /* ===================================================================
+     دکمه‌های دعوت‌به‌اقدام (CTA) — دو سطح:
+
+     ۱) CTA کلی دسته‌بندی — وقتی آیرو کلی دربارهٔ یک دسته حرف می‌زند
+        (بدون اسم بردن یک مورد خاص). یک دکمهٔ نرم به صفحهٔ لیست آن دسته.
+
+     ۲) CTA اختصاصی موجودیت — وقتی آیرو اسم یک بروکر/صرافی/پراپ‌فرم/
+        کارگزاری/صندوق خاص را می‌برد. دو دکمه نشان داده می‌شود:
+        «بررسی» (همیشه به صفحهٔ واقعی آن مورد در ایران بروکر می‌رود) و
+        «ثبت‌نام» (اگر لینک ریفرال اختصاصی در REFERRAL_LINKS تنظیم شده
+        باشد به همان می‌رود، وگرنه امن به همان صفحهٔ بررسی برمی‌گردد —
+        هیچ‌وقت لینک شکسته نشان داده نمی‌شود).
+
+     برای افزودن لینک ریفرال یک بروکر خاص، فقط این‌جا اضافه‌اش کن:
+       amarkets: 'https://your-real-referral-link'
+     همهٔ اسلاگ‌های زیر مستقیماً از iranbroker.net تأیید شده‌اند.
+     =================================================================== */
+  var CTA_LINKS = {
+    forex: { label: 'بروکرهای فارکس در ایران بروکر', url: 'https://iranbroker.net/forex-brokers/' },
+    crypto: { label: 'صرافی ارز دیجیتال در ایران بروکر', url: 'https://iranbroker.net/crypto-exchanges/' },
+    prop: { label: 'پراپ‌فرم‌ها در ایران بروکر', url: 'https://iranbroker.net/prop-firms/' },
+    stock: { label: 'کارگزاری‌های بورس در ایران بروکر', url: 'https://iranbroker.net/bourse/' },
+    gold: { label: 'صندوق‌های طلا در ایران بروکر', url: 'https://iranbroker.net/funds/' },
+    spread: { label: 'مقایسهٔ بروکرها در ایران بروکر', url: 'https://iranbroker.net/forex-brokers/' }
+  };
+
+  var ENTITY_CATS = {
+    broker: { path: 'broker' },
+    exchange: { path: 'exchange' },
+    prop: { path: 'prop' },
+    bourse: { path: 'bourse' },
+    fund: { path: 'funds' }
+  };
+
+  var ENTITY_SLUGS = {
+    broker: ['alpari', 'amarkets', 'capitalxtend', 'deltafx', 'eplanet', 'errante', 'fibo', 'forexchief', 'fxpro', 'hycm', 'ifcmarkets', 'liteforex', 'mondfx', 'moneta-markets', 'opofinance', 'orbex', 'otetmarkets', 'startrader', 'stp-trading', 'trendo', 'vittaverse', 'vtmarkets', 'wingo', 'wmmarkets'],
+    exchange: ['abantether', 'bit24', 'bitpin', 'coinex', 'kcex', 'kifpoolme', 'lbank', 'nobitex', 'ok-ex', 'ompfinex', 'ramzinex', 'sarmayex', 'tabdil', 'tetherland', 'toobit', 'wallex'],
+    prop: ['blue-guardian', 'capitalchain', 'e8-funding', 'fenefx', 'forfx', 'ftmo', 'funded-next', 'fundingpips', 'nextgen-funding', 'paroxfx', 'proopco', 'propplus', 'robinsood', 'sarmayegozarebartar', 'traderscombat', 'zorafx'],
+    bourse: ['agah', 'bank-meli-kargozari', 'bourse-bime-iran', 'charisma', 'ebidar', 'farabi', 'hafez', 'mehr-eqtesad', 'mobin-sarmaye', 'mofid', 'nahayat-negar', 'pasargad', 'pishro', 'saderat', 'samanbourse', 'seavolex', 'tadbir-garan-farda', 'tejaratbankbrk'],
+    fund: ['amin-shahr', 'arzesh-maskan', 'avand', 'ayar', 'banko', 'chashni', 'danik', 'etemadbmi', 'ganj', 'gohar', 'homayeagah', 'kahroba', 'kakh', 'kashaneh', 'klid', 'lotus', 'malek-atie', 'mesghal', 'moj', 'noghrsa', 'pishran', 'yaghot']
+  };
+
+  // لینک ریفرال اختصاصی هر بروکر/صرافی/... — کلید = اسلاگ (از فهرست بالا)
+  // تا وقتی خالی است، دکمهٔ «ثبت‌نام» به صفحهٔ بررسی همان مورد می‌رود.
+  var REFERRAL_LINKS = {
+    // amarkets: 'https://your-real-referral-link-for-amarkets'
+  };
+
+  function prettySlug(slug) {
+    return slug.split('-').map(function (w) { return w.charAt(0).toUpperCase() + w.slice(1); }).join(' ');
+  }
+
   var SYSTEM = [
     'تو «آیرو» هستی — هوش مصنوعی ایران بروکر (iranbroker.net)، مرجع فارسی‌زبان بازارهای مالی.',
     'تخصص تو: فارکس، ارز دیجیتال، بورس، طلا، بروکرها، پراپ‌فرم‌ها، مدیریت ریسک و آموزش ترید.',
@@ -46,6 +99,15 @@
     'هرگز سیگنال قطعی خرید/فروش نده؛ همیشه به ریسک و مسئولیت شخصی اشاره کن.',
     'به قیمت لحظه‌ای بازار دسترسی نداری؛ اگر قیمت زنده پرسیدند صادقانه بگو و ابزارهای ایران بروکر (مقایسه اسپرد، قیمت ارز دیجیتال، تقویم اقتصادی) را پیشنهاد بده.',
     'دربارهٔ وعده‌های سود تضمینی و کلاهبرداری هشدار بده و بخش «هشدار کلاهبرداری» ایران بروکر را معرفی کن.',
+    'اگر یک بروکر، صرافی، پراپ‌فرم، کارگزاری بورس یا صندوق طلای خاص را نام بردی و دقیقاً در یکی از فهرست‌های زیر بود، بلافاصله بعد از معرفی‌اش این را در یک خط جداگانه بنویس (بدون هیچ توضیح یا کاراکتر اضافه دور آن): [[entity:CATEGORY:SLUG]] — CATEGORY یکی از broker (بروکر فارکس)، exchange (صرافی ارز دیجیتال)، prop (پراپ‌فرم)، bourse (کارگزاری بورس)، fund (صندوق طلا)؛ SLUG دقیقاً از فهرست خودِ همان دسته. اگر چند مورد را با هم مقایسه کردی، برای هر کدام که در فهرست بود یک [[entity:...]] جدا بنویس.',
+    'فهرست broker: alpari, amarkets, capitalxtend, deltafx, eplanet, errante, fibo, forexchief, fxpro, hycm, ifcmarkets, liteforex, mondfx, moneta-markets, opofinance, orbex, otetmarkets, startrader, stp-trading, trendo, vittaverse, vtmarkets, wingo, wmmarkets',
+    'فهرست exchange: abantether, bit24, bitpin, coinex, kcex, kifpoolme, lbank, nobitex, ok-ex, ompfinex, ramzinex, sarmayex, tabdil, tetherland, toobit, wallex',
+    'فهرست prop: blue-guardian, capitalchain, e8-funding, fenefx, forfx, ftmo, funded-next, fundingpips, nextgen-funding, paroxfx, proopco, propplus, robinsood, sarmayegozarebartar, traderscombat, zorafx',
+    'فهرست bourse: agah, bank-meli-kargozari, bourse-bime-iran, charisma, ebidar, farabi, hafez, mehr-eqtesad, mobin-sarmaye, mofid, nahayat-negar, pasargad, pishro, saderat, samanbourse, seavolex, tadbir-garan-farda, tejaratbankbrk',
+    'فهرست fund: amin-shahr, arzesh-maskan, avand, ayar, banko, chashni, danik, etemadbmi, ganj, gohar, homayeagah, kahroba, kakh, kashaneh, klid, lotus, malek-atie, mesghal, moj, noghrsa, pishran, yaghot',
+    'هرگز اسلاگی خارج از این فهرست‌ها نساز — اگر مورد موردنظر در فهرست نبود، به‌جایش از دستور کلی زیر استفاده کن.',
+    'اگر دربارهٔ یک دسته به‌طور کلی صحبت کردی (نه یک مورد خاص از فهرست بالا) یا چند گزینه را عمومی مقایسه کردی، در پایان پاسخ دقیقاً یکی از این‌ها را در خط جداگانه بنویس: [[cta:forex]] برای بروکر فارکس، [[cta:crypto]] برای صرافی ارز دیجیتال، [[cta:prop]] برای پراپ‌فرم، [[cta:stock]] برای کارگزاری بورس، [[cta:gold]] برای صندوق طلا. هرگز کلیدی غیر از این‌ها نساز.',
+    'این دستورها را فقط وقتی اضافه کن که واقعاً به موضوع پاسخ مرتبط است، نه در هر پیام.',
     'برای خوانایی از **بولد** و لیست‌های کوتاه با - استفاده کن.'
   ].join('\n');
 
@@ -56,13 +118,17 @@
     'چطور کلاهبرداری فارکسی رو تشخیص بدم؟ 🚨'
   ];
 
+  var HIST_KEY = 'ib_airo_conversations';
+  var HIST_MAX = 40;
+
   /* ----------------------------- State ----------------------------- */
   var els = {};
-  var history = [];        // [{role:'user'|'assistant', content:'string'}, ...]
+  var history = [];        // [{role:'user'|'assistant', content:'string', t:'HH:MM'}, ...]
+  var currentConvId = null; // null until the active thread is first saved
   var isOpen = false;
   var busy = false;
   var ctrl = null;         // AbortController
-  var session = 0;         // bumped on "new chat" so stale streams can't touch history
+  var session = 0;         // bumped on "new chat" / loading history so stale streams can't touch it
 
   function keyReady() {
     var cfg = PROVIDERS[ACTIVE];
@@ -74,16 +140,45 @@
   function esc(s) {
     return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
   }
-  /* light markdown: **bold**, `code`, "- " bullets, newlines */
+
+  function ctaPill(url, label, extraClass) {
+    return '<a class="airo-cta' + (extraClass ? ' ' + extraClass : '') + '" href="' + url + '" target="_blank" rel="noopener">' +
+      '<span class="airo-cta-txt">' + esc(label) + '</span>' +
+      '<span class="airo-cta-arrow">↗</span>' +
+    '</a>';
+  }
+
+  /* light markdown: **bold**, `code`, "- " bullets, newlines,
+     [[cta:key]] (category pill) and [[entity:cat:slug]] (review+signup pair) */
   function md(s) {
     var out = esc(s);
     out = out.replace(/\*\*([^*]+)\*\*/g, '<b>$1</b>');
     out = out.replace(/`([^`]+)`/g, '<code>$1</code>');
+    out = out.replace(/\[\[entity:(\w+):([a-z0-9-]+)\]\]/g, function (_, cat, slug) {
+      var meta = ENTITY_CATS[cat];
+      var slugs = ENTITY_SLUGS[cat];
+      if (!meta || !slugs || slugs.indexOf(slug) === -1) return '';
+      var name = prettySlug(slug);
+      var reviewUrl = 'https://iranbroker.net/' + meta.path + '/' + slug + '/';
+      var signupUrl = REFERRAL_LINKS[slug] || reviewUrl;
+      return '<span class="airo-cta-group">' +
+        ctaPill(reviewUrl, 'بررسی ' + name) +
+        ctaPill(signupUrl, 'ثبت‌نام در ' + name, 'airo-cta-signup') +
+      '</span>';
+    });
+    out = out.replace(/\[\[cta:(\w+)\]\]/g, function (_, key) {
+      var c = CTA_LINKS[key];
+      return c ? ctaPill(c.url, c.label) : '';
+    });
     out = out.split('\n').map(function (line) {
       var m = line.match(/^\s*[-•]\s+(.*)$/);
       return m ? '<span class="am-li">' + m[1] + '</span>' : line;
     }).join('<br>');
     out = out.replace(/(<br>)+(<span class="am-li">)/g, '$2');
+    out = out.replace(/(<br>\s*)+(<a class="airo-cta")/g, '$2');
+    out = out.replace(/(<br>\s*)+(<span class="airo-cta-group">)/g, '$2');
+    out = out.replace(/(<\/a>)(\s*<br>)+/g, '$1');
+    out = out.replace(/(<\/span>)(\s*<br>)+/g, '$1');
     return out;
   }
 
@@ -105,12 +200,145 @@
     els.status.innerHTML = '<span class="airo-status-dot ' + (cls || '') + '"></span>' + esc(txt);
   }
 
-  /* ----------------------------- Rendering ----------------------------- */
-  function fmtTime() {
-    try { return new Date().toLocaleTimeString('fa-IR', { hour: '2-digit', minute: '2-digit' }); }
+  /* ----------------------------- Time helpers ----------------------------- */
+  function fmtTime(d) {
+    try { return (d || new Date()).toLocaleTimeString('fa-IR', { hour: '2-digit', minute: '2-digit' }); }
     catch (e) { return ''; }
   }
 
+  function relDay(ts) {
+    var d = new Date(ts);
+    var now = new Date();
+    if (d.toDateString() === now.toDateString()) return fmtTime(d);
+    var y = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1);
+    if (d.toDateString() === y.toDateString()) return 'دیروز';
+    try { return new Intl.DateTimeFormat('fa-IR', { month: 'short', day: 'numeric' }).format(d); }
+    catch (e) { return ''; }
+  }
+
+  /* ----------------------------- Conversation persistence ----------------------------- */
+  function loadConversations() {
+    try { return JSON.parse(localStorage.getItem(HIST_KEY) || '[]'); }
+    catch (e) { return []; }
+  }
+  function saveConversations(list) {
+    try { localStorage.setItem(HIST_KEY, JSON.stringify(list.slice(0, HIST_MAX))); }
+    catch (e) {}
+  }
+
+  function persistCurrentConversation() {
+    if (!history.length) return;
+    var list = loadConversations();
+    if (currentConvId) {
+      for (var i = 0; i < list.length; i++) {
+        if (list[i].id === currentConvId) { list.splice(i, 1); break; }
+      }
+    }
+    var firstUser = null;
+    for (var j = 0; j < history.length; j++) {
+      if (history[j].role === 'user') { firstUser = history[j]; break; }
+    }
+    var conv = {
+      id: currentConvId || ('c' + Date.now().toString(36) + Math.random().toString(36).slice(2, 7)),
+      title: firstUser ? firstUser.content.slice(0, 60) : 'گفتگو',
+      messages: history.slice(),
+      updatedAt: Date.now()
+    };
+    currentConvId = conv.id;
+    list.unshift(conv);
+    saveConversations(list);
+    renderHistoryList();
+  }
+
+  function deleteConversation(id) {
+    saveConversations(loadConversations().filter(function (c) { return c.id !== id; }));
+    if (currentConvId === id) currentConvId = null;
+    renderHistoryList();
+  }
+
+  /* ----------------------------- History sidebar ----------------------------- */
+  function toggleHistory() {
+    if (!els.hist) return;
+    var opening = els.hist.hidden;
+    els.hist.hidden = !opening;
+    if (els.histBtn) els.histBtn.classList.toggle('active', opening);
+    if (opening) renderHistoryList();
+  }
+
+  function renderHistoryList() {
+    if (!els.histList) return;
+    var list = loadConversations();
+    if (!list.length) {
+      els.histList.innerHTML = '<div class="airo-hist-empty">هنوز گفتگویی ذخیره نشده</div>';
+      return;
+    }
+    els.histList.innerHTML = list.map(function (c) {
+      var active = c.id === currentConvId ? ' active' : '';
+      return '<div class="airo-hist-item' + active + '" data-id="' + c.id + '">' +
+        '<div class="airo-hist-item-main">' +
+          '<div class="airo-hist-item-title">' + esc(c.title || 'گفتگو') + '</div>' +
+          '<div class="airo-hist-item-time">' + esc(relDay(c.updatedAt)) + '</div>' +
+        '</div>' +
+        '<button class="airo-hist-del" data-id="' + c.id + '" title="حذف" aria-label="حذف">' +
+          '<svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>' +
+        '</button>' +
+      '</div>';
+    }).join('');
+    Array.prototype.forEach.call(els.histList.querySelectorAll('.airo-hist-item'), function (el) {
+      el.addEventListener('click', function (e) {
+        if (e.target.closest('.airo-hist-del')) return;
+        loadConversation(el.getAttribute('data-id'));
+      });
+    });
+    Array.prototype.forEach.call(els.histList.querySelectorAll('.airo-hist-del'), function (btn) {
+      btn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        deleteConversation(btn.getAttribute('data-id'));
+      });
+    });
+  }
+
+  function loadConversation(id) {
+    var list = loadConversations();
+    var conv = null;
+    for (var i = 0; i < list.length; i++) { if (list[i].id === id) { conv = list[i]; break; } }
+    if (!conv) return;
+
+    session++; // invalidate any stream still tied to the previous thread
+    if (ctrl) { try { ctrl.abort(); } catch (e) {} }
+    busy = false;
+    setSendMode('send');
+
+    currentConvId = conv.id;
+    history = conv.messages.slice();
+    renderChips(false);
+    els.body.innerHTML = '';
+    history.forEach(function (m) {
+      if (m.role === 'user') {
+        var u = document.createElement('div');
+        u.className = 'airo-msg airo-msg-user';
+        u.innerHTML =
+          '<div class="airo-meta"><span class="airo-meta-user">شما</span><span class="airo-meta-t">' + esc(m.t || '') + '</span></div>' +
+          '<div class="airo-bubble">' + md(m.content) + '</div>';
+        els.body.appendChild(u);
+      } else {
+        var a = document.createElement('div');
+        a.className = 'airo-msg airo-msg-ai';
+        a.innerHTML =
+          orbHTML('airo-orb-xs') +
+          '<div class="airo-ai-col">' +
+            '<div class="airo-meta"><span class="airo-meta-name">آیرو</span><span class="airo-meta-t">' + esc(m.t || '') + '</span></div>' +
+            '<div class="airo-ai-text">' + md(m.content) + '</div>' +
+          '</div>';
+        els.body.appendChild(a);
+      }
+    });
+    scrollDown(true);
+    setStatus('آنلاین', 'on');
+    renderHistoryList();
+  }
+
+  /* ----------------------------- Rendering ----------------------------- */
   function scrollDown(force) {
     var b = els.body;
     if (!b) return;
@@ -141,24 +369,24 @@
     });
   }
 
-  function addUserBubble(text) {
+  function addUserBubble(text, t) {
     var wrap = document.createElement('div');
     wrap.className = 'airo-msg airo-msg-user';
     wrap.innerHTML =
-      '<div class="airo-meta"><span>شما</span><span class="airo-meta-t">' + fmtTime() + '</span></div>' +
+      '<div class="airo-meta"><span class="airo-meta-user">شما</span><span class="airo-meta-t">' + esc(t || '') + '</span></div>' +
       '<div class="airo-bubble">' + md(text) + '</div>';
     els.body.appendChild(wrap);
     scrollDown(true);
   }
 
   /* Airo answers render like terminal output: no bubble, orb + meta + open text */
-  function addAiroBubble() {
+  function addAiroBubble(t) {
     var wrap = document.createElement('div');
     wrap.className = 'airo-msg airo-msg-ai';
     wrap.innerHTML =
       orbHTML('airo-orb-xs') +
       '<div class="airo-ai-col">' +
-        '<div class="airo-meta"><span class="airo-meta-name">آیرو</span><span class="airo-meta-t">' + fmtTime() + '</span>' +
+        '<div class="airo-meta"><span class="airo-meta-name">آیرو</span><span class="airo-meta-t">' + esc(t || '') + '</span>' +
           '<button class="airo-copy" title="کپی پاسخ">' +
             '<svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>' +
           '</button>' +
@@ -217,7 +445,9 @@
         model: cfg.model,
         max_tokens: cfg.maxTokens,
         stream: true,
-        messages: [{ role: 'system', content: SYSTEM }].concat(history)
+        messages: [{ role: 'system', content: SYSTEM }].concat(
+          history.map(function (m) { return { role: m.role, content: m.content }; })
+        )
       })
     }).then(function (res) {
       if (!res.ok) {
@@ -300,7 +530,7 @@
         stream: true,
         thinking: { type: 'adaptive' },
         system: SYSTEM,
-        messages: history
+        messages: history.map(function (m) { return { role: m.role, content: m.content }; })
       })
     }).then(function (res) {
       if (!res.ok) {
@@ -389,10 +619,11 @@
     if (w) els.body.innerHTML = '';
     renderChips(false);
 
-    history.push({ role: 'user', content: question });
-    addUserBubble(question);
+    var t = fmtTime();
+    history.push({ role: 'user', content: question, t: t });
+    addUserBubble(question, t);
 
-    var bubbleWrap = addAiroBubble();
+    var bubbleWrap = addAiroBubble(t);
     var answerEl = bubbleWrap.querySelector('.airo-answer');
     var typingEl = bubbleWrap.querySelector('.airo-typing');
     var caretEl = bubbleWrap.querySelector('.airo-caret');
@@ -426,16 +657,20 @@
     }
 
     streamChat(
-      function onText(t) {
+      function onText(chunk) {
         if (!textSoFar) { typingEl.remove(); setMood('talking'); setStatus('در حال نوشتن…', 'busy'); }
-        textSoFar += t;
+        textSoFar += chunk;
         answerEl.innerHTML = md(textSoFar);
         scrollDown();
       },
       function onDone(finalText, stopReason) {
         if (mySession !== session) return; // chat was reset mid-stream
-        if (textSoFar) history.push({ role: 'assistant', content: textSoFar });
-        else history.pop(); // nothing came back — don't poison history
+        if (textSoFar) {
+          history.push({ role: 'assistant', content: textSoFar, t: t });
+          persistCurrentConversation();
+        } else {
+          history.pop(); // nothing came back — don't poison history
+        }
         if (stopReason === 'refusal' && !textSoFar) {
           answerEl.innerHTML = md('این یکی رو نمی‌تونم جواب بدم 🙏 — یه سوال دیگه دربارهٔ بازارهای مالی بپرس.');
           textSoFar = ' ';
@@ -472,16 +707,10 @@
       : '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H6"/><path d="M11 7l-5 5 5 5"/></svg>';
   }
 
-  /* ----------------------------- Header clock ----------------------------- */
-  function tickClock() {
-    if (els.clock) els.clock.textContent = fmtTime();
-  }
-
   /* ----------------------------- Open / close ----------------------------- */
   function open(silent) {
     if (isOpen) return;
     isOpen = true;
-    tickClock();
     els.overlay.hidden = false;
     els.overlay.classList.remove('closing');
     els.overlay.classList.add('opening');
@@ -510,6 +739,7 @@
     session++;
     if (ctrl) { try { ctrl.abort(); } catch (e) {} }
     history = [];
+    currentConvId = null;
     busy = false;
     setSendMode('send');
     renderWelcome();
@@ -526,16 +756,17 @@
     els.input = $('airo-input');
     els.send = $('airo-send');
     els.status = $('airo-status');
-    els.clock = $('airo-clock');
+    els.hist = $('airo-hist');
+    els.histList = $('airo-hist-list');
+    els.histBtn = $('airo-hist-btn');
 
-    // head orb + clock + buttons
+    // head orb + buttons
     $('airo-head-orb').innerHTML = orbHTML('airo-orb-sm');
     setSendMode('send');
-    tickClock();
-    setInterval(tickClock, 15000);
 
     $('airo-close').addEventListener('click', close);
     $('airo-new').addEventListener('click', newChat);
+    if (els.histBtn) els.histBtn.addEventListener('click', toggleHistory);
 
     els.send.addEventListener('click', function () {
       if (busy) { if (ctrl) ctrl.abort(); return; }

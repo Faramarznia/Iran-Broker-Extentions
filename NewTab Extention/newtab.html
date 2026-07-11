@@ -206,32 +206,43 @@
     <!-- ===== AIRO — AI CHAT MODAL ===== -->
     <div class="airo-overlay" id="airo-overlay" hidden>
       <div class="airo-modal" id="airo-panel" data-mood="idle">
-        <div class="airo-head">
-          <div class="airo-head-id">
-            <div id="airo-head-orb"></div>
-            <div class="airo-head-txt">
-              <span class="airo-name">آیرو</span>
-              <span class="airo-status" id="airo-status"><span class="airo-status-dot on"></span>هوش مصنوعی ایران بروکر</span>
+
+        <aside class="airo-hist" id="airo-hist" hidden>
+          <div class="airo-hist-head">گفتگوهای قبلی</div>
+          <div class="airo-hist-list" id="airo-hist-list"></div>
+        </aside>
+
+        <div class="airo-main">
+          <div class="airo-head">
+            <div class="airo-head-id">
+              <div id="airo-head-orb"></div>
+              <div class="airo-head-txt">
+                <span class="airo-name">آیرو</span>
+                <span class="airo-status" id="airo-status"><span class="airo-status-dot on"></span>هوش مصنوعی ایران بروکر</span>
+              </div>
+            </div>
+            <div class="airo-head-actions">
+              <button class="airo-hbtn" id="airo-hist-btn" title="گفتگوهای قبلی" aria-label="گفتگوهای قبلی">
+                <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M4 12h16M4 18h10"/></svg>
+              </button>
+              <button class="airo-hbtn" id="airo-new" title="گفتگوی جدید" aria-label="گفتگوی جدید">
+                <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+              </button>
+              <button class="airo-hbtn" id="airo-close" title="بستن (Esc)" aria-label="بستن">
+                <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+              </button>
             </div>
           </div>
-          <div class="airo-head-actions">
-            <span class="airo-clock" id="airo-clock" title="ساعت محلی">--:--</span>
-            <button class="airo-hbtn" id="airo-new" title="گفتگوی جدید" aria-label="گفتگوی جدید">
-              <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
-            </button>
-            <button class="airo-hbtn" id="airo-close" title="بستن (Esc)" aria-label="بستن">
-              <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
-            </button>
+          <div class="airo-body" id="airo-body"></div>
+          <div class="airo-foot">
+            <div class="airo-chips" id="airo-chips" hidden></div>
+            <div class="airo-input-row">
+              <input type="text" id="airo-input" placeholder="سوالت رو بنویس…" autocomplete="off" spellcheck="false" />
+              <button class="airo-send" id="airo-send" title="ارسال" aria-label="ارسال"></button>
+            </div>
           </div>
         </div>
-        <div class="airo-body" id="airo-body"></div>
-        <div class="airo-foot">
-          <div class="airo-chips" id="airo-chips" hidden></div>
-          <div class="airo-input-row">
-            <input type="text" id="airo-input" placeholder="سوالت رو بنویس…" autocomplete="off" spellcheck="false" />
-            <button class="airo-send" id="airo-send" title="ارسال" aria-label="ارسال"></button>
-          </div>
-        </div>
+
       </div>
     </div>
 
