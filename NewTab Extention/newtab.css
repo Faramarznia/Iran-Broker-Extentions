@@ -207,14 +207,14 @@ a {
   gap: 32px;
   height: 100vh;
   width: 100%;
-  margin: 0 auto;
-  padding: 32px;
+  margin: 0;
+  padding: 0;
 }
 
 .page-col {
   flex: 1;
   min-width: 0;
-  padding: 26px 20px 54px;
+  padding: 32px;
   display: flex;
   flex-direction: column;
   gap: 26px;
@@ -236,7 +236,9 @@ a {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 18px
+  gap: 18px;
+  align-self: stretch;
+  max-width: none
 }
 
 .brand {
@@ -1864,17 +1866,20 @@ body[data-layout="data"] .stage-root {
   height: 100vh
 }
 
-body[data-layout="data"] .layout-wrap {
-  justify-content: center
-}
-
 body[data-layout="data"] .page-col {
-  flex: 0 1 1200px;
+  flex: 1;
   width: 100%;
   height: 100%;
-  padding-top: 16px;
-  padding-bottom: 18px;
-  gap: 11px
+  padding: 32px;
+  gap: 11px;
+  align-items: stretch
+}
+
+body[data-layout="data"] .hero-search-wrap,
+body[data-layout="data"] .content-block {
+  max-width: 1400px;
+  width: 100%;
+  margin: 0 auto
 }
 
 body[data-layout="data"] .hero-search-wrap {
@@ -2482,7 +2487,6 @@ body[data-theme="glass"] .modal-body select {
 
 .m-tab:hover {
   color: var(--sub);
-  background: var(--surface)
 }
 
 .m-tab.active {
@@ -5782,18 +5786,19 @@ body[data-layout="simple"] .hero-search-wrap {
    Mode visibility plumbing
 ───────────────────────────────────────────── */
 
-/* hero-center wrapper is invisible to layout outside hub mode */
+/* hero-center and hub-center-col are transparent to layout outside hub mode */
+/* hero-center is transparent to layout outside hub mode */
 .hero-center { display: contents }
-.hub-aside { display: none }
-.hub-quick { display: none }
+/* hub panels hidden by default */
+.hub-panels { display: none }
+.hub-aside  { display: none }
+.hub-quick  { display: none }
 
-/* In hub mode: hide simple/data content + side panels, show hub pieces */
+/* ── Hub mode ── */
 body[data-layout="hub"] .content-block { display: none }
-body[data-layout="hub"] .sidebar { display: none }          /* community/other side rails off */
-body[data-layout="hub"] .hub-aside { display: block }
-body[data-layout="hub"] .hub-quick { display: block }
+body[data-layout="hub"] .sidebar       { display: none }
 
-/* Hub scrolls naturally and stays centered (not the fixed-height dashboard) */
+/* Hub scrolls naturally */
 body[data-layout="hub"] .stage-root {
   min-height: 100vh;
   overflow-x: hidden;
@@ -5803,64 +5808,49 @@ body[data-layout="hub"] .layout-wrap {
   height: auto;
   min-height: 100vh;
   align-items: flex-start;
-  justify-content: center;
   gap: 0;
   padding: 0
 }
 body[data-layout="hub"] .page-col {
-  flex: 0 1 1300px;
-  max-width: 1300px;
+  flex: 1;
+  width: 100%;
   height: auto;
   min-height: 100vh;
-  margin: 0 auto;
-  padding: 22px 30px 56px;
-  gap: 0;
+  margin: 0;
+  padding: 32px;
+  gap: 24px;
   align-items: stretch;
   justify-content: flex-start
 }
 
-/* Hub dashboard grid (RTL — first column track is on the right):
-     ┌ cal ┬ hero  ┬ notes ┐
-     │ cal │ quick │ notes │
-     └─────┴───────┴───────┘
-   cal  = weather+calendar (right) · hero+quick = centre · notes = tasks (left) */
+/* hero-search-wrap in hub: same centred behaviour as simple mode */
 body[data-layout="hub"] .hero-search-wrap {
-  display: grid;
-  grid-template-columns: minmax(290px, 330px) minmax(0, 1fr) minmax(290px, 330px);
-  grid-template-rows: auto auto;
-  grid-template-areas:
-    "cal hero  notes"
-    "cal quick notes";
-  align-items: stretch;
-  gap: 20px 22px;
-  width: 100%;
-  max-width: 1240px;
-  margin: auto;                  /* centre the dashboard vertically & horizontally */
-  padding: 0
+  justify-content: center;
+  padding-bottom: 0
 }
-body[data-layout="hub"] .hub-aside-cal   { grid-area: cal }
-body[data-layout="hub"] .hero-center     { grid-area: hero }
-body[data-layout="hub"] #hub-quick       { grid-area: quick; display: block; margin: 0 }
-body[data-layout="hub"] .hub-aside-tasks { grid-area: notes }
 
-/* side columns become flex so their card fills the row height */
-body[data-layout="hub"] .hub-aside { display: flex; flex-direction: column }
-body[data-layout="hub"] .hub-aside-tasks .htasks { flex: 1; max-height: none }
-body[data-layout="hub"] .hub-aside-cal .hweather { flex: 0 0 auto }
-
-body[data-layout="hub"] .hero-center {
+/* Panels row below the hero */
+body[data-layout="hub"] .hub-panels {
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;       /* vertically centre clock+search */
+  flex-direction: row;
+  align-items: flex-start;
   gap: 22px;
-  min-width: 0;
-  min-height: 0
+  width: 100%;
 }
-/* slightly smaller hero clock so it sits between the boxes nicely */
-body[data-layout="hub"] .clock { font-size: 60px; letter-spacing: -4px }
-body[data-layout="hub"] .hero-greeting { margin-bottom: 10px }
-body[data-layout="hub"] .sec-search { max-width: 560px }
+body[data-layout="hub"] .hub-aside {
+  flex: 0 0 310px;
+  display: flex;
+  flex-direction: column
+}
+body[data-layout="hub"] .hub-aside-cal        { gap: 16px }
+body[data-layout="hub"] .hub-aside-cal .hweather { flex: 0 0 auto }
+body[data-layout="hub"] .hub-aside-tasks .htasks { flex: 1; max-height: none }
+body[data-layout="hub"] .hub-quick {
+  flex: 1;
+  min-width: 0;
+  display: block;
+  margin: 0
+}
 
 /* Shared card */
 .hub-card {
@@ -6655,30 +6645,22 @@ body[data-layout="hub"] .hub-aside-cal { gap: 16px }
    HUB RESPONSIVE
 ═══════════════════════════════════════ */
 @media (max-width: 1080px) {
-  body[data-layout="hub"] .hero-search-wrap {
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-    grid-template-rows: auto auto auto;
-    grid-template-areas:
-      "hero  hero"
-      "cal   notes"
-      "quick quick";
-    align-items: start
+  body[data-layout="hub"] .hub-panels {
+    flex-wrap: wrap;
+    gap: 16px
   }
-  body[data-layout="hub"] .hero-center { padding: 8px 0 4px }
-  body[data-layout="hub"] #hub-quick { margin-top: 6px }
+  body[data-layout="hub"] .hub-aside {
+    flex: 1;
+    min-width: 260px
+  }
+  body[data-layout="hub"] .hub-quick { flex: 0 0 100%; order: -1 }
   .hub-quick-grid { grid-template-columns: repeat(4, 1fr) }
 }
 
 @media (max-width: 680px) {
-  body[data-layout="hub"] .hero-search-wrap {
-    grid-template-columns: 1fr;
-    grid-template-rows: auto;
-    grid-template-areas:
-      "hero"
-      "quick"
-      "cal"
-      "notes"
-  }
+  body[data-layout="hub"] .hub-panels { flex-direction: column }
+  body[data-layout="hub"] .hub-aside  { flex: 0 0 auto; width: 100% }
+  body[data-layout="hub"] .hub-quick  { order: 0 }
   body[data-layout="hub"] .clock { font-size: 52px }
   .hub-quick-grid { grid-template-columns: repeat(2, 1fr) }
 }

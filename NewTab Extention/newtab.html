@@ -70,14 +70,7 @@
         </header>
 
         <!-- ===== HERO + SEARCH ===== -->
-        <!-- Hub layout (areas):  [cal | hero | notes]  /  [cal | quick | notes]
-           cal = weather+calendar (right, RTL) · notes = tasks (left, RTL) -->
         <div class="hero-search-wrap">
-
-          <!-- ░░ HUB area "notes": daily tasks (left in RTL) ░░ -->
-          <aside class="hub-aside hub-aside-tasks" id="hub-tasks-box"></aside>
-
-          <!-- center top: hero + search (display:contents outside hub mode) -->
           <div class="hero-center">
             <section class="sec-hero">
               <div class="hero-date" id="hero-date">—</div>
@@ -104,8 +97,11 @@
               </div>
             </section>
           </div>
+        </div><!-- /hero-search-wrap -->
 
-          <!-- center bottom: quick-access grid (3-col, hub mode only) -->
+        <!-- ===== HUB PANELS (hub mode only, below hero) ===== -->
+        <div class="hub-panels">
+          <aside class="hub-aside hub-aside-cal" id="hub-cal-box"></aside>
           <section id="hub-quick" class="hub-quick">
             <div class="hub-quick-head">
               <h2>دسترسی سریع</h2>
@@ -113,11 +109,8 @@
             </div>
             <div class="hub-quick-grid" id="hub-quick-grid"></div>
           </section>
-
-          <!-- ░░ HUB area "cal": weather (top) + calendar (bottom), right in RTL ░░ -->
-          <aside class="hub-aside hub-aside-cal" id="hub-cal-box"></aside>
-
-        </div><!-- /hero-search-wrap -->
+          <aside class="hub-aside hub-aside-tasks" id="hub-tasks-box"></aside>
+        </div><!-- /hub-panels -->
 
         <!-- ===== CONTENT BLOCK (tools + bento) ===== -->
         <div class="content-block">
