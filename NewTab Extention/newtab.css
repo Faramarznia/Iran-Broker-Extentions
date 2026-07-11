@@ -5852,6 +5852,37 @@ body[data-layout="hub"] .hub-quick {
   margin: 0
 }
 
+/* ── Wide layout: aside columns flank the centred hero/search, running
+   from the search box's top edge to the bottom of the page; quick-access
+   matches the search box's width ── */
+@media (min-width: 1081px) {
+  body[data-layout="hub"] .page-col {
+    display: grid;
+    grid-template-columns: 1fr 310px minmax(0, 660px) 310px 1fr;
+    grid-template-rows: auto auto auto 1fr;
+    grid-template-areas:
+      "head   head head   head  head"
+      "hero   hero hero   hero  hero"
+      ".      cal  search tasks ."
+      ".      cal  quick  tasks .";
+    column-gap: 24px;
+    row-gap: 24px
+  }
+  body[data-layout="hub"] .topbar          { grid-area: head }
+  body[data-layout="hub"] .hero-search-wrap,
+  body[data-layout="hub"] .hub-panels      { display: contents }
+  body[data-layout="hub"] .sec-hero        { grid-area: hero }
+  body[data-layout="hub"] .sec-search      { grid-area: search }
+  body[data-layout="hub"] .hub-aside-cal   { grid-area: cal }
+  body[data-layout="hub"] .hub-aside-tasks { grid-area: tasks }
+  body[data-layout="hub"] .hub-quick {
+    grid-area: quick;
+    max-width: 660px;
+    width: 100%;
+    margin: 0 auto
+  }
+}
+
 /* Shared card */
 .hub-card {
   background: var(--surface);
@@ -6911,4 +6942,713 @@ body[data-layout="hub"] .hub-aside-cal { gap: 16px }
   .ibt-pop, .ibt-pop-hero { width: calc(100vw - 24px); }
   .ibt-lay { grid-template-columns: 46px 1fr; }
   .ibt-lay-mini { width: 46px; height: 36px; }
+}
+
+/* ===================================================================
+   ===== AIRO — هوش مصنوعی ایران بروکر =====
+   Design thesis: Airo is the live point on the market line.
+   The modal is born the way a chart is born — a dot appears, draws
+   itself into a price line, and the line splits open into the panel.
+   Surfaces stay on the extension's token system; the orb's ring is
+   the single gradient in the feature. Body sits on faint chart grid.
+   =================================================================== */
+
+@property --airo-angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+
+@keyframes airoSpin {
+  to { --airo-angle: 360deg }
+}
+
+/* ---- engine chip: same language as the other engines ---- */
+.engines button.engine-airo.active {
+  border-color: var(--primary);
+  background: var(--primarySoft);
+  color: var(--primary);
+}
+
+/* ---- search box in Airo mode: a calm focus ring ---- */
+.search-box.airo-mode {
+  border-color: var(--primary);
+  box-shadow: var(--shadow), 0 0 0 3px var(--primarySoft);
+  transition: border-color .25s, box-shadow .25s;
+}
+
+/* ---- overlay ---- */
+.airo-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 70;
+  background: rgba(5, 8, 16, .6);
+  -webkit-backdrop-filter: blur(7px);
+  backdrop-filter: blur(7px);
+  display: grid;
+  place-items: center;
+  padding: 20px;
+}
+
+.airo-overlay[hidden] { display: none }
+
+.airo-overlay.opening { animation: airoFadeIn .28s ease both }
+.airo-overlay.closing { animation: airoFadeOut .32s ease both }
+
+@keyframes airoFadeIn { from { opacity: 0 } }
+@keyframes airoFadeOut { to { opacity: 0 } }
+
+/* ---- modal ---- */
+.airo-modal {
+  position: relative;
+  width: min(620px, 94vw);
+  height: min(640px, 84vh);
+  display: flex;
+  flex-direction: column;
+  background: var(--surfaceSolid);
+  border: 1px solid var(--border);
+  border-radius: 22px;
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+
+/* the reveal: dot → line → the line splits open
+   (all frames carry `round 22px`; while the slit is thinner than the
+   radius the UA clamps it, which rounds the line's ends for free) */
+.airo-overlay.opening .airo-modal {
+  animation: airoReveal .9s cubic-bezier(.3, .9, .3, 1) both;
+}
+
+@keyframes airoReveal {
+  0% {
+    clip-path: inset(calc(50% - 1.5px) calc(50% - 12px) calc(50% - 1.5px) calc(50% - 12px) round 22px);
+  }
+  32%, 42% {
+    clip-path: inset(calc(50% - 1.5px) 0 calc(50% - 1.5px) 0 round 22px);
+  }
+  100% {
+    clip-path: inset(0 0 0 0 round 22px);
+  }
+}
+
+/* the glowing seam that rides the split, then dies out */
+.airo-modal::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 2px;
+  margin-top: -1px;
+  background: var(--primary);
+  box-shadow: 0 0 16px 2px var(--primary);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.airo-overlay.opening .airo-modal::after {
+  animation: airoSeam .9s ease both;
+}
+
+@keyframes airoSeam {
+  0%, 42% { opacity: 1 }
+  80%, 100% { opacity: 0 }
+}
+
+/* closing: fold back into the line, then vanish */
+.airo-overlay.closing .airo-modal {
+  animation: airoConceal .3s cubic-bezier(.5, 0, .75, .4) both;
+}
+
+@keyframes airoConceal {
+  0% { clip-path: inset(0 0 0 0 round 22px) }
+  70% { clip-path: inset(calc(50% - 1.5px) 6% calc(50% - 1.5px) 6% round 22px) }
+  100% {
+    clip-path: inset(calc(50% - 1.5px) calc(50% - 12px) calc(50% - 1.5px) calc(50% - 12px) round 22px);
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .airo-overlay.opening .airo-modal,
+  .airo-overlay.closing .airo-modal { animation: none }
+  .airo-overlay.opening .airo-modal::after { animation: none }
+}
+
+/* ---- head ---- */
+.airo-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.airo-head-id {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+}
+
+.airo-head-txt {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.airo-name {
+  font-size: 14.5px;
+  font-weight: 800;
+  color: var(--text);
+}
+
+.airo-status {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 10.5px;
+  color: var(--soft);
+}
+
+.airo-status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--soft);
+  flex-shrink: 0;
+}
+
+.airo-status-dot.on {
+  background: var(--green);
+  animation: airoPing 2.4s ease-out infinite;
+}
+
+.airo-status-dot.busy {
+  background: var(--orange);
+  animation: airoPulseDot .9s ease-in-out infinite;
+}
+
+.airo-status-dot.warn { background: var(--orange) }
+
+@keyframes airoPing {
+  0% { box-shadow: 0 0 0 0 rgba(31, 193, 107, .4) }
+  70%, 100% { box-shadow: 0 0 0 7px rgba(31, 193, 107, 0) }
+}
+
+@keyframes airoPulseDot {
+  50% { transform: scale(.6); opacity: .6 }
+}
+
+.airo-head-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.airo-clock {
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  color: var(--soft);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  padding: 6px 11px;
+  border-radius: 10px;
+  line-height: 1;
+}
+
+.airo-hbtn {
+  display: grid;
+  place-items: center;
+  width: 31px;
+  height: 31px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--sub);
+  cursor: pointer;
+  transition: color .18s, border-color .18s;
+}
+
+.airo-hbtn:hover {
+  color: var(--text);
+  border-color: var(--border2);
+}
+
+/* ---- the living orb — the one gradient in the feature ---- */
+.airo-orb {
+  position: relative;
+  width: 34px;
+  height: 34px;
+  flex-shrink: 0;
+}
+
+.airo-orb-sm { width: 34px; height: 34px }
+.airo-orb-xs { width: 26px; height: 26px }
+.airo-orb-lg { width: 72px; height: 72px }
+
+.airo-orb .ao-halo {
+  position: absolute;
+  inset: -22%;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--primarySoft), transparent 70%);
+  animation: airoHalo 3.4s ease-in-out infinite;
+}
+
+@keyframes airoHalo {
+  0%, 100% { transform: scale(.94); opacity: .65 }
+  50% { transform: scale(1.06); opacity: 1 }
+}
+
+.airo-orb .ao-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: conic-gradient(from var(--airo-angle), var(--primary), var(--teal), var(--primary));
+  animation: airoSpin 6s linear infinite;
+}
+
+.airo-orb .ao-core {
+  position: absolute;
+  inset: 2.5px;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 32% 28%, rgba(255, 255, 255, .9), rgba(255, 255, 255, 0) 45%),
+    var(--primaryStrong);
+  animation: airoBreathe 3.6s ease-in-out infinite;
+}
+
+@keyframes airoBreathe {
+  0%, 100% { transform: scale(1) }
+  50% { transform: scale(1.04) }
+}
+
+.airo-orb .ao-eyes {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18%;
+  padding-top: 4%;
+}
+
+.airo-orb .ao-eyes i {
+  width: 10%;
+  height: 26%;
+  min-width: 2px;
+  border-radius: 99px;
+  background: #fff;
+  animation: airoBlink 4.4s infinite;
+  transform-origin: center;
+}
+
+@keyframes airoBlink {
+  0%, 91%, 100% { transform: scaleY(1) }
+  94%, 96% { transform: scaleY(.08) }
+}
+
+/* moods */
+.airo-modal[data-mood="thinking"] .ao-ring { animation-duration: 1s }
+.airo-modal[data-mood="thinking"] .ao-eyes { animation: airoLook 1.6s ease-in-out infinite }
+.airo-modal[data-mood="talking"] .ao-core { animation-duration: 1s }
+
+@keyframes airoLook {
+  0%, 100% { transform: translate(0, 0) }
+  30% { transform: translate(-9%, -7%) }
+  65% { transform: translate(9%, -4%) }
+}
+
+/* ---- body: chat on faint chart-grid paper ---- */
+.airo-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 18px 18px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  scroll-behavior: smooth;
+  background-image:
+    linear-gradient(var(--grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size: 26px 26px;
+}
+
+/* ---- welcome: the orb as the live point on a faded price line ---- */
+.airo-welcome {
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 14px;
+  padding: 12px 18px;
+  animation: airoRise .5s cubic-bezier(.22, 1.2, .4, 1) .35s both;
+}
+
+.airo-w-line {
+  position: relative;
+  width: min(320px, 78%);
+  display: flex;
+  justify-content: center;
+  padding: 10px 0;
+}
+
+/* the line itself, fading at both ends, with two "past points" */
+.airo-w-line::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background:
+    radial-gradient(circle 2.5px at 12% 50%, var(--border2) 100%, transparent),
+    radial-gradient(circle 2.5px at 88% 50%, var(--border2) 100%, transparent),
+    linear-gradient(90deg, transparent, var(--border2) 18%, var(--border2) 82%, transparent);
+}
+
+.airo-w-ping {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 72px;
+  height: 72px;
+  margin: -36px 0 0 -36px;
+  border: 1.5px solid var(--primary);
+  border-radius: 50%;
+  opacity: 0;
+  animation: airoWavePing 2.8s ease-out infinite .6s;
+  pointer-events: none;
+}
+
+@keyframes airoWavePing {
+  0% { transform: scale(.7); opacity: .5 }
+  70%, 100% { transform: scale(1.5); opacity: 0 }
+}
+
+.airo-w-title {
+  font-size: 17px;
+  font-weight: 800;
+}
+
+.airo-w-sub {
+  font-size: 12.5px;
+  color: var(--sub);
+  line-height: 2;
+  max-width: 380px;
+}
+
+.airo-wave {
+  display: inline-block;
+  animation: airoWave 1.8s ease-in-out infinite;
+  transform-origin: 70% 70%;
+}
+
+@keyframes airoWave {
+  0%, 45%, 100% { transform: rotate(0) }
+  10% { transform: rotate(18deg) }
+  20% { transform: rotate(-9deg) }
+  30% { transform: rotate(14deg) }
+}
+
+/* ---- messages ---- */
+@keyframes airoRise {
+  from { opacity: 0; transform: translateY(14px) }
+  to { opacity: 1; transform: translateY(0) }
+}
+
+.airo-msg {
+  animation: airoRise .38s cubic-bezier(.22, 1.2, .4, 1) both;
+}
+
+/* shared meta line: name · time (order-fill style) */
+.airo-meta {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 10px;
+  color: var(--soft);
+  margin-bottom: 5px;
+}
+
+.airo-meta-name { color: var(--primary); font-weight: 700 }
+
+.airo-meta-t { font-variant-numeric: tabular-nums }
+
+/* user turn: a compact accent bubble, end-aligned — the "order you placed" */
+.airo-msg-user {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.airo-msg-user .airo-bubble {
+  max-width: 84%;
+  padding: 10px 14px;
+  border-radius: 16px;
+  border-bottom-left-radius: 6px;
+  background: var(--primaryStrong);
+  color: #fff;
+  font-size: 13.5px;
+  line-height: 2;
+  word-break: break-word;
+}
+
+/* airo turn: terminal-output style — orb column + open text, no bubble */
+.airo-msg-ai {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.airo-msg-ai .airo-orb { margin-top: 1px }
+
+.airo-ai-col {
+  flex: 1;
+  min-width: 0;
+  padding-top: 2px;
+}
+
+.airo-ai-text {
+  font-size: 13.5px;
+  line-height: 2;
+  word-break: break-word;
+  color: var(--text);
+}
+
+.airo-ai-text code {
+  font-family: ui-monospace, monospace;
+  font-size: 12px;
+  background: rgba(127, 127, 127, .16);
+  padding: 1px 6px;
+  border-radius: 6px;
+  direction: ltr;
+  unicode-bidi: embed;
+}
+
+.airo-ai-text .am-li {
+  display: block;
+  padding-inline-start: 14px;
+  position: relative;
+}
+
+.airo-ai-text .am-li::before {
+  content: '';
+  position: absolute;
+  inline-size: 5px;
+  block-size: 5px;
+  border-radius: 50%;
+  background: var(--primary);
+  inset-inline-start: 1px;
+  inset-block-start: 1em;
+}
+
+.airo-stopped {
+  color: var(--soft);
+  font-size: 11px;
+  font-style: normal;
+}
+
+/* copy button lives in the meta row, shows on hover */
+.airo-copy {
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  margin-inline-start: auto;
+  border-radius: 6px;
+  border: none;
+  background: transparent;
+  color: var(--soft);
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity .18s, color .18s;
+  pointer-events: none;
+}
+
+.airo-copy.show { pointer-events: auto }
+
+.airo-msg-ai:hover .airo-copy.show { opacity: 1 }
+
+.airo-copy:hover { color: var(--text) }
+
+.airo-copy.done { color: var(--green); opacity: 1 }
+
+/* typing dots */
+.airo-typing {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 18px;
+}
+
+.airo-typing i {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--primary);
+  animation: airoDots 1.1s ease-in-out infinite;
+}
+
+.airo-typing i:nth-child(2) { animation-delay: .15s }
+.airo-typing i:nth-child(3) { animation-delay: .3s }
+
+@keyframes airoDots {
+  0%, 100% { transform: translateY(0); opacity: .4 }
+  40% { transform: translateY(-5px); opacity: 1 }
+}
+
+/* streaming caret */
+.airo-caret {
+  display: inline-block;
+  width: 2px;
+  height: 14px;
+  margin-inline-start: 2px;
+  vertical-align: -2px;
+  background: var(--primary);
+  animation: airoCaret 1s steps(2) infinite;
+}
+
+@keyframes airoCaret {
+  50% { opacity: 0 }
+}
+
+/* error note */
+.airo-note {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: 12.5px;
+  padding: 10px 14px;
+  border-radius: 14px;
+  animation: airoRise .35s ease both;
+}
+
+.airo-note.err {
+  background: var(--redSoft);
+  border: 1px solid rgba(251, 55, 72, .3);
+  color: var(--text);
+}
+
+.airo-retry {
+  flex-shrink: 0;
+  border: none;
+  background: var(--red);
+  color: #fff;
+  font-size: 11.5px;
+  font-weight: 700;
+  padding: 6px 13px;
+  border-radius: 99px;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+/* ---- foot: chips + input ---- */
+.airo-foot {
+  padding: 10px 16px 16px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.airo-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.airo-chips[hidden] { display: none }
+
+.airo-chip {
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--sub);
+  font-size: 11.5px;
+  font-weight: 600;
+  padding: 7px 13px;
+  border-radius: 99px;
+  cursor: pointer;
+  font-family: inherit;
+  animation: airoChipPop .4s cubic-bezier(.25, 1.3, .45, 1) both;
+  transition: color .18s, border-color .18s, background .18s;
+}
+
+@keyframes airoChipPop {
+  from { opacity: 0; transform: translateY(8px) }
+  to { opacity: 1; transform: translateY(0) }
+}
+
+.airo-chip:hover {
+  color: var(--primary);
+  border-color: var(--primary);
+  background: var(--primarySoft);
+}
+
+.airo-input-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.airo-input-row input {
+  flex: 1;
+  border: 1.5px solid var(--border);
+  background: var(--surface2);
+  color: var(--text);
+  font-size: 13.5px;
+  font-family: inherit;
+  padding: 11px 16px;
+  border-radius: 99px;
+  outline: none;
+  transition: border-color .2s, box-shadow .2s;
+}
+
+.airo-input-row input:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--primarySoft);
+}
+
+.airo-send {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 99px;
+  border: none;
+  cursor: pointer;
+  color: #fff;
+  background: linear-gradient(140deg, var(--primaryStrong), #1142a8);
+  transition: filter .15s, background .2s;
+  flex-shrink: 0;
+}
+
+.airo-send:hover { filter: brightness(1.12) }
+.airo-send:active { filter: brightness(.92) }
+
+.airo-send[data-mode="stop"] {
+  background: var(--red);
+}
+
+/* ---- glass theme ---- */
+body[data-theme="glass"] .airo-modal {
+  background: rgba(20, 24, 34, .78);
+  -webkit-backdrop-filter: blur(18px) saturate(160%);
+  backdrop-filter: blur(18px) saturate(160%);
+  border: 1.5px solid rgba(255, 255, 255, .12);
+}
+
+/* ---- light theme ---- */
+body[data-theme="light"] .airo-overlay {
+  background: rgba(14, 18, 27, .35);
+}
+
+/* ---- small screens ---- */
+@media (max-width: 560px) {
+  .airo-modal { height: min(560px, 88vh) }
+  .airo-msg-user .airo-bubble { max-width: 94% }
 }
