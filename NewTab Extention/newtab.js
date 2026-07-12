@@ -19,6 +19,7 @@
     google: '<path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.27-4.74 3.27-8.1z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84A11 11 0 0 0 12 23z"/><path fill="#FBBC05" d="M5.84 14.1a6.6 6.6 0 0 1 0-4.2V7.06H2.18a11 11 0 0 0 0 9.88l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1A11 11 0 0 0 2.18 7.06l3.66 2.84C6.71 7.31 9.14 5.38 12 5.38z"/>',
     lineChart: '<path fill="currentColor" d="M3 3h2v16h16v2H3V3zm15.293 3.293l1.414 1.414L14 13.414l-3-3-4.293 4.293-1.414-1.414L11 7.586l3 3z"/>',
     refresh: '<path fill="currentColor" d="M5.463 4.433A9.961 9.961 0 0 1 12 2c5.523 0 10 4.477 10 10 0 2.136-.67 4.116-1.81 5.74L17 12h3A8 8 0 0 0 6.46 6.228l-.997-1.795zm13.074 15.134A9.961 9.961 0 0 1 12 22C6.477 22 2 17.523 2 12c0-2.136.67-4.116 1.81-5.74L7 12H4a8 8 0 0 0 13.54 5.772l.997 1.795z"/>',
+    sort: '<path fill="currentColor" d="M7 3l4 4H8v10H6V7H3l4-4zm10 18l-4-4h3V7h2v10h3l-4 4z"/>',
     shieldCheck: '<path fill="currentColor" d="M12 1l8.217 1.826a1 1 0 0 1 .783.976v9.987a6 6 0 0 1-2.672 4.992L12 23l-6.328-4.219A6 6 0 0 1 3 13.79V3.802a1 1 0 0 1 .783-.976L12 1zm0 2.049L5 4.604v9.185a4 4 0 0 0 1.781 3.328L12 20.597l5.219-3.48A4 4 0 0 0 19 13.79V4.604L12 3.05zm4.452 5.173l1.415 1.414L11.503 16 7.26 11.757l1.414-1.414 2.828 2.828 4.95-4.95z"/>',
     close: '<path fill="currentColor" d="M12 10.586l4.95-4.95 1.414 1.414L13.414 12l4.95 4.95-1.414 1.414L12 13.414l-4.95 4.95-1.414-1.414L10.586 12 5.636 7.05 7.05 5.636z"/>',
     bank: '<path fill="currentColor" d="M2 20h20v2H2v-2zm2-8h2v7H4v-7zm5 0h2v7H9v-7zm4 0h2v7h-2v-7zm5 0h2v7h-2v-7zM2 7l10-5 10 5v4H2V7zm2 1.236V9h16v-.764l-8-4-8 4z"/>',
@@ -67,11 +68,13 @@
     { tag: 'پراپ فرم', text: 'پراپ‌فرم معتبر هرگز برای «برداشت سود» هزینهٔ اضافه نمی‌خواهد. مراقب درخواست‌های پرداخت مشکوک باشید.' },
     { tag: 'آموزش', text: 'سودآوری مداوم در فارکس یک‌شبه به‌دست نمی‌آید؛ نیاز به سال‌ها تمرین، تجربه و پشتکار دارد.' }
   ];
+  /* جلسات با ساعت محلیِ خودِ بازار تعریف می‌شوند و ساعت UTC به‌صورت زنده
+     از تایم‌زون محاسبه می‌شود — بنابراین تغییر ساعت تابستانی (DST) خودکار اعمال می‌شود */
   const SESSIONS = [
-    { name: 'سیدنی', tz: 'Australia/Sydney', open: 21, close: 6, c: '#35d0c0' },
-    { name: 'توکیو', tz: 'Asia/Tokyo', open: 0, close: 9, c: '#a78bfa' },
-    { name: 'لندن', tz: 'Europe/London', open: 7, close: 16, c: '#6f9bf3' },
-    { name: 'نیویورک', tz: 'America/New_York', open: 12, close: 21, c: '#f6a723' }
+    { key: 'sydney', name: 'سیدنی', flag: '🇦🇺', tz: 'Australia/Sydney', open: 7, close: 16, c: '#35d0c0' },
+    { key: 'tokyo', name: 'توکیو', flag: '🇯🇵', tz: 'Asia/Tokyo', open: 9, close: 18, c: '#a78bfa' },
+    { key: 'london', name: 'لندن', flag: '🇬🇧', tz: 'Europe/London', open: 8, close: 17, c: '#6f9bf3' },
+    { key: 'newyork', name: 'نیویورک', flag: '🇺🇸', tz: 'America/New_York', open: 8, close: 17, c: '#f6a723' }
   ];
   const GALLERY = [
     { label: 'ارزهای جهانی',    file: 'assets/gallery/bg1.jpg', gradient: 'linear-gradient(135deg,#8B6914,#C4901A,#7B4F12)' },
@@ -175,7 +178,19 @@
     name: '', engine: 'google', activeEngine: 'google',
     coins: 'bitcoin,ethereum,tether,solana,ripple,dogecoin',
     showCrypto: true, query: '', sugIdx: -1, tipIndex: 0,
-    crypto: SEED.slice(), cryptoErr: false, cryptoTime: '', refreshing: false, cryptoLive: false,
+    pxTab: 'crypto', pxSort: 'def', pxExpanded: null,
+    pxData: {
+      crypto: {
+        rows: SEED.map(function (c) {
+          const m = COIN_META[c.id] || {};
+          return { id: c.id, sym: m.sym || c.id.toUpperCase(), name: m.name || c.id, price: c.price, chg: c.chg };
+        }),
+        ts: 0, time: '', err: false
+      },
+      forex: { rows: [], ts: 0, time: '', err: false },
+      iran: { rows: [], ts: 0, time: '', err: false }
+    },
+    mktAxis: 'utc', newsCat: 'همه', news: null,
     bgMode: 'default', bgIndex: 0, bgImage: null
   };
   const BG_IMAGE_KEY = 'ib_bg_image';
@@ -183,10 +198,12 @@
   function load() {
     var saved = {};
     try { saved = JSON.parse(localStorage.getItem(PERSIST_KEY) || '{}'); } catch (e) {}
-    ['theme', 'layout', 'accent', 'showGrid', 'name', 'engine', 'coins', 'showCrypto', 'tipIndex', 'bgMode', 'bgIndex'].forEach(function (k) {
+    ['theme', 'layout', 'accent', 'showGrid', 'name', 'engine', 'coins', 'showCrypto', 'tipIndex', 'bgMode', 'bgIndex', 'pxTab', 'mktAxis'].forEach(function (k) {
       if (saved[k] !== undefined) state[k] = saved[k];
     });
     state.activeEngine = state.engine;
+    if (!state.pxData[state.pxTab]) state.pxTab = 'crypto';
+    if (state.mktAxis !== 'local') state.mktAxis = 'utc';
     if (state.bgMode === 'custom') {
       try { state.bgImage = localStorage.getItem(BG_IMAGE_KEY) || null; } catch (e) {}
       if (!state.bgImage) state.bgMode = 'default';
@@ -197,7 +214,8 @@
       theme: state.theme, layout: state.layout, accent: state.accent, showGrid: state.showGrid,
       name: state.name, engine: state.engine, coins: state.coins,
       showCrypto: state.showCrypto, tipIndex: state.tipIndex,
-      bgMode: state.bgMode, bgIndex: state.bgIndex
+      bgMode: state.bgMode, bgIndex: state.bgIndex,
+      pxTab: state.pxTab, mktAxis: state.mktAxis
     };
     try { localStorage.setItem(PERSIST_KEY, JSON.stringify(o)); } catch (e) {}
   }
@@ -232,25 +250,87 @@
     const large = (a1 - a0) > 180 ? 1 : 0;
     return 'M ' + p0[0].toFixed(2) + ' ' + p0[1].toFixed(2) + ' A ' + r + ' ' + r + ' 0 ' + large + ' 1 ' + p1[0].toFixed(2) + ' ' + p1[1].toFixed(2);
   }
-  function isOpen(s, h) { return s.open < s.close ? (h >= s.open && h < s.close) : (h >= s.open || h < s.close); }
+  /* --- زمان محلی هر بازار (با کش فرمترها؛ Intl ساختنش گران است) --- */
+  const tzFmtCache = {};
+  function tzParts(now, tz) {
+    let fmt = tzFmtCache[tz];
+    if (!fmt) {
+      try {
+        fmt = tzFmtCache[tz] = new Intl.DateTimeFormat('en-US', {
+          timeZone: tz, hour12: false, weekday: 'short', hour: '2-digit', minute: '2-digit'
+        });
+      } catch (e) { return { day: now.getUTCDay(), h: now.getUTCHours(), m: now.getUTCMinutes() }; }
+    }
+    const parts = {};
+    fmt.formatToParts(now).forEach(function (p) { parts[p.type] = p.value; });
+    const days = { Sun: 0, Mon: 1, Tue: 2, Wed: 3, Thu: 4, Fri: 5, Sat: 6 };
+    return {
+      day: days[parts.weekday] != null ? days[parts.weekday] : now.getUTCDay(),
+      h: (parseInt(parts.hour, 10) || 0) % 24,
+      m: parseInt(parts.minute, 10) || 0
+    };
+  }
+  /* وضعیت کامل یک جلسه: باز/بسته (با احتساب آخر هفته)، دقایق مانده تا
+     رویداد بعدی، و پنجرهٔ باز بودن بر حسب دقیقهٔ UTC */
+  function sessionState(s, now) {
+    const lp = tzParts(now, s.tz);
+    const lm = lp.h * 60 + lp.m;
+    const openM = s.open * 60, closeM = s.close * 60;
+    const weekday = lp.day >= 1 && lp.day <= 5;
+    const open = weekday && lm >= openM && lm < closeM;
+    let minsLeft;
+    if (open) minsLeft = closeM - lm;
+    else {
+      minsLeft = 0;
+      for (let add = 0; add <= 7; add++) {
+        const day = (lp.day + add) % 7;
+        if (day < 1 || day > 5) continue;
+        const t = add * 1440 + openM - lm;
+        if (t > 0) { minsLeft = t; break; }
+      }
+    }
+    const utcTotal = now.getUTCDay() * 1440 + now.getUTCHours() * 60 + now.getUTCMinutes();
+    let off = (lp.day * 1440 + lm) - utcTotal;
+    if (off > 5040) off -= 10080; else if (off < -5040) off += 10080;
+    off = Math.round(off / 15) * 15;
+    return {
+      open: open, minsLeft: minsLeft, lp: lp,
+      openUtc: ((openM - off) % 1440 + 1440) % 1440,
+      closeUtc: ((closeM - off) % 1440 + 1440) % 1440
+    };
+  }
+  function fmtDur(mins) {
+    mins = Math.max(0, Math.round(mins));
+    const h = Math.floor(mins / 60), m = mins % 60;
+    if (h >= 24) { const d = Math.floor(h / 24); return d + ' روز' + (h % 24 ? ' و ' + (h % 24) + 'س' : ''); }
+    if (h > 0) return h + 'س' + (m ? ' ' + m + 'د' : '');
+    return m + 'د';
+  }
 
-  /* ----------------------------- Crypto helpers ----------------------------- */
+  /* ----------------------------- Price helpers ----------------------------- */
   function fmtPrice(p) {
     if (p >= 1000) return '$' + p.toLocaleString('en-US', { maximumFractionDigits: 0 });
     if (p >= 1) return '$' + p.toLocaleString('en-US', { maximumFractionDigits: 2 });
     return '$' + p.toLocaleString('en-US', { maximumFractionDigits: 4 });
   }
-  function sparkPts(coin) {
-    let arr = coin.spark;
-    if (!arr || arr.length < 4) {
-      let seed = 0; for (const ch of coin.id) seed += ch.charCodeAt(0);
-      arr = []; const n = 24; const trend = (coin.chg || 0) / 100;
-      for (let i = 0; i < n; i++) arr.push(1 + trend * (i / n) + Math.sin(i * 0.7 + seed) * 0.012 + Math.sin(i * 1.9 + seed) * 0.006);
-    } else { arr = arr.slice(-24); }
+  function fmtAbbr(v) {
+    if (v >= 1e12) return '$' + (v / 1e12).toFixed(2) + 'T';
+    if (v >= 1e9) return '$' + (v / 1e9).toFixed(1) + 'B';
+    if (v >= 1e6) return '$' + (v / 1e6).toFixed(1) + 'M';
+    return '$' + Math.round(v).toLocaleString('en-US');
+  }
+  function pctStr(v) { return (v >= 0 ? '+' : '−') + Math.abs(v).toFixed(2) + '٪'; }
+  function sparkPts(arr) {
+    if (arr.length > 32) {
+      const step = arr.length / 32, out = [];
+      for (let i = 0; i < 32; i++) out.push(arr[Math.floor(i * step)]);
+      out.push(arr[arr.length - 1]);
+      arr = out;
+    }
     const min = Math.min.apply(null, arr), max = Math.max.apply(null, arr), rng = (max - min) || 1;
     const W = 64, H = 22;
     return arr.map(function (v, i) {
-      return (W - (i / (arr.length - 1)) * W).toFixed(1) + ',' + (H - ((v - min) / rng) * H).toFixed(1);
+      return (W - (i / (arr.length - 1)) * W).toFixed(1) + ',' + (1 + (H - 2) - ((v - min) / rng) * (H - 2)).toFixed(1);
     }).join(' ');
   }
 
@@ -331,45 +411,84 @@
       .catch(function () { renderCommunity(); });
   }
 
-  function renderNews(items) {
-    const el = document.getElementById('bento-news-list');
-    if (!el) return;
-    // Group by category, preserving order of first appearance
-    const groups = {};
-    const groupOrder = [];
-    items.forEach(function (n) {
-      if (!groups[n.cat]) {
-        groups[n.cat] = { items: [], color: n.catColor || CAT_COLORS[n.cat] || '#6f9bf3' };
-        groupOrder.push(n.cat);
+  /* ----------------------------- News (اخبار بازار) ----------------------------- */
+  const NEWS_READ_KEY = 'ib_news_read';
+  let newsRead = {};
+  try {
+    (JSON.parse(localStorage.getItem(NEWS_READ_KEY) || '[]')).forEach(function (u) { newsRead[u] = 1; });
+  } catch (e) {}
+  function markNewsRead(url) {
+    if (!url || newsRead[url]) return;
+    newsRead[url] = 1;
+    try {
+      let arr = Object.keys(newsRead);
+      if (arr.length > 300) {
+        arr = arr.slice(-200);
+        newsRead = {};
+        arr.forEach(function (u) { newsRead[u] = 1; });
       }
-      groups[n.cat].items.push(n);
-    });
-    el.innerHTML = groupOrder.map(function (cat) {
-      const g = groups[cat];
-      const color = g.color;
-      const soft = hexA(color, 0.13);
-      const itemsHTML = g.items.map(function (n) {
-        var thumb;
-        if (n.img) {
-          thumb = '<img class="bn-thumb-img" src="' + n.img + '" alt="" loading="lazy"/>';
-        } else {
-          thumb = '<div class="bn-thumb-placeholder" style="background:' + soft + ';color:' + color + '">' + cat.slice(0, 2) + '</div>';
-        }
-        return '<a class="bn-item" href="' + (n.url || 'https://iranbroker.net/news/') + '" target="_blank" rel="noopener">' +
-          '<div class="bn-thumb">' + thumb + '</div>' +
-          '<div class="bn-body">' +
-            '<div class="bn-time">' + n.time + '</div>' +
-            '<div class="bn-title">' + n.title + '</div>' +
-          '</div>' +
-        '</a>';
+      localStorage.setItem(NEWS_READ_KEY, JSON.stringify(arr));
+    } catch (e) {}
+  }
+  function newsIsFresh(n) { return !!(n.ts && Date.now() - n.ts < 2 * 3600 * 1000); }
+
+  function renderNews() {
+    const el = els.bentoNewsList || document.getElementById('bento-news-list');
+    if (!el) return;
+    const items = state.news || NEWS_SEED;
+
+    /* چیپ‌های فیلتر دسته‌بندی */
+    const cats = [];
+    items.forEach(function (n) { if (n.cat && cats.indexOf(n.cat) < 0) cats.push(n.cat); });
+    if (state.newsCat !== 'همه' && cats.indexOf(state.newsCat) < 0) state.newsCat = 'همه';
+    if (els.bnChips) {
+      els.bnChips.hidden = cats.length < 2;
+      els.bnChips.innerHTML = ['همه'].concat(cats).map(function (c) {
+        const col = c === 'همه' ? 'var(--primary)' : (CAT_COLORS[c] || '#6f9bf3');
+        const cnt = c === 'همه' ? items.length : items.filter(function (x) { return x.cat === c; }).length;
+        return '<button class="bn-chip' + (state.newsCat === c ? ' active' : '') + '" data-cat="' + c + '" style="--chip:' + col + '">' +
+          c + ' <i>' + cnt + '</i></button>';
       }).join('');
-      return '<div class="bn-group">' +
-        '<div class="bn-group-head">' +
-          '<span class="bn-group-cat" style="background:' + soft + ';color:' + color + '">' + cat + '</span>' +
-        '</div>' +
-        itemsHTML +
+    }
+
+    const list = state.newsCat === 'همه' ? items : items.filter(function (n) { return n.cat === state.newsCat; });
+
+    function metaHTML(n) {
+      const col = n.catColor || CAT_COLORS[n.cat] || '#6f9bf3';
+      return '<div class="bn-meta">' +
+        '<span class="bn-cat" style="background:' + hexA(col, 0.13) + ';color:' + col + '">' + n.cat + '</span>' +
+        (newsIsFresh(n) ? '<span class="bn-new">تازه</span>' : '') +
+        '<span class="bn-time">' + (n.time || '') + '</span>' +
       '</div>';
-    }).join('');
+    }
+
+    /* خبر شاخص: اولین خبرِ دارای تصویر، بزرگ نمایش داده می‌شود */
+    let heroIdx = -1;
+    for (let i = 0; i < list.length; i++) { if (list[i].img) { heroIdx = i; break; } }
+
+    let html = '';
+    if (heroIdx >= 0) {
+      const n = list[heroIdx];
+      html += '<a class="bn-hero' + (newsRead[n.url] ? ' read' : '') + '" href="' + n.url + '" target="_blank" rel="noopener" data-url="' + n.url + '">' +
+        '<img src="' + n.img + '" alt="" loading="lazy"/>' +
+        '<div class="bn-hero-txt">' + metaHTML(n) +
+          '<div class="bn-hero-title">' + n.title + '</div>' +
+        '</div></a>';
+    }
+    list.forEach(function (n, i) {
+      if (i === heroIdx) return;
+      const col = n.catColor || CAT_COLORS[n.cat] || '#6f9bf3';
+      const url = n.url || 'https://iranbroker.net/news/';
+      html += '<a class="bn-item' + (newsRead[url] ? ' read' : '') + '" href="' + url + '" target="_blank" rel="noopener" data-url="' + url + '">' +
+        '<div class="bn-thumb">' +
+          '<div class="bn-thumb-placeholder" style="background:' + hexA(col, 0.13) + ';color:' + col + '">' + (n.cat || 'خبر').slice(0, 2) + '</div>' +
+          (n.img ? '<img class="bn-thumb-img" src="' + n.img + '" alt="" loading="lazy"/>' : '') +
+        '</div>' +
+        '<div class="bn-body">' + metaHTML(n) +
+          '<div class="bn-title">' + n.title + '</div>' +
+        '</div></a>';
+    });
+    el.innerHTML = html || '<div class="px-empty">خبری در این دسته نیست</div>';
   }
 
   function relTimeFa(dateStr) {
@@ -383,7 +502,7 @@
   }
 
   function loadNews() {
-    renderNews(NEWS_SEED);
+    if (els.newsRefresh) els.newsRefresh.classList.add('spinning');
     fetch('https://iranbroker.net/feed/')
       .then(function (res) { return res.text(); })
       .then(function (text) {
@@ -391,7 +510,7 @@
         const doc = parser.parseFromString(text, 'text/xml');
         const items = Array.prototype.slice.call(doc.querySelectorAll('item'));
         if (!items.length) return;
-        const parsed = items.slice(0, 12).map(function (item) {
+        const parsed = items.slice(0, 20).map(function (item) {
           const title = (item.querySelector('title') ? item.querySelector('title').textContent : '').replace(/<!\[CDATA\[|\]\]>/g, '').trim();
           const guidEl = item.querySelector('guid');
           const url = guidEl ? guidEl.textContent.trim() : 'https://iranbroker.net/news/';
@@ -417,11 +536,15 @@
               if (m) img = m[1];
             }
           }
-          return { title: title, url: url, cat: cat, catColor: color, time: relTimeFa(pubDate), img: img };
+          const ts = pubDate ? Date.parse(pubDate) : NaN;
+          return { title: title, url: url, cat: cat, catColor: color, time: relTimeFa(pubDate), img: img, ts: isFinite(ts) ? ts : null };
         }).filter(function (n) { return n.title; });
-        if (parsed.length) renderNews(parsed);
+        if (parsed.length) { state.news = parsed; renderNews(); }
       })
-      .catch(function () {});
+      .catch(function () {})
+      .finally(function () {
+        if (els.newsRefresh) els.newsRefresh.classList.remove('spinning');
+      });
   }
 
   function initSidebars() {
@@ -466,6 +589,8 @@
     els.searchIcon.innerHTML = svg('search');
     els.searchGo.innerHTML = svg('arrowLeft');
     els.cryptoRefresh.innerHTML = svg('refresh');
+    if (els.cryptoSort) els.cryptoSort.innerHTML = svg('sort');
+    if (els.newsRefresh) els.newsRefresh.innerHTML = svg('refresh');
     els.settingsClose.innerHTML = '<span class="icon">' + svg('close') + '</span>';
   }
 
@@ -533,34 +658,152 @@
     }
   }
 
-  /* ----------------------------- Crypto ----------------------------- */
-  function renderCrypto() {
-    const list = (state.crypto || SEED);
-    els.cryptoList.innerHTML = list.map(function (c, i) {
-      const meta = COIN_META[c.id] || { sym: c.id.toUpperCase(), name: c.id };
-      const up = (c.chg || 0) >= 0;
-      const chgColor = up ? 'var(--green)' : 'var(--red)';
-      const chgBg = up ? 'var(--greenSoft)' : 'var(--redSoft)';
-      const chgStr = (up ? '▲ ' : '▼ ') + Math.abs(c.chg || 0).toFixed(2) + '٪';
-      return '<div class="c-row">' +
-        '<span class="c-rank">' + (i + 1) + '</span>' +
-        '<div class="c-id"><span class="c-sym">' + meta.sym + '</span><span class="c-name">' + meta.name + '</span></div>' +
-        '<svg class="c-spark" viewBox="0 0 64 22" width="56" height="20" preserveAspectRatio="none">' +
-          '<polyline points="' + sparkPts(c) + '" fill="none" stroke="' + (up ? 'var(--green)' : 'var(--red)') + '" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></polyline></svg>' +
-        '<div class="c-price-col">' +
-          '<span class="c-price">' + fmtPrice(c.price) + '</span>' +
-          '<span class="c-chg" style="color:' + chgColor + ';background:' + chgBg + '">' + chgStr + '</span>' +
-        '</div></div>';
-    }).join('');
+  /* ----------------------------- Live Prices (کریپتو / فارکس / بازار ایران) ----------------------------- */
+  const FX_PAIRS = [
+    { id: 'eurusd', sym: 'EUR/USD', name: 'یورو / دلار', cur: 'EUR', inv: true, flag: '🇪🇺', dec: 4 },
+    { id: 'gbpusd', sym: 'GBP/USD', name: 'پوند / دلار', cur: 'GBP', inv: true, flag: '🇬🇧', dec: 4 },
+    { id: 'usdjpy', sym: 'USD/JPY', name: 'دلار / ین', cur: 'JPY', inv: false, flag: '🇯🇵', dec: 2 },
+    { id: 'usdchf', sym: 'USD/CHF', name: 'دلار / فرانک', cur: 'CHF', inv: false, flag: '🇨🇭', dec: 4 },
+    { id: 'usdcad', sym: 'USD/CAD', name: 'دلار / کانادا', cur: 'CAD', inv: false, flag: '🇨🇦', dec: 4 },
+    { id: 'audusd', sym: 'AUD/USD', name: 'استرالیا / دلار', cur: 'AUD', inv: true, flag: '🇦🇺', dec: 4 }
+  ];
+  const IRAN_ITEMS = [
+    { id: 'usd', sym: 'USD', name: 'دلار آزاد', keys: ['price_dollar_rl', 'price_dollar_soleymani', 'dollar_rl'], flag: '💵', div: 10, unit: 'تومان' },
+    { id: 'eur', sym: 'EUR', name: 'یورو', keys: ['price_eur'], flag: '💶', div: 10, unit: 'تومان' },
+    { id: 'gold18', sym: 'GOLD', name: 'طلای ۱۸ عیار', keys: ['geram18', 'price_gold_18'], flag: '🥇', div: 10, unit: 'تومان' },
+    { id: 'sekke', sym: 'IMAMI', name: 'سکه امامی', keys: ['sekee', 'price_sekee', 'sekeb'], flag: '🪙', div: 10, unit: 'تومان' },
+    { id: 'mesghal', sym: 'MSQ', name: 'مثقال طلا', keys: ['mesghal'], flag: '⚖️', div: 10, unit: 'تومان' },
+    { id: 'ons', sym: 'XAU', name: 'انس جهانی طلا', keys: ['ons', 'price_ons'], flag: '🌕', div: 1, unit: 'دلار' }
+  ];
+  const PX_TTL = { crypto: 90000, forex: 600000, iran: 300000 };
+  const PX_SRC = { crypto: 'CoinGecko', forex: 'ECB / Frankfurter', iran: 'TGJU' };
+  const PX_SORTS = ['def', 'gain', 'loss'];
+  const PX_SORT_LBL = { def: 'پیش‌فرض', gain: 'بیشترین رشد', loss: 'بیشترین افت' };
+  const pxPrev = {};
+
+  function fmtRowPrice(tab, r) {
+    if (tab === 'forex') return r.price.toFixed(r.dec == null ? 4 : r.dec);
+    if (tab === 'iran') return Math.round(r.price).toLocaleString('en-US');
+    return fmtPrice(r.price);
+  }
+
+  function renderPrices() {
+    const tab = state.pxTab;
+    const d = state.pxData[tab];
+    let rows = (d.rows || []).slice();
+    if (state.pxSort === 'gain') rows.sort(function (a, b) { return (b.chg || 0) - (a.chg || 0); });
+    else if (state.pxSort === 'loss') rows.sort(function (a, b) { return (a.chg || 0) - (b.chg || 0); });
+
+    /* نبض بازار — نسبت صعودی/نزولی و میانگین تغییر */
+    let pulse = '';
+    if (rows.length > 1) {
+      const ups = rows.filter(function (r) { return (r.chg || 0) >= 0; }).length;
+      const avg = rows.reduce(function (s, r) { return s + (r.chg || 0); }, 0) / rows.length;
+      pulse = '<span class="pp-cnt pp-up">' + ups + ' صعودی</span>' +
+        '<div class="pp-bar" dir="ltr"><i style="width:' + Math.round(ups / rows.length * 100) + '%"></i></div>' +
+        '<span class="pp-cnt pp-down">' + (rows.length - ups) + ' نزولی</span>' +
+        '<span class="pp-avg" style="color:' + (avg >= 0 ? 'var(--green)' : 'var(--red)') + '">' + pctStr(avg) + '</span>';
+    }
+    if (els.pxPulse) { els.pxPulse.hidden = !pulse; els.pxPulse.innerHTML = pulse; }
+
+    function rangeBar(cls, low, high, cur, color) {
+      const pct = Math.max(0, Math.min(100, (cur - low) / (high - low) * 100));
+      return '<div class="' + cls + '" dir="ltr"><i style="left:' + pct.toFixed(1) + '%' + (color ? ';background:' + color : '') + '"></i></div>';
+    }
+
+    els.cryptoList.innerHTML = rows.length ? rows.map(function (r, i) {
+      const up = (r.chg || 0) >= 0;
+      const col = up ? 'var(--green)' : 'var(--red)';
+      const key = tab + ':' + r.id;
+      let flash = '';
+      if (pxPrev[key] != null && r.price !== pxPrev[key]) flash = r.price > pxPrev[key] ? ' flash-up' : ' flash-down';
+      pxPrev[key] = r.price;
+
+      let ava;
+      if (r.img) ava = '<span class="px-ava"><span class="px-ava-fb">' + (r.sym || '?').slice(0, 1) + '</span><img src="' + r.img + '" alt="" loading="lazy"/></span>';
+      else if (r.flag) ava = '<span class="px-ava px-ava-emoji">' + r.flag + '</span>';
+      else ava = '<span class="px-ava"><span class="px-ava-fb">' + (r.sym || '?').slice(0, 1) + '</span></span>';
+
+      let mid;
+      if (r.spark && r.spark.length > 3) {
+        const pts = sparkPts(r.spark);
+        const gid = 'pxg-' + tab + '-' + i;
+        const solid = up ? '#1fc16b' : '#fb3748';
+        mid = '<svg class="c-spark" viewBox="0 0 64 22" width="56" height="20" preserveAspectRatio="none">' +
+          '<defs><linearGradient id="' + gid + '" x1="0" y1="0" x2="0" y2="1">' +
+          '<stop offset="0" stop-color="' + solid + '" stop-opacity=".26"/>' +
+          '<stop offset="1" stop-color="' + solid + '" stop-opacity="0"/></linearGradient></defs>' +
+          '<polygon points="' + pts + ' 0,22 64,22" fill="url(#' + gid + ')"></polygon>' +
+          '<polyline points="' + pts + '" fill="none" stroke="' + col + '" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></polyline></svg>';
+      } else if (r.extra && isFinite(r.extra.low) && isFinite(r.extra.high) && r.extra.high > r.extra.low) {
+        mid = rangeBar('px-range-mini', r.extra.low, r.extra.high, r.price, col);
+      } else {
+        mid = '<div class="px-range-mini px-range-empty"></div>';
+      }
+
+      let detail = '';
+      if (state.pxExpanded === r.id && r.extra) {
+        const ex = r.extra;
+        let rangeHtml = '';
+        if (isFinite(ex.low) && isFinite(ex.high) && ex.high > ex.low) {
+          rangeHtml = '<div class="px-range-row"><span class="px-range-lbl">' + (ex.rangeLbl || 'بازه') + '</span>' +
+            rangeBar('px-range', ex.low, ex.high, r.price, null) +
+            '<span class="px-range-minmax" dir="ltr">' + fmtRowPrice(tab, { price: ex.low, dec: r.dec }) + ' – ' + fmtRowPrice(tab, { price: ex.high, dec: r.dec }) + '</span></div>';
+        }
+        const statsHtml = (ex.stats || []).map(function (s) {
+          return '<div class="px-stat"><span>' + s.label + '</span><b dir="ltr">' + s.val + '</b></div>';
+        }).join('');
+        detail = '<div class="px-detail">' + rangeHtml + (statsHtml ? '<div class="px-stats">' + statsHtml + '</div>' : '') + '</div>';
+      }
+
+      return '<div class="c-row' + (r.extra ? ' has-detail' : '') + (detail ? ' expanded' : '') + '" data-pxid="' + r.id + '"' + (r.extra ? ' title="جزئیات بیشتر"' : '') + '>' +
+        '<div class="c-main">' +
+          ava +
+          '<div class="c-id"><span class="c-sym">' + r.sym + '</span><span class="c-name">' + r.name + '</span></div>' +
+          mid +
+          '<div class="c-price-col">' +
+            '<span class="c-price' + flash + '">' + fmtRowPrice(tab, r) + (r.unit ? ' <i class="c-unit">' + r.unit + '</i>' : '') + '</span>' +
+            '<span class="c-chg" style="color:' + col + ';background:' + (up ? 'var(--greenSoft)' : 'var(--redSoft)') + '">' + (up ? '▲ ' : '▼ ') + Math.abs(r.chg || 0).toFixed(2) + '٪</span>' +
+          '</div>' +
+        '</div>' + detail + '</div>';
+    }).join('') : '<div class="px-empty">' + (d.err ? 'دریافت داده ممکن نشد' : 'در حال دریافت…') + '</div>';
+
     let foot = '';
-    if (state.cryptoErr) foot = '<span class="err">دریافت زنده ممکن نشد — نمایش آخرین داده</span>';
-    else if (state.cryptoTime) foot = '<span>به‌روزرسانی ' + state.cryptoTime + ' · داده از CoinGecko</span>';
+    if (rows.length) {
+      if (d.err) foot += '<span class="err">آفلاین — آخرین داده</span><span class="foot-sep">·</span>';
+      if (d.time) foot += '<span>به‌روزرسانی ' + d.time + '</span><span class="foot-sep">·</span>';
+      foot += '<span>' + PX_SRC[tab] + '</span>' +
+        '<span class="foot-sep">·</span><span>بعدی <b id="px-next" dir="ltr">--</b></span>';
+    }
     els.cryptoFoot.innerHTML = foot;
   }
+
+  function pxSpin(on) { els.cryptoRefresh.classList.toggle('spinning', !!on); }
+  function pxDone(tab, rows) {
+    const d = state.pxData[tab];
+    if (rows) {
+      d.rows = rows; d.err = false; d.ts = Date.now();
+      d.time = new Date().toLocaleTimeString('fa-IR', { hour: '2-digit', minute: '2-digit' });
+    } else {
+      d.err = true;
+      d.ts = Date.now(); /* تا شکست‌ها هم TTL داشته باشند و اسپم درخواست نشود */
+    }
+    pxSpin(false);
+    if (state.pxTab === tab) renderPrices();
+  }
+  function loadPrices(force) {
+    const tab = state.pxTab;
+    const d = state.pxData[tab];
+    if (!force && d.ts && Date.now() - d.ts < PX_TTL[tab]) { return; }
+    pxSpin(true);
+    if (tab === 'crypto') loadCrypto();
+    else if (tab === 'forex') loadForex();
+    else loadIran();
+  }
+
   function loadCrypto() {
     const ids = state.coins.split(',').map(function (s) { return s.trim(); }).filter(Boolean).slice(0, 6);
-    if (!ids.length) return;
-    state.refreshing = true; els.cryptoRefresh.classList.add('spinning');
+    if (!ids.length) { pxDone('crypto', []); return; }
     const url = 'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=' + ids.join(',') + '&order=market_cap_desc&sparkline=true&price_change_percentage=24h';
     fetch(url).then(function (res) {
       if (!res.ok) throw new Error('http');
@@ -570,21 +813,109 @@
       const byId = {};
       data.forEach(function (c) { byId[c.id] = c; });
       const rows = ids.map(function (id) { return byId[id]; }).filter(Boolean).map(function (c) {
+        const spark = (c.sparkline_in_7d && c.sparkline_in_7d.price && c.sparkline_in_7d.price.length > 3) ? c.sparkline_in_7d.price : null;
+        let wk = null;
+        if (spark) wk = (spark[spark.length - 1] - spark[0]) / spark[0] * 100;
         return {
-          id: c.id, price: c.current_price, chg: c.price_change_percentage_24h == null ? 0 : c.price_change_percentage_24h,
-          spark: (c.sparkline_in_7d && c.sparkline_in_7d.price) ? c.sparkline_in_7d.price : null
+          id: c.id,
+          sym: (c.symbol || c.id).toUpperCase(),
+          name: (COIN_META[c.id] || {}).name || c.name || c.id,
+          price: c.current_price,
+          chg: c.price_change_percentage_24h == null ? 0 : c.price_change_percentage_24h,
+          spark: spark, img: c.image || null,
+          extra: {
+            low: c.low_24h, high: c.high_24h, rangeLbl: 'بازه ۲۴ ساعته',
+            stats: [
+              { label: 'رتبه بازار', val: '#' + (c.market_cap_rank || '—') },
+              { label: 'ارزش بازار', val: fmtAbbr(c.market_cap || 0) },
+              { label: 'حجم ۲۴س', val: fmtAbbr(c.total_volume || 0) },
+              { label: 'تغییر ۷ روزه', val: wk == null ? '—' : pctStr(wk) }
+            ]
+          }
         };
       });
-      state.crypto = rows; state.cryptoErr = false; state.cryptoLive = true; state.refreshing = false;
-      state.cryptoTime = new Date().toLocaleTimeString('fa-IR', { hour: '2-digit', minute: '2-digit' });
-      els.cryptoRefresh.classList.remove('spinning');
-      renderCrypto();
-    }).catch(function () {
-      // keep last data; flag the fallback only while we've never loaded live prices
-      state.cryptoErr = !state.cryptoLive;
-      state.refreshing = false; els.cryptoRefresh.classList.remove('spinning');
-      renderCrypto();
-    });
+      pxDone('crypto', rows);
+    }).catch(function () { pxDone('crypto', null); });
+  }
+
+  function loadForex() {
+    function iso(t) { return new Date(t).toISOString().slice(0, 10); }
+    const url = 'https://api.frankfurter.app/' + iso(Date.now() - 9 * 86400000) + '..' + iso(Date.now()) +
+      '?from=USD&to=' + FX_PAIRS.map(function (p) { return p.cur; }).join(',');
+    fetch(url).then(function (r) {
+      if (!r.ok) throw new Error('http');
+      return r.json();
+    }).then(function (data) {
+      const dates = Object.keys(data.rates || {}).sort();
+      if (dates.length < 2) throw new Error('empty');
+      const rows = FX_PAIRS.map(function (p) {
+        const series = dates
+          .map(function (dt) { return (data.rates[dt] || {})[p.cur]; })
+          .filter(function (v) { return v > 0; })
+          .map(function (v) { return p.inv ? 1 / v : v; });
+        if (series.length < 2) return null;
+        const last = series[series.length - 1], prev = series[series.length - 2];
+        const lo = Math.min.apply(null, series), hi = Math.max.apply(null, series);
+        return {
+          id: p.id, sym: p.sym, name: p.name, flag: p.flag, dec: p.dec,
+          price: last, chg: (last - prev) / prev * 100, spark: series,
+          extra: {
+            low: lo, high: hi, rangeLbl: 'بازه هفتگی',
+            stats: [
+              { label: 'تغییر هفتگی', val: pctStr((last - series[0]) / series[0] * 100) },
+              { label: 'کف هفته', val: lo.toFixed(p.dec) },
+              { label: 'سقف هفته', val: hi.toFixed(p.dec) }
+            ]
+          }
+        };
+      }).filter(Boolean);
+      if (!rows.length) throw new Error('empty');
+      pxDone('forex', rows);
+    }).catch(function () { pxDone('forex', null); });
+  }
+
+  function tgjuNum(v) {
+    if (v == null) return NaN;
+    return parseFloat(String(v).replace(/,/g, ''));
+  }
+  function loadIran() {
+    const ctl = new AbortController();
+    setTimeout(function () { ctl.abort(); }, 9000);
+    fetch('https://call4.tgju.org/c/currency/price-all', { signal: ctl.signal })
+      .then(function (r) { if (!r.ok) throw new Error('http'); return r.json(); })
+      .then(function (data) {
+        const cur = data.current || data || {};
+        const rows = [];
+        IRAN_ITEMS.forEach(function (it) {
+          let raw = null;
+          for (let k = 0; k < it.keys.length; k++) {
+            if (cur[it.keys[k]] != null) { raw = cur[it.keys[k]]; break; }
+          }
+          if (raw == null) return;
+          let p, h, l, chg = 0;
+          if (typeof raw === 'object') {
+            p = tgjuNum(raw.p); h = tgjuNum(raw.h); l = tgjuNum(raw.l);
+            const dp = tgjuNum(raw.dp);
+            if (isFinite(dp)) chg = (String(raw.dt).toLowerCase() === 'low' ? -1 : 1) * dp;
+            /* برخی نسخه‌ها تغییر را با کلید جدا می‌دهند */
+          } else {
+            p = tgjuNum(raw); h = NaN; l = NaN;
+            const c2 = tgjuNum(cur['change_' + it.id] || cur[it.keys[0].replace('price_', 'change_')]);
+            if (isFinite(c2)) chg = c2;
+          }
+          if (!isFinite(p) || p <= 0) return;
+          rows.push({
+            id: it.id, sym: it.sym, name: it.name, flag: it.flag, unit: it.unit,
+            price: p / it.div, chg: chg,
+            extra: (isFinite(h) && isFinite(l) && h > l)
+              ? { low: l / it.div, high: h / it.div, rangeLbl: 'بازه امروز', stats: [] }
+              : null
+          });
+        });
+        if (!rows.length) throw new Error('empty');
+        pxDone('iran', rows);
+      })
+      .catch(function () { pxDone('iran', null); });
   }
 
   /* ----------------------------- Tip ----------------------------- */
@@ -595,66 +926,109 @@
   }
 
   /* ----------------------------- Market Sessions Timeline ----------------------------- */
-  function renderMarkets() {
+  function renderMarkets(now) {
     if (!els.marketsWrap) return;
-    var now = new Date();
-    var utcH = now.getUTCHours() + now.getUTCMinutes() / 60;
-    var nowPct = (utcH / 24 * 100).toFixed(2);
+    now = now || new Date();
+    const axisLocal = state.mktAxis === 'local';
+    /* دقایق شیفت برای نمایش تایم‌لاین در مبنای انتخابی (UTC یا محلی) */
+    const shiftMin = axisLocal ? -now.getTimezoneOffset() : 0;
+    const utcMin = now.getUTCHours() * 60 + now.getUTCMinutes();
+    const dispNowMin = ((utcMin + shiftMin) % 1440 + 1440) % 1440;
+    const nowPct = (dispNowMin / 1440 * 100).toFixed(2);
 
-    var TICKS = [
-      { label: '00:00', pct: '0', tr: 'translateX(0)' },
-      { label: '06:00', pct: '25', tr: 'translateX(-50%)' },
-      { label: '12:00', pct: '50', tr: 'translateX(-50%)' },
-      { label: '18:00', pct: '75', tr: 'translateX(-50%)' }
-    ];
-    var ticksHtml = TICKS.map(function (t) {
-      return '<span class="mkt-tick" style="left:' + t.pct + '%;transform:' + t.tr + '">' + t.label + '</span>';
+    const states = SESSIONS.map(function (s) { return sessionState(s, now); });
+
+    /* بج بالای کارت: ساعت جاری در مبنای انتخابی */
+    if (els.marketsUtcBadge) {
+      const txt = axisLocal
+        ? String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0') + ' محلی'
+        : String(now.getUTCHours()).padStart(2, '0') + ':' + String(now.getUTCMinutes()).padStart(2, '0') + ' UTC';
+      els.marketsUtcBadge.innerHTML = '<span class="mkt-ax-swap">⇄</span> ' + txt;
+    }
+
+    function segHtml(aMin, bMin, style) {
+      const a = ((aMin + shiftMin) % 1440 + 1440) % 1440;
+      const len = ((bMin - aMin) % 1440 + 1440) % 1440;
+      const parts = (a + len <= 1440) ? [[a, len]] : [[a, 1440 - a], [0, a + len - 1440]];
+      return parts.map(function (t) {
+        return '<div class="mkt-seg" style="left:' + (t[0] / 1440 * 100).toFixed(2) + '%;width:' + (t[1] / 1440 * 100).toFixed(2) + '%;' + style + '"></div>';
+      }).join('');
+    }
+
+    const ticksHtml = [0, 6, 12, 18].map(function (h) {
+      return '<span class="mkt-tick" style="left:' + (h / 24 * 100) + '%;transform:translateX(' + (h === 0 ? '0' : '-50%') + ')">' +
+        String(h).padStart(2, '0') + ':00</span>';
     }).join('');
 
-    var rowsHtml = SESSIONS.map(function (s) {
-      var open = isOpen(s, now.getUTCHours());
-      var opacity = open ? '1' : '0.28';
-
-      var localStr = '';
-      try {
-        localStr = new Intl.DateTimeFormat('en-US', {
-          hour: 'numeric', minute: '2-digit', hour12: true, timeZone: s.tz
-        }).format(now).toLowerCase().replace(' ', '');
-      } catch (e) {}
-
-      var segs = '';
-      if (s.open < s.close) {
-        var l = (s.open / 24 * 100).toFixed(2);
-        var w = ((s.close - s.open) / 24 * 100).toFixed(2);
-        segs = '<div class="mkt-seg" style="left:' + l + '%;width:' + w + '%;background:' + s.c + ';opacity:' + opacity + '"></div>';
-      } else {
-        var l1 = (s.open / 24 * 100).toFixed(2);
-        var w1 = ((24 - s.open) / 24 * 100).toFixed(2);
-        var w2 = (s.close / 24 * 100).toFixed(2);
-        segs = '<div class="mkt-seg" style="left:' + l1 + '%;width:' + w1 + '%;background:' + s.c + ';opacity:' + opacity + '"></div>' +
-               '<div class="mkt-seg" style="left:0%;width:' + w2 + '%;background:' + s.c + ';opacity:' + opacity + '"></div>';
+    /* بنر آخر هفته وقتی همهٔ بازارها بسته‌اند و بازگشایی دور است */
+    let banner = '';
+    const allClosed = states.every(function (st) { return !st.open; });
+    if (allClosed) {
+      const nextOpen = Math.min.apply(null, states.map(function (st) { return st.minsLeft; }));
+      if (nextOpen > 180) {
+        banner = '<div class="mkt-weekend"><span class="mkt-wk-ic">🌙</span><div>' +
+          '<b>بازار فارکس تعطیل است</b>' +
+          '<span>بازگشایی با جلسهٔ سیدنی — ' + fmtDur(nextOpen) + ' دیگر</span>' +
+        '</div></div>';
       }
+    }
 
-      return '<div class="mkt-row">' +
+    const rowsHtml = SESSIONS.map(function (s, i) {
+      const st = states[i];
+      const localStr = String(st.lp.h).padStart(2, '0') + ':' + String(st.lp.m).padStart(2, '0');
+      const cnt = fmtDur(st.minsLeft);
+      const tip = st.open ? ('بسته می‌شود تا ' + cnt + ' دیگر') : ('باز می‌شود تا ' + cnt + ' دیگر');
+      return '<div class="mkt-row' + (st.open ? ' is-open' : '') + '" title="' + s.name + ' — ' + tip + '">' +
         '<div class="mkt-info">' +
-          '<span class="mkt-name">' + s.name + '</span>' +
-          '<span class="mkt-status" style="color:' + (open ? 'var(--green)' : 'var(--soft)') + '">' + (open ? 'باز' : 'بسته') + '</span>' +
+          '<span class="mkt-name"><i class="mkt-flag">' + s.flag + '</i> ' + s.name + '</span>' +
+          '<span class="mkt-status" style="color:' + (st.open ? 'var(--green)' : 'var(--soft)') + '">' +
+            (st.open ? 'باز' : 'بسته') + ' · ' + cnt +
+          '</span>' +
         '</div>' +
         '<div class="mkt-track" dir="ltr">' +
-          segs +
+          segHtml(st.openUtc, st.closeUtc, 'background:' + s.c + ';opacity:' + (st.open ? '1' : '.28')) +
           '<div class="mkt-now-line" style="left:' + nowPct + '%"></div>' +
         '</div>' +
         '<span class="mkt-ltime" dir="ltr">' + localStr + '</span>' +
       '</div>';
     }).join('');
 
+    /* ردیف همپوشانی: بازه‌هایی که ۲+ جلسه هم‌زمان باز است (بیشترین نقدینگی) */
+    const diff = new Array(1441).fill(0);
+    states.forEach(function (st) {
+      const a = st.openUtc, b = st.closeUtc;
+      if (b <= a) { diff[a]++; diff[1440]--; diff[0]++; diff[b]--; }
+      else { diff[a]++; diff[b]--; }
+    });
+    let run = 0, startIdx = -1;
+    const spans = [];
+    for (let mIdx = 0; mIdx <= 1440; mIdx++) {
+      run += diff[mIdx];
+      const on = mIdx < 1440 && run >= 2;
+      if (on && startIdx < 0) startIdx = mIdx;
+      if (!on && startIdx >= 0) { spans.push([startIdx, mIdx]); startIdx = -1; }
+    }
+    const inOverlap = !allClosed && spans.some(function (sp) { return utcMin >= sp[0] && utcMin < sp[1]; });
+    const ovSegs = spans.map(function (sp) { return segHtml(sp[0], sp[1], 'background:linear-gradient(90deg,#f6a723,#fb8b24)'); }).join('');
+    const ovHtml = '<div class="mkt-row mkt-overlap-row" title="بازه‌های همپوشانی جلسات — بیشترین نقدینگی و نوسان بازار">' +
+      '<div class="mkt-info">' +
+        '<span class="mkt-name"><i class="mkt-flag">⚡</i> همپوشانی</span>' +
+        '<span class="mkt-status" style="color:' + (inOverlap ? 'var(--orange)' : 'var(--soft)') + '">' + (inOverlap ? 'الان فعال' : 'نقدینگی بالا') + '</span>' +
+      '</div>' +
+      '<div class="mkt-track mkt-track-ov" dir="ltr">' + ovSegs +
+        '<div class="mkt-now-line" style="left:' + nowPct + '%"></div>' +
+      '</div>' +
+      '<span class="mkt-ltime" aria-hidden="true"></span>' +
+    '</div>';
+
     els.marketsWrap.innerHTML =
+      banner +
       '<div class="mkt-row mkt-axis">' +
         '<div class="mkt-info" aria-hidden="true"></div>' +
         '<div class="mkt-ticks" dir="ltr">' + ticksHtml + '</div>' +
         '<div class="mkt-ltime" aria-hidden="true"></div>' +
       '</div>' +
-      rowsHtml;
+      rowsHtml + ovHtml;
   }
 
   /* ----------------------------- Time-dependent render ----------------------------- */
@@ -675,16 +1049,14 @@
 
     // sessions
     const uh = now.getUTCHours();
-    const open = SESSIONS.map(function (s) { return isOpen(s, uh); });
-    const openSessions = SESSIONS.filter(function (s, i) { return open[i]; });
+    const openSessions = SESSIONS.filter(function (s) { return sessionState(s, now).open; });
     const openCount = openSessions.length;
     const activeSession = openSessions.length ? openSessions.map(function (s) { return s.name; }).join('، ') : 'بازارها بسته';
 
     if (els.marketCount) els.marketCount.textContent = openCount + ' بازار فعال';
     els.heroActive.textContent = activeSession;
     els.heroUtc.textContent = String(uh).padStart(2, '0') + ':' + String(now.getUTCMinutes()).padStart(2, '0');
-    if (els.marketsUtcBadge) els.marketsUtcBadge.textContent = String(uh).padStart(2, '0') + ':' + String(now.getUTCMinutes()).padStart(2, '0') + ' UTC';
-    renderMarkets();
+    renderMarkets(now);
   }
 
   /* ----------------------------- Theme / layout / grid ----------------------------- */
@@ -996,13 +1368,22 @@
       'hero-date', 'clock', 'hero-greeting', 'hero-active', 'hero-utc',
       'search-box', 'search-icon', 'search-input', 'scope-label', 'search-go', 'suggest', 'engines',
       'tools-grid', 'crypto-card', 'crypto-list', 'crypto-foot', 'crypto-refresh',
+      'crypto-sort', 'px-tabs', 'px-pulse',
       'markets-wrap', 'markets-utc-badge',
+      'bn-chips', 'news-refresh', 'bento-news-list',
       'quick-links', 'settings-modal', 'settings-panel', 'settings-close', 'settings-save',
       'set-name', 'set-engine', 'set-layout', 'set-accent', 'set-grid', 'set-crypto', 'set-coins',
       'set-theme-mode', 'bg-picker', 'bg-opt-default', 'bg-gallery', 'bg-upload'
     ].forEach(function (id) {
       const camel = id.replace(/-([a-z])/g, function (_, c) { return c.toUpperCase(); });
       els[camel] = $(id);
+    });
+  }
+
+  function syncPxTabs() {
+    if (!els.pxTabs) return;
+    Array.prototype.forEach.call(els.pxTabs.querySelectorAll('button'), function (t) {
+      t.classList.toggle('active', t.getAttribute('data-ptab') === state.pxTab);
     });
   }
 
@@ -1020,9 +1401,11 @@
     renderTools();
     renderQuick();
     setEngine(state.activeEngine);
-    renderCrypto();
+    syncPxTabs();
+    renderPrices();
     applyShowCrypto();
     renderTime();
+    renderNews();
     loadNews();
     initSidebars();
     loadCommunityTab('hot');
@@ -1037,8 +1420,71 @@
     els.searchInput.addEventListener('blur', function () { setTimeout(function () { els.suggest.hidden = true; }, 120); });
     els.searchGo.addEventListener('click', submitSearch);
 
-    // crypto
-    els.cryptoRefresh.addEventListener('click', function () { loadCrypto(); });
+    // live prices — refresh / tabs / sort / expandable rows
+    els.cryptoRefresh.addEventListener('click', function () { loadPrices(true); });
+    if (els.pxTabs) {
+      els.pxTabs.addEventListener('click', function (e) {
+        const b = e.target.closest('[data-ptab]');
+        if (!b) return;
+        state.pxTab = b.getAttribute('data-ptab');
+        state.pxExpanded = null;
+        syncPxTabs();
+        persist();
+        renderPrices();
+        loadPrices(false);
+      });
+    }
+    if (els.cryptoSort) {
+      els.cryptoSort.addEventListener('click', function () {
+        state.pxSort = PX_SORTS[(PX_SORTS.indexOf(state.pxSort) + 1) % PX_SORTS.length];
+        els.cryptoSort.classList.toggle('active', state.pxSort !== 'def');
+        els.cryptoSort.title = 'مرتب‌سازی: ' + PX_SORT_LBL[state.pxSort];
+        renderPrices();
+      });
+    }
+    els.cryptoList.addEventListener('click', function (e) {
+      if (e.target.closest('a')) return;
+      const row = e.target.closest('[data-pxid]');
+      if (!row || !row.classList.contains('has-detail')) return;
+      const id = row.getAttribute('data-pxid');
+      state.pxExpanded = state.pxExpanded === id ? null : id;
+      renderPrices();
+    });
+    /* اگر لوگوی کوین لود نشد، مونوگرام پشت آن دیده شود (error باب‌بل نمی‌شود → capture) */
+    els.cryptoList.addEventListener('error', function (e) {
+      if (e.target && e.target.tagName === 'IMG') e.target.style.display = 'none';
+    }, true);
+
+    // markets — سوییچ مبنای زمان
+    if (els.marketsUtcBadge) {
+      els.marketsUtcBadge.addEventListener('click', function () {
+        state.mktAxis = state.mktAxis === 'utc' ? 'local' : 'utc';
+        persist();
+        renderMarkets();
+      });
+    }
+
+    // news — رفرش / فیلتر دسته / علامت خوانده‌شده
+    if (els.newsRefresh) els.newsRefresh.addEventListener('click', function () { loadNews(); });
+    if (els.bnChips) {
+      els.bnChips.addEventListener('click', function (e) {
+        const b = e.target.closest('[data-cat]');
+        if (!b) return;
+        state.newsCat = b.getAttribute('data-cat');
+        renderNews();
+      });
+    }
+    if (els.bentoNewsList) {
+      els.bentoNewsList.addEventListener('click', function (e) {
+        const a = e.target.closest('[data-url]');
+        if (!a) return;
+        markNewsRead(a.getAttribute('data-url'));
+        a.classList.add('read');
+      });
+      els.bentoNewsList.addEventListener('error', function (e) {
+        if (e.target && e.target.tagName === 'IMG') e.target.style.display = 'none';
+      }, true);
+    }
 
     // tab switching
     document.querySelectorAll('.m-tab').forEach(function(t) {
@@ -1052,11 +1498,15 @@
     els.settingsPanel.addEventListener('click', function (e) { e.stopPropagation(); });
     els.setName.addEventListener('input', function (e) { state.name = e.target.value; renderTime(); persist(); });
     els.setEngine.addEventListener('change', function (e) { state.engine = e.target.value; setEngine(e.target.value); persist(); });
-    els.setCoins.addEventListener('input', function (e) { state.coins = e.target.value; persist(); });
+    els.setCoins.addEventListener('input', function (e) {
+      state.coins = e.target.value;
+      state.pxData.crypto.ts = 0; /* کش کریپتو باطل شود تا لیست جدید فوراً لود شود */
+      persist();
+    });
     els.setGrid.addEventListener('change', function (e) { state.showGrid = e.target.checked; applyGrid(); persist(); });
     els.setCrypto.addEventListener('change', function (e) {
       state.showCrypto = e.target.checked; applyShowCrypto(); persist();
-      if (state.showCrypto) loadCrypto();
+      if (state.showCrypto) loadPrices(false);
     });
     Array.prototype.forEach.call(els.setLayout.querySelectorAll('button'), function (b) {
       b.addEventListener('click', function () { state.layout = b.getAttribute('data-layout'); applyLayout(); syncSeg(els.setLayout, 'layout', state.layout); persist(); });
@@ -1113,8 +1563,18 @@
 
     // timers
     setInterval(renderTime, 1000 * 20);
-    if (state.showCrypto) setTimeout(loadCrypto, 400);
-    setInterval(function () { if (state.showCrypto) loadCrypto(); }, 90000);
+    if (state.showCrypto) setTimeout(function () { loadPrices(false); }, 400);
+    /* هر ۱۵ ثانیه چک می‌شود؛ TTL هر تب تعیین می‌کند که واقعاً درخواست برود یا نه */
+    setInterval(function () { if (state.showCrypto) loadPrices(false); }, 15000);
+    /* شمارش معکوس تا بروزرسانی بعدی در پاورقی کارت قیمت */
+    setInterval(function () {
+      const el = document.getElementById('px-next');
+      if (!el) return;
+      const d = state.pxData[state.pxTab];
+      if (!d.ts) { el.textContent = '…'; return; }
+      const s = Math.max(0, Math.round((d.ts + PX_TTL[state.pxTab] - Date.now()) / 1000));
+      el.textContent = s >= 60 ? Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0') : s + 'ث';
+    }, 1000);
 
     // focus search for quick typing
     els.searchInput.focus();

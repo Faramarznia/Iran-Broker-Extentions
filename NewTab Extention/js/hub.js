@@ -40,6 +40,32 @@
     {id:'urgent',  e:'🔥', l:'فوری',     c:'#fb3748'}
   ];
 
+  /* keyword → category (auto-detect while typing) */
+  var CAT_KEYS = [
+    {c:'trade',   w:['معامله','معاملات','ترید','تحلیل','چارت','پوزیشن','واچ‌لیست','واچلیست','ستاپ','ورود','خروج','ژورنال','بک‌تست','بکتست','بازار','نماد','سیگنال','ریسک']},
+    {c:'learn',   w:['مطالعه','بخوان','کتاب','دوره','آموزش','وبینار','یاد','تمرین','مقاله','ویدیو','پادکست']},
+    {c:'urgent',  w:['فوری','ددلاین','سررسید','همین','عجله']},
+    {c:'personal',w:['ورزش','باشگاه','خرید','خانواده','دکتر','پزشک','قدم','آب','استراحت','ناهار','شام','خواب']},
+    {c:'work',    w:['جلسه','ایمیل','گزارش','تماس','پروژه','تسک','ارائه','قرارداد','کار']}
+  ];
+
+  /* one-tap trading routines */
+  var ROUTINES = [
+    {id:'pre', e:'🌅', l:'پیش از بازار', items:[
+      {t:'مرور تقویم اقتصادی روز', c:'trade', at:8*60+30},
+      {t:'بررسی واچ‌لیست و سطوح کلیدی', c:'trade', at:9*60},
+      {t:'تعیین سقف ریسک امروز', c:'trade', at:9*60+15}
+    ]},
+    {id:'post', e:'🌙', l:'بستن روز', items:[
+      {t:'ثبت معاملات در ژورنال', c:'trade', at:20*60},
+      {t:'مرور اشتباه‌ها و درس‌های امروز', c:'learn', at:20*60+20}
+    ]},
+    {id:'study', e:'📚', l:'مطالعه', items:[
+      {t:'۳۰ دقیقه مطالعهٔ تحلیل تکنیکال', c:'learn', at:null},
+      {t:'بازبینی یک معاملهٔ گذشته', c:'learn', at:null}
+    ]}
+  ];
+
   var QA_COLORS = ['#185adb','#e23636','#e27b36','#2eb86e',
                    '#9b36e2','#36b8e2','#e2a836','#fb3748'];
 
@@ -53,15 +79,22 @@
 
   /* ─────────── state ─────────── */
   var DB = {
-    tasks: {},                 // { 'YYYY-MM-DD': [ {id,text,cat,done} ] }
+    tasks: {},                 // { 'YYYY-MM-DD': [ {id,text,cat,done,at,pri,star} ] }
     quick: [],                 // user shortcuts
-    weatherCity: null          // {name, lat, lon}
+    weatherCity: null,         // {name, lat, lon}
+    streak: {n:0, last:null},  // consecutive days with a completed task
+    carried: null,             // last day-key we offered carry-over for
+    showEv: true               // economic events inside the timeline
   };
   var calView = { jy:0, jm:0 };
-  var activeCat = 'work';
+  var activeCat = 'trade';
+  var catLocked = false;       // user picked a category by hand → don't auto-override
   var ECON = {};               // { 'YYYY-MM-DD': [events] }  this week only
   var econLoaded = false;
   var qaEditColor = QA_COLORS[0];
+  var lastDayKey = '';
+  var undoBuf = null;          // {task, timer} for the delete-undo toast
+  var editingId = null;
 
   /* ═══════════════════════════════════════
      Jalaali ↔ Gregorian  (jalaali-js algorithm, MIT — proven correct)
@@ -313,6 +346,7 @@
           (ECON[key]=ECON[key]||[]).push(it);
         });
         renderCalendar();
+        renderTasks();          /* today's events land on the plan timeline */
       })
       .catch(function(){ econLoaded=true; });
   }
@@ -464,16 +498,164 @@
   }
 
   /* ═══════════════════════════════════════
-     BUILD — Tasks (right box)
+     TODAY PLAN (right box) — timeline + smart composer
+     ▸ کارها روی یک تایم‌لاین با خط «الان» می‌نشینند
+     ▸ رویدادهای اقتصادی امروز داخل همان تایم‌لاین دیده می‌شوند
+     ▸ ورودی، زمان/اولویت/دسته را از متن فارسی تشخیص می‌دهد
   ═══════════════════════════════════════ */
+
+  /* ─────────── date helpers ─────────── */
+  function keyOf(d){ return d.getFullYear()+'-'+p2(d.getMonth()+1)+'-'+p2(d.getDate()); }
+  function shiftKey(days){ var d=new Date(); d.setDate(d.getDate()+days); return keyOf(d); }
+  function nowMins(){ var n=new Date(); return n.getHours()*60+n.getMinutes(); }
+  function hhmm(m){ return fa(p2(Math.floor(m/60))+':'+p2(m%60)); }
+
+  /* ─────────── natural-language parsing (fa) ───────────
+     digits are normalised 1:1 so match indexes stay valid on the raw string */
+  function toEnDigits(s){
+    return String(s).replace(/[۰-۹]/g,function(d){ return String('۰۱۲۳۴۵۶۷۸۹'.indexOf(d)); })
+                    .replace(/[٠-٩]/g,function(d){ return String('٠١٢٣٤٥٦٧٨٩'.indexOf(d)); });
+  }
+  var DAYPART = {'صبح':9,'ظهر':12,'عصر':16,'بعدازظهر':16,'شب':20};
+
+  function parseInput(raw){
+    var text=String(raw), norm=toEnDigits(text), at=null, pri=false, cat=null, m;
+
+    function cut(idx,len){
+      text = text.slice(0,idx)+' '+text.slice(idx+len);
+      norm = norm.slice(0,idx)+' '+norm.slice(idx+len);
+    }
+    /* 1) 14:30 / ساعت ۱۴:۳۰  — colon only, so prices like ۱.۰۸ stay untouched */
+    if((m=norm.match(/(?:ساعت\s*)?([01]?\d|2[0-3])\s*:\s*([0-5]\d)/))){
+      at=+m[1]*60 + +m[2]; cut(m.index,m[0].length);
+    }
+    /* 2) ساعت ۸ / ساعت ۸ شب */
+    else if((m=norm.match(/ساعت\s*([01]?\d|2[0-3])(?!\d)\s*(صبح|ظهر|عصر|بعدازظهر|شب)?/))){
+      var h2=+m[1];
+      if(m[2]&&(m[2]==='شب'||m[2]==='عصر'||m[2]==='بعدازظهر')&&h2<12) h2+=12;
+      at=h2*60; cut(m.index,m[0].length);
+    }
+    /* 3) ۸ صبح / ۹ شب */
+    else if((m=norm.match(/([01]?\d|2[0-3])\s*(صبح|ظهر|عصر|بعدازظهر|شب)/))){
+      var h3=+m[1];
+      if((m[2]==='شب'||m[2]==='عصر'||m[2]==='بعدازظهر')&&h3<12) h3+=12;
+      at=h3*60; cut(m.index,m[0].length);
+    }
+    /* 4) فقط «صبح/ظهر/عصر/شب» → زمان پیش‌فرض آن بازه */
+    else if((m=norm.match(/(^|\s)(صبح|ظهر|عصر|بعدازظهر|شب)(\s|$)/))){
+      at=DAYPART[m[2]]*60; cut(m.index+m[1].length, m[2].length);
+    }
+
+    /* اولویت: هر «!» یا واژهٔ «فوری» */
+    if((m=norm.match(/!+/))){ pri=true; cut(m.index, m[0].length); }
+    if(/فوری/.test(norm)) pri=true;
+
+    /* دسته از روی کلیدواژه */
+    var low=norm;
+    for(var i=0;i<CAT_KEYS.length && !cat;i++){
+      for(var j=0;j<CAT_KEYS[i].w.length;j++){
+        if(low.indexOf(CAT_KEYS[i].w[j])>-1){ cat=CAT_KEYS[i].c; break; }
+      }
+    }
+    text=text.replace(/\s{2,}/g,' ').trim();
+    return {text:text, at:at, pri:pri, cat:cat};
+  }
+
+  /* ─────────── data ─────────── */
+  function getTasks(){ return DB.tasks[todayKey()]||[]; }
+  function setTasks(a){ DB.tasks[todayKey()]=a; save(); }
+
+  function addTask(raw){
+    var p=parseInput(raw);
+    if(!p.text) return false;
+    var a=getTasks();
+    a.push({
+      id: Date.now()+Math.floor(Math.random()*1000),
+      text: p.text,
+      cat: (catLocked ? activeCat : (p.cat||activeCat)),
+      at: p.at,
+      pri: p.pri,
+      done: false,
+      star: false
+    });
+    setTasks(a); catLocked=false; renderTasks();
+    return true;
+  }
+  function addRoutine(id){
+    var r=null;
+    ROUTINES.forEach(function(x){ if(x.id===id) r=x; });
+    if(!r) return;
+    var a=getTasks(), base=Date.now();
+    r.items.forEach(function(it,i){
+      var dup=false;
+      a.forEach(function(t){ if(t.text===it.t) dup=true; });
+      if(dup) return;
+      a.push({id:base+i, text:it.t, cat:it.c, at:it.at, pri:false, done:false, star:false});
+    });
+    setTasks(a); renderTasks();
+  }
+  function toggleTask(id){
+    var a=getTasks(), hit=null;
+    a.forEach(function(t){ if(t.id===id){ t.done=!t.done; hit=t; } });
+    setTasks(a);
+    if(hit&&hit.done) bumpStreak();
+    renderTasks();
+  }
+  function starTask(id){
+    var a=getTasks();
+    a.forEach(function(t){ t.star = (t.id===id) ? !t.star : false; });
+    setTasks(a); renderTasks();
+  }
+  function delTask(id){
+    var a=getTasks(), gone=null, idx=-1;
+    a.forEach(function(t,i){ if(t.id===id){ gone=t; idx=i; } });
+    if(!gone) return;
+    setTasks(a.filter(function(t){ return t.id!==id; }));
+    if(undoBuf&&undoBuf.timer) clearTimeout(undoBuf.timer);
+    undoBuf={task:gone, idx:idx, timer:setTimeout(function(){ undoBuf=null; renderUndo(); },6000)};
+    renderTasks();
+  }
+  function undoDel(){
+    if(!undoBuf) return;
+    var a=getTasks();
+    a.splice(Math.min(undoBuf.idx,a.length),0,undoBuf.task);
+    clearTimeout(undoBuf.timer); undoBuf=null;
+    setTasks(a); renderTasks();
+  }
+  function editTask(id,text){
+    var t=String(text).trim(); if(!t){ return; }
+    var a=getTasks();
+    a.forEach(function(x){ if(x.id===id) x.text=t; });
+    setTasks(a);
+  }
+  function bumpStreak(){
+    var tk=todayKey();
+    if(DB.streak.last===tk) return;
+    DB.streak.n = (DB.streak.last===shiftKey(-1)) ? DB.streak.n+1 : 1;
+    DB.streak.last=tk; save();
+  }
+  function prune(){
+    var keys=Object.keys(DB.tasks).sort();
+    while(keys.length>90){ delete DB.tasks[keys.shift()]; }
+  }
+
+  /* ─────────── shell ─────────── */
   function buildTasksBox(){
     var box=$('hub-tasks-box'); if(!box) return;
     var now=new Date();
     var todJ=g2j(now.getFullYear(),now.getMonth()+1,now.getDate());
+    lastDayKey=todayKey();
 
     var cats='';
     CATS.forEach(function(c){
-      cats+='<button class="htask-cat-btn" data-cat="'+c.id+'" title="'+c.l+'" style="--cc:'+c.c+'">'+c.e+'</button>';
+      cats+='<button class="htask-cat-btn'+(c.id===activeCat?' active':'')+'" data-cat="'+c.id+'" title="'+c.l+'" style="--cc:'+c.c+'">'+
+              '<span class="htcb-e">'+c.e+'</span><span class="htcb-l">'+c.l+'</span>'+
+            '</button>';
+    });
+
+    var routines='';
+    ROUTINES.forEach(function(r){
+      routines+='<button class="htask-rt" data-rt="'+r.id+'"><span>'+r.e+'</span>'+r.l+'</button>';
     });
 
     box.innerHTML=
@@ -483,89 +665,366 @@
             '<span class="htasks-title-main">برنامهٔ امروز</span>' +
             '<span class="htasks-title-date">'+WD_FULL[now.getDay()]+' · '+fa(todJ[2])+' '+JM[todJ[1]-1]+'</span>' +
           '</div>' +
-          '<div id="hub-task-ring" class="htasks-ring"></div>' +
+          '<div class="htasks-hact">' +
+            '<button id="hub-task-ev" class="htasks-ico" title="نمایش رویدادهای اقتصادی روی تایم‌لاین" aria-label="رویدادهای اقتصادی">' +
+              '<svg viewBox="0 0 24 24" width="15" height="15" fill="none"><path d="M4 9h16M7 3v3M17 3v3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><rect x="3.5" y="5.5" width="17" height="15" rx="3" stroke="currentColor" stroke-width="1.8"/><path d="M8 14l2.5 2.5L16 12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>' +
+            '</button>' +
+            '<div id="hub-task-ring" class="htasks-ring"></div>' +
+          '</div>' +
         '</div>' +
-        '<div class="htask-cats" id="hub-task-cats">'+cats+'</div>' +
+
+        '<div class="htasks-meter">' +
+          '<div id="hub-task-segs" class="htasks-segs"></div>' +
+          '<div class="htasks-metarow">' +
+            '<span id="hub-task-stat" class="htasks-stat"></span>' +
+            '<span id="hub-task-streak" class="htasks-streak"></span>' +
+          '</div>' +
+        '</div>' +
+
+        '<div id="hub-task-banner"></div>' +
         '<div id="hub-task-list" class="htask-list"></div>' +
+        '<div id="hub-task-undo" class="htask-undo" hidden></div>' +
+
         '<div class="htask-foot">' +
-          '<input type="text" id="hub-task-inp" class="htask-inp" placeholder="یک کار جدید بنویس و Enter بزن…" maxlength="120" autocomplete="off" />' +
-          '<button id="hub-task-add" class="htask-add" aria-label="افزودن">' +
-            '<svg viewBox="0 0 16 16" width="16" height="16" fill="none"><path d="M8 3v10M3 8h10" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>' +
-          '</button>' +
+          '<div class="htask-inpwrap">' +
+            '<input type="text" id="hub-task-inp" class="htask-inp" placeholder="مثلاً: تحلیل یورودلار ساعت ۱۴:۳۰ !" maxlength="140" autocomplete="off" />' +
+            '<button id="hub-task-add" class="htask-add" aria-label="افزودن">' +
+              '<svg viewBox="0 0 16 16" width="16" height="16" fill="none"><path d="M8 3v10M3 8h10" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>' +
+            '</button>' +
+          '</div>' +
+          '<div id="hub-task-parse" class="htask-parse" hidden></div>' +
+          '<div class="htask-cats" id="hub-task-cats">'+cats+'</div>' +
+          '<div class="htask-rts" id="hub-task-rts">'+
+            '<span class="htask-rts-l">روتین:</span>'+routines+
+          '</div>' +
         '</div>' +
       '</div>';
 
     var catBtns=box.querySelectorAll('.htask-cat-btn');
     Array.prototype.forEach.call(catBtns,function(b){
       b.addEventListener('click',function(){
-        Array.prototype.forEach.call(catBtns,function(x){x.classList.remove('active');});
-        b.classList.add('active'); activeCat=b.getAttribute('data-cat');
+        activeCat=b.getAttribute('data-cat'); catLocked=true;
+        paintCats();
+        var i=$('hub-task-inp'); if(i) i.focus();
       });
     });
-    if(catBtns[0]) catBtns[0].classList.add('active');
+
+    Array.prototype.forEach.call(box.querySelectorAll('.htask-rt'),function(b){
+      b.addEventListener('click',function(){ addRoutine(b.getAttribute('data-rt')); });
+    });
+
+    var evb=$('hub-task-ev');
+    if(evb){
+      evb.classList.toggle('on', !!DB.showEv);
+      evb.addEventListener('click',function(){
+        DB.showEv=!DB.showEv; save();
+        evb.classList.toggle('on', !!DB.showEv);
+        renderTasks();
+      });
+    }
 
     var inp=$('hub-task-inp'), add=$('hub-task-add');
-    if(inp) inp.addEventListener('keydown',function(e){ if(e.key==='Enter'){ e.preventDefault(); addTask(inp.value); inp.value=''; } });
-    if(add) add.addEventListener('click',function(){ if(inp){ addTask(inp.value); inp.value=''; inp.focus(); } });
+    if(inp){
+      inp.addEventListener('input', previewParse);
+      inp.addEventListener('keydown',function(e){
+        if(e.key==='Enter'){ e.preventDefault(); if(addTask(inp.value)){ inp.value=''; previewParse(); } }
+        if(e.key==='Escape'){ inp.value=''; previewParse(); inp.blur(); }
+      });
+    }
+    if(add) add.addEventListener('click',function(){
+      if(inp && addTask(inp.value)){ inp.value=''; previewParse(); inp.focus(); }
+    });
   }
 
-  function getTasks(){ return DB.tasks[todayKey()]||[]; }
-  function setTasks(a){ DB.tasks[todayKey()]=a; save(); }
-  function addTask(text){
-    var t=text.trim(); if(!t) return;
-    var a=getTasks(); a.push({id:Date.now(),text:t,cat:activeCat,done:false}); setTasks(a); renderTasks();
+  function paintCats(){
+    var box=$('hub-task-cats'); if(!box) return;
+    Array.prototype.forEach.call(box.querySelectorAll('.htask-cat-btn'),function(b){
+      b.classList.toggle('active', b.getAttribute('data-cat')===activeCat);
+    });
   }
-  function toggleTask(id){ var a=getTasks(); a.forEach(function(t){ if(t.id===id)t.done=!t.done; }); setTasks(a); renderTasks(); }
-  function delTask(id){ setTasks(getTasks().filter(function(t){ return t.id!==id; })); renderTasks(); }
 
+  /* live chips under the composer */
+  function previewParse(){
+    var inp=$('hub-task-inp'), row=$('hub-task-parse');
+    if(!inp||!row) return;
+    var raw=inp.value;
+    if(!raw.trim()){ row.setAttribute('hidden',''); row.innerHTML=''; return; }
+    var p=parseInput(raw);
+    if(!catLocked && p.cat){ activeCat=p.cat; paintCats(); }
+
+    var chips='';
+    if(p.at!=null) chips+='<span class="htp-chip htp-time">🕒 '+hhmm(p.at)+'</span>';
+    if(p.pri)      chips+='<span class="htp-chip htp-pri">🔥 فوری</span>';
+    var c=catById(activeCat);
+    chips+='<span class="htp-chip" style="--cc:'+c.c+'">'+c.e+' '+c.l+'</span>';
+    if(p.at==null) chips+='<span class="htp-hint">زمان بنویس تا روی تایم‌لاین بنشیند</span>';
+
+    row.innerHTML=chips;
+    row.removeAttribute('hidden');
+  }
+
+  /* ─────────── carry-over from yesterday ─────────── */
+  function pendingCarry(){
+    var y=DB.tasks[shiftKey(-1)]||[];
+    return y.filter(function(t){ return !t.done; });
+  }
+  function renderBanner(){
+    var b=$('hub-task-banner'); if(!b) return;
+    var tk=todayKey();
+    var left=pendingCarry();
+    if(DB.carried===tk || !left.length){ b.innerHTML=''; return; }
+    b.innerHTML=
+      '<div class="htask-carry">'+
+        '<span class="htask-carry-t">'+fa(left.length)+' کار ناتمام از دیروز</span>'+
+        '<div class="htask-carry-a">'+
+          '<button id="hub-carry-yes" class="htask-carry-y">انتقال به امروز</button>'+
+          '<button id="hub-carry-no" class="htask-carry-n" aria-label="نادیده بگیر">×</button>'+
+        '</div>'+
+      '</div>';
+    $('hub-carry-yes').addEventListener('click',function(){
+      var a=getTasks(), base=Date.now();
+      left.forEach(function(t,i){
+        a.push({id:base+i, text:t.text, cat:t.cat, at:(t.at!=null?t.at:null), pri:!!t.pri, done:false, star:false});
+      });
+      DB.carried=tk; setTasks(a); renderTasks();
+    });
+    $('hub-carry-no').addEventListener('click',function(){ DB.carried=tk; save(); renderBanner(); });
+  }
+
+  /* ─────────── undo toast ─────────── */
+  function renderUndo(){
+    var u=$('hub-task-undo'); if(!u) return;
+    if(!undoBuf){ u.setAttribute('hidden',''); u.innerHTML=''; return; }
+    u.innerHTML='<span class="htu-t">«'+esc(undoBuf.task.text.slice(0,26))+'» حذف شد</span>'+
+                '<button id="hub-task-undo-b" class="htu-b">بازگردانی</button>';
+    u.removeAttribute('hidden');
+    $('hub-task-undo-b').addEventListener('click', undoDel);
+  }
+
+  /* ─────────── today's economic events ─────────── */
+  function todayEvents(){
+    if(!DB.showEv) return [];
+    var ev=ECON[todayKey()]||[];
+    return ev.filter(function(e){ return e.impact==='High'||e.impact==='Medium'; })
+             .map(function(e){
+               var d=new Date(e._t||0);
+               return {kind:'ev', at:d.getHours()*60+d.getMinutes(), ev:e};
+             });
+  }
+
+  /* ═══════════════════════════════════════
+     RENDER
+  ═══════════════════════════════════════ */
   function renderTasks(){
     var list=$('hub-task-list'); if(!list) return;
     var tasks=getTasks();
-    var undone=tasks.filter(function(t){return !t.done;});
-    var done=tasks.filter(function(t){return t.done;});
-    var sorted=undone.concat(done);
+    var done=tasks.filter(function(t){ return t.done; });
+    var nm=nowMins();
 
-    /* progress ring */
-    var ring=$('hub-task-ring');
-    if(ring){
-      if(!tasks.length){ ring.innerHTML=''; }
-      else{
-        var pct=Math.round(done.length/tasks.length*100);
-        var R=15, C=2*Math.PI*R, off=C*(1-pct/100);
-        ring.innerHTML='<svg viewBox="0 0 36 36" width="40" height="40">'+
-          '<circle cx="18" cy="18" r="'+R+'" fill="none" stroke="var(--border)" stroke-width="3.4"/>'+
-          '<circle cx="18" cy="18" r="'+R+'" fill="none" stroke="var(--green)" stroke-width="3.4" stroke-linecap="round" stroke-dasharray="'+C.toFixed(1)+'" stroke-dashoffset="'+off.toFixed(1)+'" transform="rotate(-90 18 18)"/>'+
-          '</svg><span class="htasks-ring-num">'+fa(done.length)+'/'+fa(tasks.length)+'</span>';
-      }
-    }
+    renderBanner();
+    renderUndo();
+    renderMeter(tasks,done);
 
-    if(!sorted.length){
-      list.innerHTML='<div class="htask-empty"><span class="htask-empty-ic">🗒️</span>'+
-        '<span class="htask-empty-t">امروز هنوز کاری ثبت نکرده‌ای</span>'+
-        '<span class="htask-empty-s">یک دستهٔ بالا انتخاب کن و اولین کار را بنویس</span></div>';
+    if(!tasks.length){
+      list.innerHTML=
+        '<div class="htask-empty">'+
+          '<span class="htask-empty-ic">🗓️</span>'+
+          '<span class="htask-empty-t">برنامهٔ امروزت خالی است</span>'+
+          '<span class="htask-empty-s">کار را با زمانش بنویس تا خودش روی تایم‌لاین بنشیند —<br>«مرور واچ‌لیست ساعت ۹» یا یک روتین آماده را بزن.</span>'+
+        '</div>';
       return;
     }
 
-    list.innerHTML=sorted.map(function(t){
-      var c=catById(t.cat);
-      return '<div class="htask'+(t.done?' htask-done':'')+'">'+
-        '<button class="htask-cb" data-id="'+t.id+'" style="--cc:'+c.c+'" aria-label="تغییر وضعیت">'+
-          (t.done?'<svg viewBox="0 0 14 14" fill="none"><path d="M2 7l3.5 3.5 6.5-7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>':'')+
-        '</button>'+
-        '<span class="htask-cat-pip" style="background:'+c.c+'" title="'+c.l+'"></span>'+
-        '<span class="htask-text">'+esc(t.text)+'</span>'+
-        '<button class="htask-del" data-id="'+t.id+'" aria-label="حذف">'+
-          '<svg viewBox="0 0 16 16" width="13" height="13" fill="none"><path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>'+
-        '</button>'+
-      '</div>';
-    }).join('');
+    /* ── build the timeline ── */
+    var timed=[], anytime=[], star=null;
+    tasks.forEach(function(t){
+      if(t.star && !t.done){ star=t; return; }
+      if(t.at!=null) timed.push({kind:'t', at:t.at, task:t});
+      else anytime.push(t);
+    });
 
+    var rows=timed.concat(todayEvents());
+    rows.sort(function(a,b){
+      if(a.at!==b.at) return a.at-b.at;
+      return a.kind==='ev' ? -1 : 1;
+    });
+
+    /* next undone timed task → «بعدی» */
+    var nextId=null;
+    for(var i=0;i<rows.length;i++){
+      if(rows[i].kind==='t' && !rows[i].task.done && rows[i].at>=nm){ nextId=rows[i].task.id; break; }
+    }
+
+    var html='';
+    if(star) html+=focusCard(star, nm);
+
+    if(rows.length){
+      html+='<div class="htl">';
+      var nowPlaced=false;
+      rows.forEach(function(r){
+        if(!nowPlaced && r.at>nm){ html+=nowRow(nm); nowPlaced=true; }
+        html+= r.kind==='ev' ? evRow(r) : taskRow(r.task, nm, nextId);
+      });
+      if(!nowPlaced) html+=nowRow(nm);
+      html+='</div>';
+    }
+
+    if(anytime.length){
+      var au=anytime.filter(function(t){ return !t.done; });
+      var ad=anytime.filter(function(t){ return t.done; });
+      html+='<div class="htask-sep"><span>بدون زمان</span></div>'+
+            '<div class="htl htl-free">'+
+              au.concat(ad).map(function(t){ return taskRow(t, nm, null); }).join('')+
+            '</div>';
+    }
+
+    if(tasks.length && done.length===tasks.length){
+      html+='<div class="htask-allgood">'+
+              '<span class="htask-allgood-ic">🎉</span>'+
+              '<span>همهٔ کارهای امروز انجام شد'+(DB.streak.n>1?' — '+fa(DB.streak.n)+' روز پیاپی':'')+'</span>'+
+            '</div>';
+    }
+
+    list.innerHTML=html;
+    wireRows(list);
+  }
+
+  function nowRow(nm){
+    return '<div class="htl-now"><span class="htl-now-t">'+hhmm(nm)+'</span><i class="htl-now-line"></i><span class="htl-now-l">الان</span></div>';
+  }
+
+  function focusCard(t,nm){
+    var c=catById(t.cat);
+    return '<div class="htask-focus" style="--cc:'+c.c+'">'+
+             '<div class="htf-head"><span class="htf-l">تمرکز اصلی امروز</span>'+
+               (t.at!=null?'<span class="htf-time">'+hhmm(t.at)+'</span>':'')+
+             '</div>'+
+             '<div class="htf-body">'+
+               '<button class="htask-cb htf-cb" data-id="'+t.id+'" style="--cc:'+c.c+'" aria-label="انجام شد"></button>'+
+               '<span class="htf-text" data-edit="'+t.id+'">'+esc(t.text)+'</span>'+
+               '<button class="htask-star on" data-star="'+t.id+'" aria-label="برداشتن تمرکز">★</button>'+
+             '</div>'+
+           '</div>';
+  }
+
+  function evRow(r){
+    var e=r.ev, im=IMP[e.impact]||IMP.Low;
+    return '<div class="htl-row htl-ev" data-ev="1" title="'+escA((e.title||'')+' — اثر '+im.l)+'">'+
+             '<span class="htl-time">'+hhmm(r.at)+'</span>'+
+             '<span class="htl-rail"><i class="htl-node htl-node-ev" style="background:'+im.c+'"></i></span>'+
+             '<span class="htl-ev-body">'+
+               '<span class="htl-ev-cur">'+esc(e.country||'')+'</span>'+
+               '<span class="htl-ev-t">'+esc(e.title||'')+'</span>'+
+             '</span>'+
+           '</div>';
+  }
+
+  function taskRow(t,nm,nextId){
+    var c=catById(t.cat);
+    var late = !t.done && t.at!=null && t.at<nm;
+    var isNext = t.id===nextId;
+    var cls='htl-row htask'+(t.done?' htask-done':'')+(late?' htask-late':'')+(isNext?' htask-next':'')+(t.pri?' htask-pri':'');
+    return '<div class="'+cls+'" style="--cc:'+c.c+'">'+
+             '<span class="htl-time">'+(t.at!=null?hhmm(t.at):'<i class="htl-dash">—</i>')+'</span>'+
+             '<span class="htl-rail"><i class="htl-node"></i></span>'+
+             '<div class="htask-body">'+
+               '<button class="htask-cb" data-id="'+t.id+'" aria-label="تغییر وضعیت">'+
+                 (t.done?'<svg viewBox="0 0 14 14" fill="none"><path d="M2 7l3.5 3.5 6.5-7" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>':'')+
+               '</button>'+
+               '<span class="htask-text" data-edit="'+t.id+'" title="برای ویرایش دوبار کلیک کن">'+esc(t.text)+'</span>'+
+               (t.pri&&!t.done?'<span class="htask-flag" title="فوری">🔥</span>':'')+
+               (isNext?'<span class="htask-tag htask-tag-next">بعدی</span>':'')+
+               (late?'<span class="htask-tag htask-tag-late">دیر شد</span>':'')+
+               '<span class="htask-acts">'+
+                 '<button class="htask-star'+(t.star?' on':'')+'" data-star="'+t.id+'" aria-label="تمرکز اصلی">★</button>'+
+                 '<button class="htask-del" data-del="'+t.id+'" aria-label="حذف">'+
+                   '<svg viewBox="0 0 16 16" width="12" height="12" fill="none"><path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>'+
+                 '</button>'+
+               '</span>'+
+             '</div>'+
+           '</div>';
+  }
+
+  function renderMeter(tasks,done){
+    var segs=$('hub-task-segs'), stat=$('hub-task-stat'),
+        streak=$('hub-task-streak'), ring=$('hub-task-ring');
+
+    if(segs){
+      if(!tasks.length){
+        segs.innerHTML='<i class="htseg htseg-ghost"></i>';
+      }else{
+        segs.innerHTML=tasks.map(function(t){
+          var c=catById(t.cat);
+          return '<i class="htseg'+(t.done?' htseg-on':'')+'" style="--cc:'+c.c+'" title="'+escA(t.text)+'"></i>';
+        }).join('');
+      }
+    }
+    if(stat){
+      if(!tasks.length) stat.textContent='هنوز کاری ثبت نشده';
+      else{
+        var left=tasks.length-done.length;
+        stat.innerHTML = left
+          ? '<b>'+fa(left)+'</b> کار باقی‌مانده از <b>'+fa(tasks.length)+'</b>'
+          : 'همه انجام شد ✓';
+      }
+    }
+    if(streak){
+      streak.innerHTML = DB.streak.n>0
+        ? '<span class="hts-fire">🔥</span>'+fa(DB.streak.n)+' روز پیاپی'
+        : '';
+    }
+    if(ring){
+      var pct = tasks.length ? Math.round(done.length/tasks.length*100) : 0;
+      var R=15, C=2*Math.PI*R, off=C*(1-pct/100);
+      ring.innerHTML='<svg viewBox="0 0 36 36" width="40" height="40">'+
+        '<circle cx="18" cy="18" r="'+R+'" fill="none" stroke="var(--border)" stroke-width="3.4"/>'+
+        '<circle cx="18" cy="18" r="'+R+'" fill="none" stroke="'+(pct===100?'var(--green)':'var(--primary)')+'" stroke-width="3.4" stroke-linecap="round" stroke-dasharray="'+C.toFixed(1)+'" stroke-dashoffset="'+off.toFixed(1)+'" transform="rotate(-90 18 18)"/>'+
+        '</svg><span class="htasks-ring-num">'+fa(pct)+'٪</span>';
+    }
+  }
+
+  /* ─────────── row wiring ─────────── */
+  function wireRows(list){
     Array.prototype.forEach.call(list.querySelectorAll('.htask-cb'),function(b){
       b.addEventListener('click',function(){ toggleTask(+b.getAttribute('data-id')); });
     });
     Array.prototype.forEach.call(list.querySelectorAll('.htask-del'),function(b){
-      b.addEventListener('click',function(){ delTask(+b.getAttribute('data-id')); });
+      b.addEventListener('click',function(){ delTask(+b.getAttribute('data-del')); });
     });
+    Array.prototype.forEach.call(list.querySelectorAll('.htask-star'),function(b){
+      b.addEventListener('click',function(){ starTask(+b.getAttribute('data-star')); });
+    });
+    Array.prototype.forEach.call(list.querySelectorAll('.htl-ev'),function(r){
+      r.addEventListener('click',function(){
+        var n=new Date(), j=g2j(n.getFullYear(),n.getMonth()+1,n.getDate());
+        calView.jy=j[0]; calView.jm=j[1]; renderCalendar();
+        openDayModal(todayKey(), j[2]);
+      });
+    });
+    Array.prototype.forEach.call(list.querySelectorAll('[data-edit]'),function(sp){
+      sp.addEventListener('dblclick',function(){ startEdit(sp); });
+    });
+  }
+
+  function startEdit(span){
+    var id=+span.getAttribute('data-edit');
+    if(editingId===id) return;
+    editingId=id;
+    var old=span.textContent;
+    var inp=el('input','htask-edit');
+    inp.type='text'; inp.value=old; inp.maxLength=140;
+    span.replaceWith(inp);
+    inp.focus(); inp.setSelectionRange(old.length,old.length);
+    function commit(ok){
+      editingId=null;
+      if(ok) editTask(id, inp.value);
+      renderTasks();
+    }
+    inp.addEventListener('keydown',function(e){
+      if(e.key==='Enter'){ e.preventDefault(); commit(true); }
+      if(e.key==='Escape'){ e.preventDefault(); commit(false); }
+    });
+    inp.addEventListener('blur',function(){ if(editingId===id) commit(true); });
   }
 
   /* ═══════════════════════════════════════
@@ -738,8 +1197,20 @@
         DB.tasks=(d.tasks&&typeof d.tasks==='object')?d.tasks:{};
         DB.quick=Array.isArray(d.quick)?d.quick:[];
         DB.weatherCity=d.weatherCity||null;
+        DB.streak=(d.streak&&typeof d.streak==='object')?{n:+d.streak.n||0, last:d.streak.last||null}:{n:0,last:null};
+        DB.carried=d.carried||null;
+        DB.showEv=(d.showEv!==false);
+        /* v1 tasks had no time/priority/star — normalise so renders stay safe */
+        Object.keys(DB.tasks).forEach(function(k){
+          if(!Array.isArray(DB.tasks[k])){ delete DB.tasks[k]; return; }
+          DB.tasks[k].forEach(function(t){
+            if(typeof t.at!=='number') t.at=null;
+            t.pri=!!t.pri; t.star=!!t.star; t.done=!!t.done;
+          });
+        });
       }
     }catch(e){}
+    prune();
   }
   function save(){ try{ localStorage.setItem(PERSIST_KEY,JSON.stringify(DB)); }catch(e){} }
 
@@ -787,6 +1258,12 @@
     renderCalendar();
     renderTasks();
     renderQuick();
+
+    /* keep the «الان» line + late/next tags honest; rebuild after midnight */
+    setInterval(function(){
+      if(todayKey()!==lastDayKey){ buildTasksBox(); }
+      if(!editingId) renderTasks();
+    }, 30000);
 
     /* async data — only fetch when relevant (always safe though) */
     loadEcon();

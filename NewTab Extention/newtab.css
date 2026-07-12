@@ -6170,148 +6170,443 @@ body[data-layout="hub"] .hub-aside-cal { gap: 16px }
 .hw-city-loading { font-size: 11.5px; color: rgba(255,255,255,.6); padding: 6px 4px }
 
 /* ═══════════════════════════════════════
-   RIGHT ASIDE — daily tasks
+   RIGHT ASIDE — «برنامهٔ امروز» (timeline plan)
 ═══════════════════════════════════════ */
-.htasks { display: flex; flex-direction: column; max-height: 560px }
+.htasks { display: flex; flex-direction: column; max-height: 560px; position: relative }
 
+/* ── head ── */
 .htasks-head {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 16px 16px 12px;
-  border-bottom: 1px solid var(--border)
+  gap: 8px;
+  padding: 15px 16px 12px
 }
-.htasks-title { display: flex; flex-direction: column; gap: 3px }
+.htasks-title { display: flex; flex-direction: column; gap: 3px; min-width: 0 }
 .htasks-title-main { font-size: 15px; font-weight: 800; color: var(--text) }
 .htasks-title-date { font-size: 11px; color: var(--soft) }
+
+.htasks-hact { display: flex; align-items: center; gap: 8px; flex-shrink: 0 }
+.htasks-ico {
+  width: 30px; height: 30px;
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  background: transparent;
+  color: var(--soft);
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: color .14s, border-color .14s, background .14s
+}
+.htasks-ico:hover { color: var(--text); background: var(--surface2) }
+.htasks-ico.on {
+  color: var(--primary);
+  border-color: color-mix(in srgb, var(--primary) 45%, transparent);
+  background: var(--primarySoft)
+}
 
 .htasks-ring { position: relative; width: 40px; height: 40px; flex-shrink: 0 }
 .htasks-ring-num {
   position: absolute; inset: 0;
   display: flex; align-items: center; justify-content: center;
-  font-size: 9.5px; font-weight: 700; color: var(--sub);
+  font-size: 9.5px; font-weight: 800; color: var(--sub);
   font-variant-numeric: tabular-nums
 }
 
-.htask-cats {
-  display: flex;
-  gap: 6px;
-  padding: 12px 16px;
-  border-bottom: 1px solid var(--border)
+/* ── segmented progress meter ── */
+.htasks-meter { padding: 0 16px 12px; border-bottom: 1px solid var(--border) }
+.htasks-segs { display: flex; gap: 3px; height: 5px }
+.htseg {
+  flex: 1;
+  border-radius: 4px;
+  background: var(--surface2);
+  box-shadow: inset 0 0 0 1px var(--border);
+  transition: background .25s ease, box-shadow .25s ease
 }
-.htask-cat-btn {
-  width: 38px; height: 34px;
-  flex-shrink: 0;
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  background: transparent;
-  font-size: 16px;
-  cursor: pointer;
-  display: flex; align-items: center; justify-content: center;
-  transition: background .12s, border-color .12s, transform .12s
+.htseg-on {
+  background: var(--cc, var(--green));
+  box-shadow: 0 0 8px -1px color-mix(in srgb, var(--cc, var(--green)) 60%, transparent)
 }
-.htask-cat-btn:hover { background: var(--surface2); transform: translateY(-1px) }
-.htask-cat-btn.active {
-  border-color: var(--cc, var(--primary));
-  background: color-mix(in srgb, var(--cc, var(--primary)) 14%, transparent);
-  box-shadow: 0 0 0 1px var(--cc, var(--primary)) inset
-}
+.htseg-ghost { background: var(--surface2); opacity: .55 }
 
+.htasks-metarow {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 8px; margin-top: 8px
+}
+.htasks-stat { font-size: 11px; color: var(--soft) }
+.htasks-stat b { color: var(--text); font-weight: 800; font-variant-numeric: tabular-nums }
+.htasks-streak {
+  display: inline-flex; align-items: center; gap: 3px;
+  font-size: 10.5px; font-weight: 700; color: var(--orange);
+  background: color-mix(in srgb, var(--orange) 12%, transparent);
+  border-radius: 20px;
+  padding: 2px 8px;
+  white-space: nowrap
+}
+.htasks-streak:empty { display: none }
+.hts-fire { font-size: 10px }
+
+/* ── carry-over banner ── */
+.htask-carry {
+  display: flex; align-items: center; justify-content: space-between; gap: 8px;
+  margin: 10px 12px 2px;
+  padding: 8px 10px;
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--primary) 10%, transparent);
+  border: 1px dashed color-mix(in srgb, var(--primary) 40%, transparent)
+}
+.htask-carry-t { font-size: 11.5px; color: var(--text); font-weight: 600 }
+.htask-carry-a { display: flex; align-items: center; gap: 4px; flex-shrink: 0 }
+.htask-carry-y {
+  border: none; border-radius: 8px;
+  background: var(--primaryStrong); color: #fff;
+  font-family: inherit; font-size: 11px; font-weight: 700;
+  padding: 5px 9px; cursor: pointer;
+  transition: opacity .14s
+}
+.htask-carry-y:hover { opacity: .88 }
+.htask-carry-n {
+  width: 22px; height: 22px;
+  border: none; border-radius: 7px;
+  background: transparent; color: var(--soft);
+  font-size: 15px; line-height: 1; cursor: pointer;
+  transition: color .14s, background .14s
+}
+.htask-carry-n:hover { color: var(--text); background: var(--surface2) }
+
+/* ── list / timeline ── */
 .htask-list {
   flex: 1;
   display: flex;
   flex-direction: column;
   overflow-y: auto;
-  padding: 6px 8px;
-  min-height: 120px
+  padding: 8px 10px 10px;
+  min-height: 150px;
+  scrollbar-width: thin
 }
 .htask-list::-webkit-scrollbar { width: 5px }
 .htask-list::-webkit-scrollbar-track { background: transparent }
 .htask-list::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 5px }
 
-.htask {
+.htl { position: relative }
+
+/* row = [time] [rail] [body] */
+.htl-row {
+  display: grid;
+  grid-template-columns: 34px 14px 1fr;
+  align-items: start;
+  column-gap: 4px;
+  position: relative
+}
+.htl-time {
+  font-size: 10.5px;
+  font-weight: 700;
+  color: var(--soft);
+  font-variant-numeric: tabular-nums;
+  padding-top: 11px;
+  text-align: center;
+  letter-spacing: -.2px
+}
+.htl-dash { color: var(--border2); font-style: normal }
+
+/* the vertical rail + node */
+.htl-rail {
+  position: relative;
+  align-self: stretch;
+  display: flex;
+  justify-content: center
+}
+.htl-rail::before {
+  content: '';
+  position: absolute;
+  top: 0; bottom: 0;
+  width: 2px;
+  background: var(--border);
+  border-radius: 2px
+}
+.htl-row:first-child .htl-rail::before { top: 12px }
+.htl-row:last-child  .htl-rail::before { bottom: calc(100% - 14px) }
+.htl-node {
+  position: relative;
+  margin-top: 9px;
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--surface);
+  box-shadow: 0 0 0 2px var(--cc, var(--border2));
+  transition: background .16s, box-shadow .16s
+}
+.htask-done .htl-node { background: var(--cc, var(--green)); box-shadow: 0 0 0 2px var(--cc, var(--green)) }
+.htask-next .htl-node {
+  background: var(--cc, var(--primary));
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--cc, var(--primary)) 28%, transparent)
+}
+.htl-node-ev { width: 6px; height: 6px; margin-top: 10px; box-shadow: none }
+
+/* task body */
+.htask-body {
   display: flex;
   align-items: center;
-  gap: 9px;
-  padding: 8px;
+  gap: 8px;
+  padding: 6px 8px;
+  margin: 1px 0;
   border-radius: 11px;
-  transition: background .1s
+  min-width: 0;
+  transition: background .12s, box-shadow .12s
 }
-.htask:hover { background: var(--surface2) }
-.htask:hover .htask-del { opacity: 1 }
+.htask:hover .htask-body { background: var(--surface2) }
+.htask:hover .htask-acts { opacity: 1; width: auto }
+.htask-next .htask-body {
+  background: color-mix(in srgb, var(--cc, var(--primary)) 10%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--cc, var(--primary)) 26%, transparent)
+}
+.htask-pri:not(.htask-done) .htask-body { box-shadow: inset 2px 0 0 0 var(--red) }
+.htask-late .htl-time { color: var(--red) }
 
 .htask-cb {
-  width: 22px; height: 22px; flex-shrink: 0;
+  width: 20px; height: 20px; flex-shrink: 0;
   border: 2px solid var(--border2);
   border-radius: 7px;
   background: transparent;
   cursor: pointer;
   display: flex; align-items: center; justify-content: center;
   color: #fff;
-  transition: border-color .12s, background .12s
+  transition: border-color .12s, background .12s, transform .12s
 }
-.htask-cb:hover { border-color: var(--cc, var(--green)) }
+.htask-cb:hover { border-color: var(--cc, var(--green)); transform: scale(1.08) }
+.htask-cb svg { width: 12px; height: 12px }
 .htask-done .htask-cb {
   background: var(--cc, var(--green));
   border-color: var(--cc, var(--green))
 }
 
-.htask-cat-pip { width: 4px; height: 26px; flex-shrink: 0; border-radius: 4px }
-
 .htask-text {
   flex: 1;
-  font-size: 13px;
+  min-width: 0;
+  font-size: 12.8px;
   color: var(--text);
-  line-height: 1.45;
-  word-break: break-word
+  line-height: 1.5;
+  word-break: break-word;
+  cursor: text
 }
-.htask-done .htask-text { text-decoration: line-through; color: var(--soft); opacity: .65 }
+.htask-done .htask-text { text-decoration: line-through; color: var(--soft); opacity: .6 }
 
-.htask-del {
-  width: 24px; height: 24px; flex-shrink: 0;
+.htask-edit {
+  flex: 1; min-width: 0;
+  height: 26px;
+  background: var(--bg2);
+  border: 1px solid var(--primary);
+  border-radius: 8px;
+  color: var(--text);
+  font-family: inherit; font-size: 12.8px;
+  padding: 0 8px;
+  outline: none
+}
+
+.htask-flag { font-size: 10px; flex-shrink: 0 }
+.htask-tag {
+  flex-shrink: 0;
+  font-size: 9.5px; font-weight: 800;
+  border-radius: 20px;
+  padding: 2px 7px;
+  white-space: nowrap
+}
+.htask-tag-next { color: var(--primary); background: var(--primarySoft) }
+.htask-tag-late { color: var(--red);     background: var(--redSoft) }
+
+.htask-acts {
+  display: flex; align-items: center; gap: 1px;
+  flex-shrink: 0;
+  opacity: 0; width: 0; overflow: hidden;
+  transition: opacity .14s
+}
+.htask-star, .htask-del {
+  width: 22px; height: 22px;
   border: none; background: transparent;
   color: var(--soft);
   cursor: pointer;
-  opacity: 0;
   border-radius: 7px;
   display: flex; align-items: center; justify-content: center;
-  transition: opacity .12s, color .12s, background .12s
+  font-size: 12px; line-height: 1;
+  transition: color .12s, background .12s
 }
-.htask-del:hover { color: var(--red); background: var(--redSoft) }
+.htask-star:hover { color: var(--orange); background: color-mix(in srgb, var(--orange) 14%, transparent) }
+.htask-del:hover  { color: var(--red);    background: var(--redSoft) }
+.htask-star.on { color: var(--orange); opacity: 1 }
+.htask:hover .htask-star.on { opacity: 1 }
 
+/* ── «الان» marker ── */
+.htl-now {
+  display: grid;
+  grid-template-columns: 34px 14px 1fr;
+  align-items: center;
+  column-gap: 4px;
+  margin: 3px 0
+}
+.htl-now-t {
+  font-size: 10px; font-weight: 800;
+  color: var(--red);
+  text-align: center;
+  font-variant-numeric: tabular-nums
+}
+.htl-now-line {
+  grid-column: 2 / 4;
+  grid-row: 1;
+  height: 1px;
+  background: linear-gradient(90deg, var(--red), color-mix(in srgb, var(--red) 8%, transparent));
+  border-radius: 2px;
+  margin-inline-start: 6px;
+  position: relative
+}
+.htl-now-line::before {
+  content: '';
+  position: absolute;
+  inset-inline-start: -6px; top: 50%;
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--red);
+  transform: translateY(-50%);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--red) 22%, transparent)
+}
+.htl-now-l {
+  grid-column: 3; grid-row: 1;
+  justify-self: end;
+  font-size: 9.5px; font-weight: 800;
+  color: var(--red);
+  background: var(--surface);
+  padding: 0 5px
+}
+
+/* ── economic event row ── */
+.htl-ev { cursor: pointer }
+.htl-ev-body {
+  display: flex; align-items: center; gap: 6px;
+  min-width: 0;
+  padding: 5px 8px;
+  margin: 1px 0;
+  border-radius: 10px;
+  border: 1px dashed var(--border);
+  background: color-mix(in srgb, var(--surface2) 60%, transparent);
+  transition: border-color .14s, background .14s
+}
+.htl-ev:hover .htl-ev-body { border-color: var(--border2); background: var(--surface2) }
+.htl-ev-cur {
+  flex-shrink: 0;
+  font-size: 9.5px; font-weight: 800;
+  color: var(--sub);
+  background: var(--surface);
+  border-radius: 5px;
+  padding: 1px 5px
+}
+.htl-ev-t {
+  flex: 1; min-width: 0;
+  font-size: 11px;
+  color: var(--sub);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis
+}
+
+/* ── focus card ── */
+.htask-focus {
+  margin: 2px 0 10px;
+  padding: 9px 11px 10px;
+  border-radius: 13px;
+  background: color-mix(in srgb, var(--cc, var(--primary)) 9%, var(--surface2));
+  border: 1px solid color-mix(in srgb, var(--cc, var(--primary)) 34%, transparent)
+}
+.htf-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px }
+.htf-l {
+  font-size: 9.5px; font-weight: 800;
+  color: var(--cc, var(--primary));
+  letter-spacing: .2px
+}
+.htf-time { font-size: 10px; font-weight: 700; color: var(--soft); font-variant-numeric: tabular-nums }
+.htf-body { display: flex; align-items: center; gap: 8px }
+.htf-text { flex: 1; min-width: 0; font-size: 13.2px; font-weight: 700; color: var(--text); line-height: 1.45; cursor: text }
+.htf-cb { border-color: color-mix(in srgb, var(--cc, var(--primary)) 55%, transparent) }
+
+/* ── section separator ── */
+.htask-sep {
+  display: flex; align-items: center; gap: 7px;
+  margin: 12px 2px 4px;
+  font-size: 10px; font-weight: 700; color: var(--soft)
+}
+.htask-sep::after {
+  content: ''; flex: 1; height: 1px;
+  background: var(--border)
+}
+.htl-free .htl-row { grid-template-columns: 34px 14px 1fr }
+
+/* ── all-done ── */
+.htask-allgood {
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+  margin-top: 10px;
+  padding: 9px;
+  border-radius: 12px;
+  font-size: 11.5px; font-weight: 700;
+  color: var(--green);
+  background: var(--greenSoft)
+}
+.htask-allgood-ic { font-size: 13px }
+
+/* ── empty ── */
 .htask-empty {
   display: flex; flex-direction: column; align-items: center; justify-content: center;
   gap: 6px;
-  margin: auto 0;            /* centre vertically in the (taller) list area */
-  padding: 28px 18px;
+  margin: auto 0;
+  padding: 22px 14px;
   text-align: center
 }
 .htask-empty-ic { font-size: 30px; margin-bottom: 2px }
-.htask-empty-t { font-size: 13px; color: var(--sub); font-weight: 600 }
-.htask-empty-s { font-size: 11.5px; color: var(--soft) }
+.htask-empty-t { font-size: 13px; color: var(--sub); font-weight: 700 }
+.htask-empty-s { font-size: 11.5px; color: var(--soft); line-height: 1.7 }
 
+/* ── undo toast ── */
+.htask-undo {
+  display: flex; align-items: center; justify-content: space-between; gap: 8px;
+  margin: 0 12px 8px;
+  padding: 7px 10px;
+  border-radius: 11px;
+  background: var(--bg2);
+  border: 1px solid var(--border)
+}
+.htask-undo[hidden] { display: none }
+.htu-t { font-size: 11px; color: var(--sub); overflow: hidden; text-overflow: ellipsis; white-space: nowrap }
+.htu-b {
+  flex-shrink: 0;
+  border: none; background: transparent;
+  color: var(--primary);
+  font-family: inherit; font-size: 11px; font-weight: 800;
+  cursor: pointer; padding: 2px 4px
+}
+.htu-b:hover { text-decoration: underline }
+
+/* ── composer ── */
 .htask-foot {
   display: flex;
-  align-items: center;
+  flex-direction: column;
   gap: 8px;
-  padding: 12px;
-  border-top: 1px solid var(--border)
+  padding: 11px 12px 12px;
+  border-top: 1px solid var(--border);
+  background: color-mix(in srgb, var(--surface2) 45%, transparent)
 }
+.htask-inpwrap { display: flex; align-items: center; gap: 8px }
 .htask-inp {
   flex: 1;
+  min-width: 0;
   height: 38px;
-  background: var(--surface2);
+  background: var(--surface);
   border: 1px solid var(--border);
   border-radius: 11px;
   color: var(--text);
   font-family: inherit;
-  font-size: 13px;
-  padding: 0 13px;
+  font-size: 12.6px;
+  padding: 0 12px;
   outline: none;
-  transition: border-color .15s
+  transition: border-color .15s, box-shadow .15s
 }
 .htask-inp::placeholder { color: var(--soft) }
-.htask-inp:focus { border-color: var(--primary) }
+.htask-inp:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--primarySoft)
+}
 .htask-add {
   width: 38px; height: 38px; flex-shrink: 0;
   background: var(--primaryStrong);
@@ -6319,9 +6614,77 @@ body[data-layout="hub"] .hub-aside-cal { gap: 16px }
   color: #fff;
   cursor: pointer;
   display: flex; align-items: center; justify-content: center;
-  transition: opacity .15s
+  transition: opacity .15s, transform .12s
 }
-.htask-add:hover { opacity: .88 }
+.htask-add:hover { opacity: .9; transform: translateY(-1px) }
+
+/* live-parsed chips */
+.htask-parse { display: flex; flex-wrap: wrap; align-items: center; gap: 5px }
+.htask-parse[hidden] { display: none }
+.htp-chip {
+  display: inline-flex; align-items: center; gap: 3px;
+  font-size: 10px; font-weight: 700;
+  border-radius: 20px;
+  padding: 3px 8px;
+  color: var(--cc, var(--sub));
+  background: color-mix(in srgb, var(--cc, var(--soft)) 13%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--cc, var(--soft)) 28%, transparent)
+}
+.htp-time { --cc: var(--teal) }
+.htp-pri  { --cc: var(--red) }
+.htp-hint { font-size: 10px; color: var(--soft) }
+
+/* category pills */
+.htask-cats { display: flex; gap: 4px }
+.htask-cat-btn {
+  flex: 1;
+  min-width: 0;
+  height: 30px;
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  background: transparent;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center; gap: 3px;
+  overflow: hidden;
+  font-family: inherit;
+  transition: background .14s, border-color .14s, flex .2s
+}
+.htcb-e { font-size: 13px; line-height: 1 }
+.htcb-l {
+  font-size: 10px; font-weight: 700;
+  color: var(--cc);
+  max-width: 0; opacity: 0;
+  white-space: nowrap;
+  transition: max-width .22s ease, opacity .18s ease
+}
+.htask-cat-btn:hover { background: var(--surface2) }
+.htask-cat-btn.active {
+  flex: 1.9;
+  border-color: color-mix(in srgb, var(--cc) 55%, transparent);
+  background: color-mix(in srgb, var(--cc) 13%, transparent)
+}
+.htask-cat-btn.active .htcb-l { max-width: 70px; opacity: 1 }
+
+/* routine chips */
+.htask-rts { display: flex; align-items: center; gap: 4px; flex-wrap: wrap }
+.htask-rts-l { font-size: 10px; color: var(--soft); margin-inline-end: 2px }
+.htask-rt {
+  display: inline-flex; align-items: center; gap: 4px;
+  border: 1px dashed var(--border2);
+  border-radius: 20px;
+  background: transparent;
+  color: var(--sub);
+  font-family: inherit; font-size: 10.5px; font-weight: 600;
+  padding: 4px 9px;
+  cursor: pointer;
+  transition: color .14s, border-color .14s, background .14s
+}
+.htask-rt:hover {
+  color: var(--text);
+  border-color: var(--primary);
+  border-style: solid;
+  background: var(--primarySoft)
+}
 
 /* ═══════════════════════════════════════
    QUICK ACCESS (below hero)
@@ -7823,3 +8186,532 @@ body[data-theme="light"] .airo-overlay {
   .airo-modal { height: min(560px, 88vh) }
   .airo-msg-user .airo-bubble { max-width: 94% }
 }
+
+/* ===================================================================
+   Bento v2.1 — بازطراحی قیمت لحظه‌ای / ساعات بازار / اخبار
+   =================================================================== */
+
+/* --- shared: head actions --- */
+.head-actions {
+  display: flex;
+  align-items: center;
+  gap: 7px
+}
+
+.refresh-sm {
+  width: 26px;
+  height: 26px;
+  border-radius: 8px
+}
+
+.refresh-sm svg {
+  width: 13px;
+  height: 13px
+}
+
+.sort-btn.active {
+  color: var(--primary);
+  border-color: var(--primary);
+  background: var(--primarySoft)
+}
+
+/* --- price card: tabs --- */
+.px-tabs {
+  display: flex;
+  gap: 4px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  padding: 3px;
+  border-radius: 11px;
+  margin-bottom: 10px;
+  flex-shrink: 0
+}
+
+.px-tabs button {
+  flex: 1;
+  border: 0;
+  background: transparent;
+  color: var(--sub);
+  font-size: 11.5px;
+  font-weight: 600;
+  font-family: inherit;
+  padding: 5.5px 4px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: color .18s, background .18s, box-shadow .18s
+}
+
+.px-tabs button:hover {
+  color: var(--text)
+}
+
+.px-tabs button.active {
+  background: var(--surface);
+  color: var(--text);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, .16)
+}
+
+body[data-theme="light"] .px-tabs button.active {
+  box-shadow: 0 1px 5px rgba(14, 18, 27, .10)
+}
+
+body[data-theme="glass"] .px-tabs button.active {
+  background: rgba(255, 255, 255, .13)
+}
+
+/* --- price card: market pulse strip --- */
+.px-pulse {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 10px;
+  color: var(--soft);
+  padding: 0 4px 9px;
+  flex-shrink: 0
+}
+
+.pp-cnt {
+  font-weight: 600;
+  white-space: nowrap
+}
+
+.pp-up { color: var(--green) }
+.pp-down { color: var(--red) }
+
+.pp-bar {
+  flex: 1;
+  max-width: 90px;
+  height: 5px;
+  border-radius: 99px;
+  background: rgba(251, 55, 72, .45);
+  overflow: hidden;
+  position: relative
+}
+
+.pp-bar i {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  background: var(--green);
+  border-radius: 99px;
+  transition: width .5s ease
+}
+
+.pp-avg {
+  margin-inline-start: auto;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  direction: ltr
+}
+
+/* --- price card: rows --- */
+.c-row {
+  display: flex;
+  flex-direction: column;
+  padding: 6px 7px
+}
+
+.c-main {
+  display: flex;
+  align-items: center;
+  gap: 10px
+}
+
+.c-row.has-detail { cursor: pointer }
+
+.c-row.expanded {
+  background: var(--surface2)
+}
+
+.px-ava {
+  width: 25px;
+  height: 25px;
+  border-radius: 99px;
+  position: relative;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  overflow: hidden
+}
+
+.px-ava img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover
+}
+
+.px-ava-fb {
+  font-size: 10px;
+  font-weight: 800;
+  color: var(--soft)
+}
+
+.px-ava-emoji {
+  font-size: 13px;
+  border: none
+}
+
+.c-unit {
+  font-style: normal;
+  font-size: 9px;
+  font-weight: 400;
+  color: var(--soft)
+}
+
+/* price flash on change */
+@keyframes pxFlashUp {
+  0% { background: var(--greenSoft); color: var(--green) }
+  100% { background: transparent }
+}
+
+@keyframes pxFlashDown {
+  0% { background: var(--redSoft); color: var(--red) }
+  100% { background: transparent }
+}
+
+.c-price {
+  border-radius: 6px;
+  padding: 0 3px;
+  margin: 0 -3px
+}
+
+.c-price.flash-up { animation: pxFlashUp 1.4s ease-out }
+.c-price.flash-down { animation: pxFlashDown 1.4s ease-out }
+
+/* mini range bar (وقتی اسپارک‌لاین نداریم — بازه‌ی روز) */
+.px-range-mini {
+  flex: 1;
+  height: 4px;
+  position: relative;
+  border-radius: 99px;
+  background: var(--surface2);
+  border: 1px solid var(--border)
+}
+
+.px-range-mini i {
+  position: absolute;
+  top: 50%;
+  width: 8px;
+  height: 8px;
+  border-radius: 99px;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 0 0 2px var(--surface)
+}
+
+.px-range-empty {
+  opacity: .4;
+  border-style: dashed
+}
+
+/* expandable detail */
+.px-detail {
+  margin-top: 7px;
+  padding: 9px 10px 8px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  animation: pxDrop .18s ease
+}
+
+@keyframes pxDrop {
+  from { opacity: 0; transform: translateY(-4px) }
+}
+
+.px-range-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 9.5px;
+  color: var(--soft);
+  margin-bottom: 7px
+}
+
+.px-range-lbl { white-space: nowrap }
+
+.px-range {
+  flex: 1;
+  position: relative;
+  height: 5px;
+  border-radius: 99px;
+  background: linear-gradient(90deg, var(--red), var(--orange) 50%, var(--green))
+}
+
+.px-range i {
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 9px;
+  height: 9px;
+  border-radius: 99px;
+  background: var(--text);
+  box-shadow: 0 0 0 2.5px var(--surface)
+}
+
+.px-range-minmax {
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap
+}
+
+.px-stats {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 5px 14px
+}
+
+.px-stat {
+  display: flex;
+  justify-content: space-between;
+  font-size: 10px;
+  color: var(--soft)
+}
+
+.px-stat b {
+  color: var(--text);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums
+}
+
+.px-empty {
+  text-align: center;
+  color: var(--soft);
+  font-size: 11.5px;
+  padding: 20px 0
+}
+
+.foot-sep {
+  margin: 0 5px;
+  opacity: .5
+}
+
+.crypto-foot b {
+  font-weight: 600;
+  font-variant-numeric: tabular-nums
+}
+
+/* لیست قیمت در چیدمان دیتا محور اسکرول نرم داشته باشد */
+body[data-layout="data"] .crypto-list {
+  overflow-y: auto;
+  scrollbar-width: thin
+}
+
+.crypto-list::-webkit-scrollbar { width: 3px }
+
+.crypto-list::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 99px
+}
+
+/* --- markets card --- */
+.markets-utc-badge {
+  cursor: pointer;
+  font-family: inherit;
+  transition: border-color .15s, color .15s
+}
+
+.markets-utc-badge:hover {
+  border-color: var(--primary)
+}
+
+.mkt-ax-swap {
+  opacity: .75;
+  font-size: 10px
+}
+
+.mkt-info { width: 92px }
+
+.mkt-flag {
+  font-style: normal;
+  font-size: 10px
+}
+
+.mkt-status {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-variant-numeric: tabular-nums
+}
+
+.mkt-row.is-open .mkt-name { color: var(--text) }
+
+.mkt-weekend {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: linear-gradient(135deg, var(--primarySoft), transparent 70%);
+  border: 1px dashed var(--border2);
+  border-radius: 12px;
+  padding: 7px 12px;
+  margin-bottom: 9px
+}
+
+.mkt-wk-ic { font-size: 15px }
+
+.mkt-weekend b {
+  display: block;
+  font-size: 11px
+}
+
+.mkt-weekend span {
+  display: block;
+  font-size: 9.5px;
+  color: var(--soft)
+}
+
+.mkt-overlap-row {
+  margin-top: 8px;
+  padding-top: 7px;
+  border-top: 1px dashed var(--border)
+}
+
+.mkt-track-ov {
+  height: 12px;
+  border-radius: 4px
+}
+
+.mkt-track-ov .mkt-seg {
+  border-radius: 2px;
+  opacity: .85
+}
+
+/* --- news card --- */
+.bn-chips {
+  display: flex;
+  gap: 5px;
+  overflow-x: auto;
+  padding: 0 2px 9px;
+  scrollbar-width: none;
+  flex-shrink: 0
+}
+
+.bn-chips::-webkit-scrollbar { display: none }
+
+.bn-chip {
+  border: 1px solid var(--border);
+  background: var(--surface2);
+  color: var(--sub);
+  font-size: 10px;
+  font-weight: 600;
+  font-family: inherit;
+  border-radius: 99px;
+  padding: 3.5px 10px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: color .15s, border-color .15s, background .15s
+}
+
+.bn-chip i {
+  font-style: normal;
+  font-size: 9px;
+  opacity: .6
+}
+
+.bn-chip:hover {
+  color: var(--text);
+  border-color: var(--border2)
+}
+
+.bn-chip.active {
+  background: var(--chip, var(--primary));
+  border-color: var(--chip, var(--primary));
+  color: #fff
+}
+
+.bn-chip.active i { opacity: .85 }
+
+.bn-meta {
+  display: flex;
+  align-items: center;
+  gap: 6px
+}
+
+.bn-cat {
+  font-size: 9px;
+  font-weight: 700;
+  padding: 1.5px 7px;
+  border-radius: 5px;
+  white-space: nowrap
+}
+
+.bn-new {
+  font-size: 8.5px;
+  font-weight: 800;
+  color: #fff;
+  background: var(--red);
+  padding: 1.5px 6px;
+  border-radius: 5px;
+  animation: pulse 2.4s ease-in-out infinite
+}
+
+.bn-item.read,
+.bn-hero.read {
+  opacity: .5
+}
+
+.bn-item.read:hover,
+.bn-hero.read:hover {
+  opacity: .8
+}
+
+.bn-thumb { position: relative }
+
+.bn-thumb-img {
+  position: absolute;
+  inset: 0
+}
+
+/* خبر شاخص با تصویر بزرگ */
+.bn-hero {
+  position: relative;
+  display: block;
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 8px;
+  text-decoration: none;
+  background: var(--surface2);
+  flex-shrink: 0
+}
+
+.bn-hero img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform .4s ease
+}
+
+.bn-hero:hover img {
+  transform: scale(1.05)
+}
+
+.bn-hero-txt {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  justify-content: flex-end;
+  min-height: 96px;
+  padding: 36px 11px 9px;
+  background: linear-gradient(180deg, transparent 10%, rgba(5, 8, 18, .88))
+}
+
+.bn-hero-title {
+  font-size: 12.5px;
+  font-weight: 700;
+  line-height: 1.75;
+  color: #fff;
+  text-shadow: 0 1px 8px rgba(0, 0, 0, .55);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden
+}
+
+.bn-hero .bn-time { color: rgba(255, 255, 255, .8) }

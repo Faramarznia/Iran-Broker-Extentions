@@ -127,15 +127,25 @@
           <!-- ===== BENTO ===== -->
           <section class="sec-bento">
 
-            <!-- crypto -->
+            <!-- live prices: crypto / forex / iran market -->
             <div class="card crypto-card" id="crypto-card">
               <div class="card-head">
                 <div class="h-title">
                   <span class="dot"></span>
-                  <h3>قیمت لحظه‌ای ارز دیجیتال</h3>
+                  <h3>قیمت لحظه‌ای</h3>
                 </div>
-                <button class="refresh-btn" id="crypto-refresh" title="بروزرسانی" aria-label="بروزرسانی"></button>
+                <div class="head-actions">
+                  <button class="refresh-btn sort-btn" id="crypto-sort" title="مرتب‌سازی: پیش‌فرض"
+                    aria-label="مرتب‌سازی"></button>
+                  <button class="refresh-btn" id="crypto-refresh" title="بروزرسانی" aria-label="بروزرسانی"></button>
+                </div>
               </div>
+              <div class="px-tabs" id="px-tabs" role="tablist">
+                <button data-ptab="crypto" class="active">کریپتو</button>
+                <button data-ptab="forex">فارکس</button>
+                <button data-ptab="iran">بازار ایران</button>
+              </div>
+              <div class="px-pulse" id="px-pulse" hidden></div>
               <div class="crypto-list" id="crypto-list"></div>
               <div class="crypto-foot" id="crypto-foot"></div>
             </div>
@@ -147,7 +157,8 @@
                   <span class="dot"></span>
                   <h3>ساعات بازار جهانی</h3>
                 </div>
-                <span class="markets-utc-badge" id="markets-utc-badge">--:-- UTC</span>
+                <button class="markets-utc-badge" id="markets-utc-badge" title="تغییر مبنای زمان (UTC / محلی)">--:--
+                  UTC</button>
               </div>
               <div class="markets-wrap" id="markets-wrap"></div>
             </div>
@@ -159,9 +170,14 @@
                   <span class="dot"></span>
                   <h3>اخبار بازار</h3>
                 </div>
-                <a class="bento-news-all" href="https://iranbroker.net/news/" target="_blank" rel="noopener">همه
-                  اخبار</a>
+                <div class="head-actions">
+                  <button class="refresh-btn refresh-sm" id="news-refresh" title="بروزرسانی اخبار"
+                    aria-label="بروزرسانی اخبار"></button>
+                  <a class="bento-news-all" href="https://iranbroker.net/news/" target="_blank" rel="noopener">همه
+                    اخبار</a>
+                </div>
               </div>
+              <div class="bn-chips" id="bn-chips" hidden></div>
               <div class="bento-news-list" id="bento-news-list"></div>
             </div>
           </section>
@@ -410,8 +426,8 @@
                 </label>
                 <label class="tog-row" for="set-crypto">
                   <div class="tog-info">
-                    <span class="tog-title">ویجت ارز دیجیتال</span>
-                    <span class="tog-desc">قیمت لحظه‌ای ارزها در داشبورد</span>
+                    <span class="tog-title">ویجت قیمت لحظه‌ای</span>
+                    <span class="tog-desc">کریپتو، فارکس و بازار ایران در داشبورد</span>
                   </div>
                   <div class="ios-tog">
                     <input type="checkbox" id="set-crypto" checked />
@@ -850,6 +866,7 @@
         <button id="hub-qa-modal-save" class="hub-modal-save">افزودن</button>
       </div>
     </div>
+  </div>
 
   <!-- ===== CALENDAR DAY-DETAIL MODAL (hub mode) ===== -->
   <div id="hub-day-modal" class="hub-modal-bg" hidden>
