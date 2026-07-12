@@ -319,18 +319,43 @@
     return '$' + Math.round(v).toLocaleString('en-US');
   }
   function pctStr(v) { return (v >= 0 ? '+' : '−') + Math.abs(v).toFixed(2) + '٪'; }
-  function sparkPts(arr) {
-    if (arr.length > 32) {
-      const step = arr.length / 32, out = [];
-      for (let i = 0; i < 32; i++) out.push(arr[Math.floor(i * step)]);
-      out.push(arr[arr.length - 1]);
+
+  /* اسپارک‌لاین: منحنی نرم (Catmull-Rom → بزیه) + سطح گرادیانی + خط مبنا.
+     محور زمان راست→چپ است تا آخرین نقطه کنار قیمت فعلی (سمت چپ ردیف) بیفتد. */
+  const SPARK = { w: 78, h: 30, pad: 3.5 };
+  function sparkChart(arr) {
+    /* نمونه‌برداری یکنواخت تا حداکثر ۴۰ نقطه — طول ثابت، بدون از دست دادن نقطهٔ آخر */
+    const MAX = 40;
+    if (arr.length > MAX) {
+      const out = [];
+      for (let i = 0; i < MAX; i++) out.push(arr[Math.round(i * (arr.length - 1) / (MAX - 1))]);
       arr = out;
     }
-    const min = Math.min.apply(null, arr), max = Math.max.apply(null, arr), rng = (max - min) || 1;
-    const W = 64, H = 22;
-    return arr.map(function (v, i) {
-      return (W - (i / (arr.length - 1)) * W).toFixed(1) + ',' + (1 + (H - 2) - ((v - min) / rng) * (H - 2)).toFixed(1);
-    }).join(' ');
+    const n = arr.length;
+    const min = Math.min.apply(null, arr), max = Math.max.apply(null, arr);
+    const rng = (max - min) || Math.abs(max) || 1;
+    const W = SPARK.w, H = SPARK.h, P = SPARK.pad;
+    const X = function (i) { return W - (i / (n - 1)) * W; };
+    const Y = function (v) { return P + (H - 2 * P) * (1 - (v - min) / rng); };
+
+    const pts = arr.map(function (v, i) { return [X(i), Y(v)]; });
+
+    /* Catmull-Rom با کشش ۰.۵ — نرم ولی بدون overshoot محسوس */
+    let d = 'M' + pts[0][0].toFixed(2) + ' ' + pts[0][1].toFixed(2);
+    for (let i = 0; i < n - 1; i++) {
+      const p0 = pts[i - 1] || pts[i], p1 = pts[i], p2 = pts[i + 1], p3 = pts[i + 2] || p2;
+      const c1x = p1[0] + (p2[0] - p0[0]) / 6, c1y = p1[1] + (p2[1] - p0[1]) / 6;
+      const c2x = p2[0] - (p3[0] - p1[0]) / 6, c2y = p2[1] - (p3[1] - p1[1]) / 6;
+      d += 'C' + c1x.toFixed(2) + ' ' + c1y.toFixed(2) + ',' + c2x.toFixed(2) + ' ' + c2y.toFixed(2) +
+        ',' + p2[0].toFixed(2) + ' ' + p2[1].toFixed(2);
+    }
+    return {
+      line: d,
+      area: d + 'L' + pts[n - 1][0].toFixed(2) + ' ' + H + 'L' + pts[0][0].toFixed(2) + ' ' + H + 'Z',
+      baseY: Y(arr[0]).toFixed(2),   /* قیمت ابتدای بازه — مبنای سود/زیان */
+      endX: pts[n - 1][0].toFixed(2),
+      endY: pts[n - 1][1].toFixed(2)
+    };
   }
 
   /* ----------------------------- DOM refs ----------------------------- */
@@ -704,15 +729,19 @@
 
       let mid;
       if (r.spark && r.spark.length > 3) {
-        const pts = sparkPts(r.spark);
+        const ch = sparkChart(r.spark);
         const gid = 'pxg-' + tab + '-' + i;
         const solid = up ? '#1fc16b' : '#fb3748';
-        mid = '<svg class="c-spark" viewBox="0 0 64 22" width="56" height="20" preserveAspectRatio="none">' +
+        mid = '<svg class="c-spark" viewBox="0 0 ' + SPARK.w + ' ' + SPARK.h + '" preserveAspectRatio="none" aria-hidden="true">' +
           '<defs><linearGradient id="' + gid + '" x1="0" y1="0" x2="0" y2="1">' +
-          '<stop offset="0" stop-color="' + solid + '" stop-opacity=".26"/>' +
-          '<stop offset="1" stop-color="' + solid + '" stop-opacity="0"/></linearGradient></defs>' +
-          '<polygon points="' + pts + ' 0,22 64,22" fill="url(#' + gid + ')"></polygon>' +
-          '<polyline points="' + pts + '" fill="none" stroke="' + col + '" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></polyline></svg>';
+            '<stop offset="0" stop-color="' + solid + '" stop-opacity=".30"/>' +
+            '<stop offset="1" stop-color="' + solid + '" stop-opacity="0"/>' +
+          '</linearGradient></defs>' +
+          '<path class="cs-area" d="' + ch.area + '" fill="url(#' + gid + ')"/>' +
+          '<line class="cs-base" x1="0" y1="' + ch.baseY + '" x2="' + SPARK.w + '" y2="' + ch.baseY + '"/>' +
+          '<path class="cs-line" d="' + ch.line + '" fill="none" stroke="' + col + '"/>' +
+          '<circle class="cs-end" cx="' + ch.endX + '" cy="' + ch.endY + '" r="2" fill="' + col + '"/>' +
+        '</svg>';
       } else if (r.extra && isFinite(r.extra.low) && isFinite(r.extra.high) && r.extra.high > r.extra.low) {
         mid = rangeBar('px-range-mini', r.extra.low, r.extra.high, r.price, col);
       } else {

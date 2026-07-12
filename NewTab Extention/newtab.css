@@ -693,14 +693,17 @@ a {
   display: flex;
   flex-direction: column;
   gap: 1px;
-  flex: 1
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  scrollbar-width: thin
 }
 
 .c-row {
   display: flex;
-  align-items: center;
-  gap: 11px;
-  padding: 8px 7px;
+  align-items: stretch;
+  gap: 10px;
+  padding: 5px 7px;
   border-radius: 11px;
   transition: background .15s
 }
@@ -719,8 +722,10 @@ a {
 .c-id {
   display: flex;
   flex-direction: column;
+  justify-content: center;
   line-height: 1.25;
-  min-width: 54px
+  min-width: 54px;
+  flex-shrink: 0
 }
 
 .c-sym {
@@ -735,15 +740,49 @@ a {
 
 .c-spark {
   flex: 1;
-  opacity: .9
+  min-width: 0;
+  height: 30px;
+  align-self: center;
+  overflow: visible
 }
 
+/* منحنی: ضخامت ثابت با وجود کشیدگی افقی viewBox */
+.cs-line {
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke
+}
+
+/* خط مبنا — قیمت ابتدای بازه؛ سطح زیر/بالای آن یعنی زیان/سود */
+.cs-base {
+  stroke: var(--soft);
+  stroke-width: 1;
+  stroke-dasharray: 2 3;
+  opacity: .28;
+  vector-effect: non-scaling-stroke
+}
+
+/* نقطهٔ آخرین قیمت — کنار ستون قیمت */
+.cs-end {
+  vector-effect: non-scaling-stroke
+}
+
+.c-row:hover .cs-end {
+  r: 2.8
+}
+
+/* ستون قیمت: چپ‌چین و هم‌تراز در باکس خودش */
 .c-price-col {
   display: flex;
   flex-direction: column;
+  justify-content: center;
   align-items: flex-start;
   gap: 2px;
-  min-width: 78px
+  min-width: 86px;
+  flex-shrink: 0;
+  direction: ltr;
+  text-align: left
 }
 
 .c-price {
@@ -1898,16 +1937,7 @@ body[data-layout="data"] .sec-bento {
   min-height: 0
 }
 
-body[data-layout="data"] .sec-bento .c-row {
-  padding-top: 6px;
-  padding-bottom: 6px
-}
-
 body[data-layout="data"] .sec-bento>div {
-  overflow: hidden
-}
-
-body[data-layout="data"] .crypto-list {
   overflow: hidden
 }
 
@@ -8420,12 +8450,6 @@ body[data-theme="light"] .airo-overlay {
 .crypto-foot b {
   font-weight: 600;
   font-variant-numeric: tabular-nums
-}
-
-/* لیست قیمت در چیدمان دیتا محور اسکرول نرم داشته باشد */
-body[data-layout="data"] .crypto-list {
-  overflow-y: auto;
-  scrollbar-width: thin
 }
 
 .crypto-list::-webkit-scrollbar { width: 3px }
