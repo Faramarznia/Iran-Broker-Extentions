@@ -242,7 +242,9 @@
   /* ─────────── init ─────────── */
   function init() {
     var sb = $('sb-articles'); if (!sb) return;
-    try { if (localStorage.getItem(COLLAPSE_KEY) === '1') sb.classList.add('collapsed'); } catch (e) {}
+    /* پیش‌فرض بسته — مثل پنل کامیونیتی */
+    try { if (localStorage.getItem(COLLAPSE_KEY) !== '0') sb.classList.add('collapsed'); }
+    catch (e) { sb.classList.add('collapsed'); }
 
     function toggle() {
       var closing = !sb.classList.contains('collapsed');

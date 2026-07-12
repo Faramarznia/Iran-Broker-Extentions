@@ -4251,26 +4251,6 @@ body[data-layout="data"] .sidebar-articles {
   transition: width .34s cubic-bezier(.22, 1, .36, 1), box-shadow .34s
 }
 
-/* accent edge that breathes while open */
-body[data-layout="data"] .sidebar-articles::after {
-  content: '';
-  position: absolute;
-  inset-inline-end: -1px;
-  top: 18%;
-  height: 64%;
-  width: 2px;
-  border-radius: 2px;
-  background: linear-gradient(180deg, transparent, var(--primary), transparent);
-  opacity: .55;
-  animation: arEdge 3.6s ease-in-out infinite;
-  pointer-events: none
-}
-@keyframes arEdge {
-  0%, 100% { opacity: .25; transform: scaleY(.7) }
-  50%      { opacity: .7;  transform: scaleY(1) }
-}
-body[data-layout="data"] .sidebar-articles.collapsed::after { display: none }
-
 body[data-layout="data"] .sidebar-articles.collapsed {
   width: 36px;
   box-shadow: none
@@ -4293,23 +4273,6 @@ body[data-layout="data"] .sidebar-articles.collapsed .sb-content {
   background: var(--primary);
   box-shadow: 0 0 0 3px var(--primarySoft)
 }
-
-/* vertical tab (collapsed state) */
-.sb-tab-art {
-  flex-direction: column;
-  gap: 10px
-}
-.sb-tab-art .sb-tab-art-ic {
-  display: grid;
-  place-items: center;
-  width: 24px;
-  height: 24px;
-  border-radius: 8px;
-  color: var(--primary);
-  background: var(--primarySoft);
-  transition: transform .25s ease
-}
-.sb-tab-art:hover .sb-tab-art-ic { transform: translateY(-2px) }
 
 /* category chips */
 .art-chips {
@@ -4519,6 +4482,159 @@ body[data-layout="data"] .sidebar-articles.collapsed .sb-content {
 
 .sb-more-art:hover { color: var(--primary) }
 
+/* ═══════════════════════════════════════
+   COLLAPSED SIDEBARS → floating capsules
+   بسته: کپسول کوچک شناور وسط لبهٔ صفحه
+   باز: جهش فنری از دل همان کپسول + ورود پلکانی محتوا
+   (بعد از بلاک‌های هر دو ساید‌بار تا در cascade برنده شود)
+═══════════════════════════════════════ */
+body[data-layout="data"] .sidebar-community,
+body[data-layout="data"] .sidebar-articles {
+  transition:
+    width .5s cubic-bezier(.34, 1.25, .4, 1),
+    top .5s cubic-bezier(.34, 1.25, .4, 1),
+    height .5s cubic-bezier(.34, 1.25, .4, 1),
+    border-radius .4s ease,
+    box-shadow .3s ease
+}
+
+/* پنل باز: عرض بیشتر + سایهٔ مینیمال */
+body[data-layout="data"] .sidebar-community:not(.collapsed),
+body[data-layout="data"] .sidebar-articles:not(.collapsed) {
+  width: 360px;
+  z-index: 41            /* بالای scrim */
+}
+body[data-layout="data"] .sidebar-community:not(.collapsed) { box-shadow: -6px 0 24px -18px rgba(0, 0, 0, .55) }
+body[data-layout="data"] .sidebar-articles:not(.collapsed)  { box-shadow:  6px 0 24px -18px rgba(0, 0, 0, .55) }
+
+/* ── scrim: با باز شدن هر پنل، بقیهٔ صفحه تیره می‌شود ── */
+.sb-scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  background: rgba(4, 6, 12, .5);
+  -webkit-backdrop-filter: blur(1.5px);
+  backdrop-filter: blur(1.5px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .34s ease
+}
+body[data-layout="data"].sb-open .sb-scrim {
+  opacity: 1;
+  pointer-events: auto
+}
+@media (prefers-reduced-motion: reduce) {
+  .sb-scrim { transition-duration: .01s }
+}
+
+body[data-layout="data"] .sidebar-community.collapsed,
+body[data-layout="data"] .sidebar-articles.collapsed {
+  top: calc(50% - 76px);
+  height: 152px;
+  width: 32px;
+  overflow: hidden;
+  cursor: pointer
+}
+/* مستطیل ساده با گوشه‌های گرد رو به داخل صفحه */
+body[data-layout="data"] .sidebar-community.collapsed { border-radius: 10px 0 0 10px }
+body[data-layout="data"] .sidebar-articles.collapsed  { border-radius: 0 10px 10px 0 }
+
+/* سایهٔ مینیمال — فقط یک لبهٔ نرم، بدون هاله */
+body[data-layout="data"] .sidebar-community.collapsed { box-shadow: -2px 0 10px -6px rgba(0, 0, 0, .35) }
+body[data-layout="data"] .sidebar-articles.collapsed  { box-shadow:  2px 0 10px -6px rgba(0, 0, 0, .35) }
+
+body[data-layout="data"] .sidebar-community.collapsed:hover,
+body[data-layout="data"] .sidebar-articles.collapsed:hover {
+  width: 36px;
+  border-color: var(--border2)
+}
+
+/* ── capsule tab: icon + short vertical label + pulsing dot ── */
+.sb-tab {
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+  padding: 12px 0
+}
+.sb-tab span:last-of-type {
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: .2px
+}
+.sb-tab .sb-tab-ic {
+  writing-mode: initial;
+  transform: none;
+  display: grid;
+  place-items: center;
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  transition: transform .25s ease, color .2s
+}
+.sb-tab .sb-tab-ic svg { width: 13px; height: 13px }
+.sb-tab-comm .sb-tab-ic { color: var(--green) }
+.sb-tab-art  .sb-tab-ic { color: var(--primary) }
+.sb-tab:hover .sb-tab-ic { transform: scale(1.12) }
+
+/* ── open: staggered content entrance (replays on every open) ── */
+@keyframes sbRowInR {
+  from { opacity: 0; transform: translateX(16px); filter: blur(3px) }
+  to   { opacity: 1; transform: none; filter: none }
+}
+@keyframes sbRowInL {
+  from { opacity: 0; transform: translateX(-16px); filter: blur(3px) }
+  to   { opacity: 1; transform: none; filter: none }
+}
+body[data-layout="data"] .sidebar-community:not(.collapsed) .sb-head,
+body[data-layout="data"] .sidebar-community:not(.collapsed) .comm-tabs,
+body[data-layout="data"] .sidebar-community:not(.collapsed) .sb-list > *,
+body[data-layout="data"] .sidebar-community:not(.collapsed) .sb-footer {
+  animation: sbRowInR .42s cubic-bezier(.22, 1, .36, 1) both
+}
+body[data-layout="data"] .sidebar-articles:not(.collapsed) .sb-head,
+body[data-layout="data"] .sidebar-articles:not(.collapsed) .art-chips,
+body[data-layout="data"] .sidebar-articles:not(.collapsed) .sb-footer {
+  animation: sbRowInL .42s cubic-bezier(.22, 1, .36, 1) both
+}
+/* آبشار تاخیرها: هدر → تب‌ها → ردیف‌ها → فوتر */
+body[data-layout="data"] .sidebar:not(.collapsed) .sb-head { animation-delay: .14s }
+body[data-layout="data"] .sidebar-community:not(.collapsed) .comm-tabs,
+body[data-layout="data"] .sidebar-articles:not(.collapsed) .art-chips { animation-delay: .2s }
+body[data-layout="data"] .sidebar-community:not(.collapsed) .sb-list > :nth-child(1) { animation-delay: .24s }
+body[data-layout="data"] .sidebar-community:not(.collapsed) .sb-list > :nth-child(2) { animation-delay: .28s }
+body[data-layout="data"] .sidebar-community:not(.collapsed) .sb-list > :nth-child(3) { animation-delay: .32s }
+body[data-layout="data"] .sidebar-community:not(.collapsed) .sb-list > :nth-child(4) { animation-delay: .36s }
+body[data-layout="data"] .sidebar-community:not(.collapsed) .sb-list > :nth-child(5) { animation-delay: .4s }
+body[data-layout="data"] .sidebar-community:not(.collapsed) .sb-list > :nth-child(6) { animation-delay: .44s }
+body[data-layout="data"] .sidebar-community:not(.collapsed) .sb-list > :nth-child(n+7) { animation-delay: .48s }
+body[data-layout="data"] .sidebar:not(.collapsed) .sb-footer { animation-delay: .5s }
+
+/* مقالات: استَگر ردیف‌ها با --i از JS مدیریت می‌شود؛ فقط تاخیر پایه بگیرد */
+.sidebar-articles .ar-stag {
+  animation-delay: calc(.22s + var(--i, 0) * 45ms)
+}
+
+/* هنگام بسته بودن، محتوای محو نباید کلیک بخورد و fade سریع باشد */
+body[data-layout="data"] .sidebar-community.collapsed .sb-content,
+body[data-layout="data"] .sidebar-articles.collapsed .sb-content {
+  transition: opacity .12s
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body[data-layout="data"] .sidebar-community,
+  body[data-layout="data"] .sidebar-articles,
+  .sb-tab .sb-tab-ic,
+  .sidebar-articles .ar-stag,
+  body[data-layout="data"] .sidebar:not(.collapsed) .sb-head,
+  body[data-layout="data"] .sidebar:not(.collapsed) .sb-footer,
+  body[data-layout="data"] .sidebar-community:not(.collapsed) .comm-tabs,
+  body[data-layout="data"] .sidebar-community:not(.collapsed) .sb-list > *,
+  body[data-layout="data"] .sidebar-articles:not(.collapsed) .art-chips {
+    animation: none;
+    transition-duration: .01s
+  }
+}
+
 /* ── Layout: simple (minimal centered) ── */
 body[data-layout="simple"] .sidebar {
   display: none
@@ -4590,7 +4706,7 @@ body[data-layout="simple"] .hero-search-wrap {
   position: fixed;
   left: 20px;
   bottom: 20px;
-  z-index: 150;
+  z-index: 10;
   display: flex;
   align-items: center;
   gap: 8px;
