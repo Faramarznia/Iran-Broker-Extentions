@@ -19,6 +19,8 @@
     google: '<path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.27-4.74 3.27-8.1z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84A11 11 0 0 0 12 23z"/><path fill="#FBBC05" d="M5.84 14.1a6.6 6.6 0 0 1 0-4.2V7.06H2.18a11 11 0 0 0 0 9.88l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1A11 11 0 0 0 2.18 7.06l3.66 2.84C6.71 7.31 9.14 5.38 12 5.38z"/>',
     lineChart: '<path fill="currentColor" d="M3 3h2v16h16v2H3V3zm15.293 3.293l1.414 1.414L14 13.414l-3-3-4.293 4.293-1.414-1.414L11 7.586l3 3z"/>',
     refresh: '<path fill="currentColor" d="M5.463 4.433A9.961 9.961 0 0 1 12 2c5.523 0 10 4.477 10 10 0 2.136-.67 4.116-1.81 5.74L17 12h3A8 8 0 0 0 6.46 6.228l-.997-1.795zm13.074 15.134A9.961 9.961 0 0 1 12 22C6.477 22 2 17.523 2 12c0-2.136.67-4.116 1.81-5.74L7 12H4a8 8 0 0 0 13.54 5.772l.997 1.795z"/>',
+    coins: '<g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><ellipse cx="9" cy="6" rx="6" ry="2.6"/><path d="M3 6v4c0 1.4 2.7 2.6 6 2.6s6-1.2 6-2.6V6"/><path d="M3 10v4c0 1.4 2.7 2.6 6 2.6"/><circle cx="17" cy="16" r="4.6"/><path d="M17 13.9v4.2M14.9 16h4.2"/></g>',
+    tag: '<path fill="currentColor" d="M17.63 5.84C17.27 5.33 16.67 5 16 5H5a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h11c.67 0 1.27-.33 1.63-.84L22 12l-4.37-6.16zM7.5 10A1.5 1.5 0 1 1 7.5 7a1.5 1.5 0 0 1 0 3z"/>',
     shieldCheck: '<path fill="currentColor" d="M12 1l8.217 1.826a1 1 0 0 1 .783.976v9.987a6 6 0 0 1-2.672 4.992L12 23l-6.328-4.219A6 6 0 0 1 3 13.79V3.802a1 1 0 0 1 .783-.976L12 1zm0 2.049L5 4.604v9.185a4 4 0 0 0 1.781 3.328L12 20.597l5.219-3.48A4 4 0 0 0 19 13.79V4.604L12 3.05zm4.452 5.173l1.415 1.414L11.503 16 7.26 11.757l1.414-1.414 2.828 2.828 4.95-4.95z"/>',
     close: '<path fill="currentColor" d="M12 10.586l4.95-4.95 1.414 1.414L13.414 12l4.95 4.95-1.414 1.414L12 13.414l-4.95 4.95-1.414-1.414L10.586 12 5.636 7.05 7.05 5.636z"/>',
     bank: '<path fill="currentColor" d="M2 20h20v2H2v-2zm2-8h2v7H4v-7zm5 0h2v7H9v-7zm4 0h2v7h-2v-7zm5 0h2v7h-2v-7zM2 7l10-5 10 5v4H2V7zm2 1.236V9h16v-.764l-8-4-8 4z"/>',
@@ -90,12 +92,30 @@
   const COIN_META = {
     bitcoin: { sym: 'BTC', name: 'بیت‌کوین' }, ethereum: { sym: 'ETH', name: 'اتریوم' }, tether: { sym: 'USDT', name: 'تتر' },
     solana: { sym: 'SOL', name: 'سولانا' }, ripple: { sym: 'XRP', name: 'ریپل' }, dogecoin: { sym: 'DOGE', name: 'دوج‌کوین' },
-    binancecoin: { sym: 'BNB', name: 'بایننس‌کوین' }, cardano: { sym: 'ADA', name: 'کاردانو' }, tron: { sym: 'TRX', name: 'ترون' }
+    binancecoin: { sym: 'BNB', name: 'بایننس‌کوین' }, cardano: { sym: 'ADA', name: 'کاردانو' }, tron: { sym: 'TRX', name: 'ترون' },
+    'avalanche-2': { sym: 'AVAX', name: 'آوالانچ' }, chainlink: { sym: 'LINK', name: 'چین‌لینک' },
+    polkadot: { sym: 'DOT', name: 'پولکادات' }, litecoin: { sym: 'LTC', name: 'لایت‌کوین' },
+    'shiba-inu': { sym: 'SHIB', name: 'شیبا اینو' }, uniswap: { sym: 'UNI', name: 'یونی‌سواپ' },
+    stellar: { sym: 'XLM', name: 'استلار' }, 'the-open-network': { sym: 'TON', name: 'تون‌کوین' },
+    'usd-coin': { sym: 'USDC', name: 'یو‌اس‌دی‌کوین' }, 'matic-network': { sym: 'MATIC', name: 'پالیگان' },
+    'bitcoin-cash': { sym: 'BCH', name: 'بیت‌کوین کش' }, near: { sym: 'NEAR', name: 'نیر' },
+    aptos: { sym: 'APT', name: 'آپتوس' }, 'internet-computer': { sym: 'ICP', name: 'اینترنت کامپیوتر' },
+    filecoin: { sym: 'FIL', name: 'فایل‌کوین' }, 'render-token': { sym: 'RNDR', name: 'رندر' },
+    arbitrum: { sym: 'ARB', name: 'آربیتروم' }, optimism: { sym: 'OP', name: 'اپتیمیزم' },
+    pepe: { sym: 'PEPE', name: 'پپه' }, 'cosmos-hub': { sym: 'ATOM', name: 'کازموس' }
   };
+  /* لیست پیش‌فرض — به‌قدری بلند که لیست داخل کارت اسکرول بخورد */
+  const COINS_DEFAULT = 'bitcoin,ethereum,tether,solana,ripple,dogecoin,binancecoin,cardano,tron,' +
+    'avalanche-2,chainlink,polkadot,litecoin,the-open-network,uniswap,stellar,shiba-inu,near';
+  const COINS_LEGACY = 'bitcoin,ethereum,tether,solana,ripple,dogecoin';
+  const COINS_MAX = 30;
   const SEED = [
     { id: 'bitcoin', price: 96480, chg: 1.84 }, { id: 'ethereum', price: 3342, chg: 2.41 },
     { id: 'tether', price: 1.0, chg: 0.02 }, { id: 'solana', price: 198.3, chg: -1.12 },
-    { id: 'ripple', price: 2.27, chg: 3.06 }, { id: 'dogecoin', price: 0.382, chg: -0.74 }
+    { id: 'ripple', price: 2.27, chg: 3.06 }, { id: 'dogecoin', price: 0.382, chg: -0.74 },
+    { id: 'binancecoin', price: 702, chg: 0.94 }, { id: 'cardano', price: 0.91, chg: -1.35 },
+    { id: 'tron', price: 0.257, chg: 0.41 }, { id: 'avalanche-2', price: 36.4, chg: -2.08 },
+    { id: 'chainlink', price: 21.7, chg: 1.62 }, { id: 'polkadot', price: 6.82, chg: -0.55 }
   ];
   const NEWS_SEED = [
     { title: 'بانک مرکزی اروپا نرخ بهره را ثابت نگه داشت', cat: 'فارکس', catColor: '#6f9bf3', time: '۳ ساعت پیش', url: 'https://iranbroker.net/news/', img: null },
@@ -162,6 +182,23 @@
     'اقتصاد': '#f6679f', 'بانک': '#a78bfa'
   };
 
+  /* دسته‌بندی‌های واقعی ایران بروکر (WordPress) — شناسه‌ها ثابت‌اند.
+     رنگ‌ها با CAT_COLORS بالا هماهنگ نگه داشته شده تا حس بصری یکسان بماند. */
+  const NEWS_CAT_DEFAULTS = [
+    { id: 1054, name: 'مقالات فارکس', color: '#6f9bf3' },
+    { id: 2626, name: 'تحلیل طلا', color: '#f6a723' },
+    { id: 2128, name: 'ارز دیجیتال', color: '#a78bfa' },
+    { id: 2627, name: 'تحلیل نفت برنت', color: '#fb3748' },
+    { id: 2670, name: 'بورس ایران', color: '#1fc16b' },
+    { id: 1076, name: 'هشدار کلاهبرداری', color: '#f6679f' }
+  ];
+  const NEWS_CATS_MAX = 10;
+  /* چرخهٔ رنگ برای دسته‌هایی که کاربر خودش از فهرست کامل اضافه می‌کند و رنگ از پیش تعیین‌شده ندارند */
+  const NEWS_CAT_PALETTE = ['#6f9bf3', '#f6a723', '#a78bfa', '#fb3748', '#1fc16b', '#35d0c0', '#f6679f', '#60a5fa', '#f97316', '#22c55e'];
+  /* رجیستری شناسه‌ٔ دسته → {name,color[,count]} — با پیش‌فرض‌ها پر می‌شود و با نتایج فهرست کامل/پست‌های واکشی‌شده رشد می‌کند */
+  const newsCatInfo = {};
+  NEWS_CAT_DEFAULTS.forEach(function (c) { newsCatInfo[c.id] = { name: c.name, color: c.color }; });
+
   const ENGINES = {
     google: { label: 'گوگل', icon: 'google', url: function (q) { return 'https://www.google.com/search?q=' + encodeURIComponent(q); } },
     ib: { label: 'ایران بروکر', icon: 'search', logo: '<svg viewBox="124.5 -1 33 30" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M137.502 0.350075C140.334 -0.328325 143.349 0.000596404 145.997 1.15182C145.59 2.0358 145.162 2.94033 144.734 3.8243C142.351 2.79643 139.621 2.67308 137.156 3.45427C134.793 4.2149 132.776 5.88006 131.391 7.93582C129.7 10.485 129.273 13.7742 130.006 16.7345C130.678 19.4686 132.532 21.8122 134.854 23.3129C137.34 24.8958 140.456 25.2658 143.288 24.5874C147.83 23.4362 151.294 19.078 151.497 14.3703C152.455 14.4731 153.412 14.5142 154.37 14.617C154.227 16.7139 153.697 18.7902 152.638 20.6198C150.744 24.1763 147.138 26.7049 143.247 27.5477C139.132 28.4728 134.671 27.1571 131.493 24.423C131.249 24.1763 130.984 24.1763 130.658 24.5669C129.619 25.7181 128.539 26.8282 127.521 28C126.808 27.3422 126.095 26.6638 125.382 25.9854C126.543 24.7313 127.704 23.4568 128.886 22.2028C129.171 21.8533 129.089 21.5655 128.906 21.3188C127.541 19.1191 126.808 16.5289 126.747 13.9386C126.808 10.9372 127.786 7.95637 129.558 5.55114C131.452 2.91977 134.386 1.13126 137.502 0.350075Z" fill="var(--logo-mark)"/><path d="M149.705 3.84486C151.375 3.45427 152.964 3.12535 154.716 2.8581C155.612 2.75531 156.02 3.22813 155.999 3.84486C155.938 5.79783 155.816 7.19574 155.632 8.90202C155.551 9.80656 154.675 10.2588 154.044 9.76544C153.473 9.49819 152.862 8.49087 152.455 8.75812C152.088 8.9637 151.864 9.33373 151.579 9.64209C149.419 12.1912 147.219 14.6993 145.04 17.2278C144.51 17.8446 143.553 17.9062 142.962 17.3512C141.638 16.0972 140.395 14.7404 139.071 13.4658C138.888 13.2602 138.623 13.3836 138.48 13.548C137.319 14.7198 136.158 15.8916 134.997 17.0634C134.325 16.3644 133.652 15.6449 132.939 14.9871C134.447 13.4247 135.995 11.9034 137.502 10.3616C137.849 9.99157 138.338 9.64209 138.806 9.64209C139.295 9.60098 139.703 9.9299 140.028 10.2588C141.169 11.41 142.31 12.5818 143.451 13.7125C143.593 13.9181 143.879 14.1236 144.082 13.8564C146.16 11.5539 148.177 9.14871 150.214 6.76404C150.54 6.37344 149.236 5.61281 149.012 5.28389C148.625 4.76995 149.053 3.94765 149.705 3.84486Z" fill="var(--logo-mark)"/></svg>', url: function (q) { return 'https://iranbroker.net/?s=' + encodeURIComponent(q); } },
@@ -175,7 +212,7 @@
   const state = {
     theme: 'dark', layout: 'simple', accent: '#185adb', showGrid: true,
     name: '', engine: 'google', activeEngine: 'google',
-    coins: 'bitcoin,ethereum,tether,solana,ripple,dogecoin',
+    coins: COINS_DEFAULT,
     showCrypto: true, query: '', sugIdx: -1, tipIndex: 0,
     pxTab: 'crypto', pxExpanded: null,
     pxData: {
@@ -187,9 +224,12 @@
         ts: 0, time: '', err: false
       },
       forex: { rows: [], ts: 0, time: '', err: false },
-      iran: { rows: [], ts: 0, time: '', err: false }
+      iran: { rows: [], ts: 0, time: '', err: false },
+      bourse: { rows: [], ts: 0, time: '', err: false }
     },
     mktAxis: 'utc', newsCat: 'همه', news: null,
+    /* دسته‌بندی‌های انتخابی برای واکشیِ اخبار — شخصی‌سازی سطح منبع، جدا از فیلتر نمایشیِ newsCat بالا */
+    newsCatIds: NEWS_CAT_DEFAULTS.map(function (c) { return c.id; }),
     bgMode: 'default', bgIndex: 0, bgImage: null
   };
   const BG_IMAGE_KEY = 'ib_bg_image';
@@ -197,12 +237,15 @@
   function load() {
     var saved = {};
     try { saved = JSON.parse(localStorage.getItem(PERSIST_KEY) || '{}'); } catch (e) {}
-    ['theme', 'layout', 'accent', 'showGrid', 'name', 'engine', 'coins', 'showCrypto', 'tipIndex', 'bgMode', 'bgIndex', 'pxTab', 'mktAxis'].forEach(function (k) {
+    ['theme', 'layout', 'accent', 'showGrid', 'name', 'engine', 'coins', 'showCrypto', 'tipIndex', 'bgMode', 'bgIndex', 'pxTab', 'mktAxis', 'newsCatIds'].forEach(function (k) {
       if (saved[k] !== undefined) state[k] = saved[k];
     });
+    /* کسانی که هرگز لیست را دستکاری نکرده‌اند، پیش‌فرض بلندِ جدید را بگیرند */
+    if (state.coins === COINS_LEGACY) state.coins = COINS_DEFAULT;
     state.activeEngine = state.engine;
     if (!state.pxData[state.pxTab]) state.pxTab = 'crypto';
     if (state.mktAxis !== 'local') state.mktAxis = 'utc';
+    if (!Array.isArray(state.newsCatIds)) state.newsCatIds = NEWS_CAT_DEFAULTS.map(function (c) { return c.id; });
     if (state.bgMode === 'custom') {
       try { state.bgImage = localStorage.getItem(BG_IMAGE_KEY) || null; } catch (e) {}
       if (!state.bgImage) state.bgMode = 'default';
@@ -214,7 +257,7 @@
       name: state.name, engine: state.engine, coins: state.coins,
       showCrypto: state.showCrypto, tipIndex: state.tipIndex,
       bgMode: state.bgMode, bgIndex: state.bgIndex,
-      pxTab: state.pxTab, mktAxis: state.mktAxis
+      pxTab: state.pxTab, mktAxis: state.mktAxis, newsCatIds: state.newsCatIds
     };
     try { localStorage.setItem(PERSIST_KEY, JSON.stringify(o)); } catch (e) {}
   }
@@ -487,21 +530,8 @@
       '</div>';
     }
 
-    /* خبر شاخص: اولین خبرِ دارای تصویر، بزرگ نمایش داده می‌شود */
-    let heroIdx = -1;
-    for (let i = 0; i < list.length; i++) { if (list[i].img) { heroIdx = i; break; } }
-
     let html = '';
-    if (heroIdx >= 0) {
-      const n = list[heroIdx];
-      html += '<a class="bn-hero' + (newsRead[n.url] ? ' read' : '') + '" href="' + n.url + '" target="_blank" rel="noopener" data-url="' + n.url + '">' +
-        '<img src="' + n.img + '" alt="" loading="lazy"/>' +
-        '<div class="bn-hero-txt">' + metaHTML(n) +
-          '<div class="bn-hero-title">' + n.title + '</div>' +
-        '</div></a>';
-    }
-    list.forEach(function (n, i) {
-      if (i === heroIdx) return;
+    list.forEach(function (n) {
       const col = n.catColor || CAT_COLORS[n.cat] || '#6f9bf3';
       const url = n.url || 'https://iranbroker.net/news/';
       html += '<a class="bn-item' + (newsRead[url] ? ' read' : '') + '" href="' + url + '" target="_blank" rel="noopener" data-url="' + url + '">' +
@@ -526,14 +556,68 @@
     return Math.floor(diff / 86400) + ' روز پیش';
   }
 
-  function loadNews() {
-    fetch('https://iranbroker.net/feed/')
+  /* --- رنگ پایدار برای هر دسته: از رجیستری، بعد CAT_COLORS، بعد چرخهٔ رنگی بر اساس شناسه --- */
+  function newsCatColor(id, name) {
+    const info = newsCatInfo[id];
+    if (info && info.color) return info.color;
+    const byName = CAT_COLORS[name];
+    if (byName) return byName;
+    return NEWS_CAT_PALETTE[Math.abs(id || 0) % NEWS_CAT_PALETTE.length];
+  }
+
+  /* عناوین WordPress ممکن است موجودیت HTML (&amp; و مانند آن) داشته باشند */
+  function decodeHtml(str) {
+    if (!str) return '';
+    const ta = document.createElement('textarea');
+    ta.innerHTML = str;
+    return ta.value;
+  }
+
+  /* --- منبع اصلی: وردپرس REST API با فیلتر دسته‌بندیِ انتخابیِ کاربر --- */
+  function loadNewsRest() {
+    const ids = (state.newsCatIds || []).filter(Boolean);
+    let url = 'https://iranbroker.net/wp-json/wp/v2/posts?per_page=20&_embed=wp:featuredmedia,wp:term' +
+      '&_fields=id,title,link,date_gmt,_links,_embedded';
+    if (ids.length) url += '&categories=' + ids.join(',');
+
+    return fetch(url)
+      .then(function (r) { if (!r.ok) throw new Error('http'); return r.json(); })
+      .then(function (data) {
+        if (!Array.isArray(data) || !data.length) throw new Error('empty');
+        const parsed = data.map(function (p) {
+          const title = decodeHtml((p.title && p.title.rendered || '').replace(/<[^>]+>/g, '')).trim();
+          if (!title) return null;
+          const emb = p._embedded || {};
+          const terms = (emb['wp:term'] && emb['wp:term'][0]) || [];
+          /* اگر پست چند دسته دارد، اولویت با دسته‌ای‌ست که کاربر انتخاب کرده */
+          let term = terms.find(function (t) { return ids.indexOf(t.id) >= 0; }) || terms[0];
+          if (term) newsCatInfo[term.id] = newsCatInfo[term.id] || { name: term.name, color: newsCatColor(term.id, term.name) };
+          const catName = term ? term.name : 'اخبار';
+          const catColor = term ? newsCatColor(term.id, term.name) : '#6f9bf3';
+          let img = null;
+          const media = emb['wp:featuredmedia'] && emb['wp:featuredmedia'][0];
+          if (media) {
+            const sizes = media.media_details && media.media_details.sizes;
+            img = (sizes && sizes.medium && sizes.medium.source_url) || media.source_url || null;
+          }
+          const pubDate = p.date_gmt ? p.date_gmt + 'Z' : '';
+          const ts = pubDate ? Date.parse(pubDate) : NaN;
+          return { title: title, url: p.link, cat: catName, catColor: catColor, time: relTimeFa(pubDate), img: img, ts: isFinite(ts) ? ts : null };
+        }).filter(Boolean);
+        if (!parsed.length) throw new Error('empty');
+        return parsed;
+      });
+  }
+
+  /* --- پشتیبان: فید عمومی سایت (وقتی REST به هر دلیلی در دسترس نیست) --- */
+  function loadNewsRss() {
+    return fetch('https://iranbroker.net/feed/')
       .then(function (res) { return res.text(); })
       .then(function (text) {
         const parser = new DOMParser();
         const doc = parser.parseFromString(text, 'text/xml');
         const items = Array.prototype.slice.call(doc.querySelectorAll('item'));
-        if (!items.length) return;
+        if (!items.length) throw new Error('empty');
         const parsed = items.slice(0, 20).map(function (item) {
           const title = (item.querySelector('title') ? item.querySelector('title').textContent : '').replace(/<!\[CDATA\[|\]\]>/g, '').trim();
           const guidEl = item.querySelector('guid');
@@ -542,7 +626,6 @@
           const catEl = item.querySelector('category');
           const cat = catEl ? catEl.textContent.replace(/<!\[CDATA\[|\]\]>/g, '').trim() : 'اخبار';
           const color = CAT_COLORS[cat] || '#6f9bf3';
-          // Try to extract featured image from feed
           var img = null;
           var mediaTh = item.querySelector('media\\:thumbnail') || item.querySelector('thumbnail');
           var mediaC = item.querySelector('media\\:content') || item.querySelector('content');
@@ -563,8 +646,15 @@
           const ts = pubDate ? Date.parse(pubDate) : NaN;
           return { title: title, url: url, cat: cat, catColor: color, time: relTimeFa(pubDate), img: img, ts: isFinite(ts) ? ts : null };
         }).filter(function (n) { return n.title; });
-        if (parsed.length) { state.news = parsed; renderNews(); }
-      })
+        if (!parsed.length) throw new Error('empty');
+        return parsed;
+      });
+  }
+
+  function loadNews() {
+    loadNewsRest()
+      .catch(function () { return loadNewsRss(); })
+      .then(function (parsed) { state.news = parsed; renderNews(); })
       .catch(function () {});
   }
 
@@ -610,6 +700,7 @@
     els.searchIcon.innerHTML = svg('search');
     els.searchGo.innerHTML = svg('arrowLeft');
     els.cryptoRefresh.innerHTML = svg('refresh');
+    if (els.coinsBtn) els.coinsBtn.innerHTML = svg('coins');
     els.settingsClose.innerHTML = '<span class="icon">' + svg('close') + '</span>';
   }
 
@@ -677,31 +768,61 @@
     }
   }
 
-  /* ----------------------------- Live Prices (کریپتو / فارکس / بازار ایران) ----------------------------- */
+  /* ----------------------------- Live Prices (کریپتو / فارکس / بازار ایران / بورس) -----------------------------
+     منابع — همه رایگان و بدون کلید:
+       crypto  → CoinGecko
+       forex   → Yahoo Finance chart API (لحظه‌ای، با سری زمانی واقعی برای اسپارک‌لاین)
+       iran    → TGJU ajax.json (بازار آزاد ارز و طلا)
+       bourse  → TGJU (شاخص کل + صندوق‌های طلا) و در صورت دسترس‌بودن، TSETMC برای هم‌وزن/فرابورس
+     نکته: چون افزونه host_permissions دارد، CORS مانع نیست. */
   const FX_PAIRS = [
-    { id: 'eurusd', sym: 'EUR/USD', name: 'یورو / دلار', cur: 'EUR', inv: true, flag: '🇪🇺', dec: 4 },
-    { id: 'gbpusd', sym: 'GBP/USD', name: 'پوند / دلار', cur: 'GBP', inv: true, flag: '🇬🇧', dec: 4 },
-    { id: 'usdjpy', sym: 'USD/JPY', name: 'دلار / ین', cur: 'JPY', inv: false, flag: '🇯🇵', dec: 2 },
-    { id: 'usdchf', sym: 'USD/CHF', name: 'دلار / فرانک', cur: 'CHF', inv: false, flag: '🇨🇭', dec: 4 },
-    { id: 'usdcad', sym: 'USD/CAD', name: 'دلار / کانادا', cur: 'CAD', inv: false, flag: '🇨🇦', dec: 4 },
-    { id: 'audusd', sym: 'AUD/USD', name: 'استرالیا / دلار', cur: 'AUD', inv: true, flag: '🇦🇺', dec: 4 }
+    { id: 'eurusd', y: 'EURUSD=X', sym: 'EUR/USD', name: 'یورو / دلار', flag: '🇪🇺', dec: 4 },
+    { id: 'gbpusd', y: 'GBPUSD=X', sym: 'GBP/USD', name: 'پوند / دلار', flag: '🇬🇧', dec: 4 },
+    { id: 'usdjpy', y: 'USDJPY=X', sym: 'USD/JPY', name: 'دلار / ین ژاپن', flag: '🇯🇵', dec: 3 },
+    { id: 'usdchf', y: 'USDCHF=X', sym: 'USD/CHF', name: 'دلار / فرانک سوئیس', flag: '🇨🇭', dec: 4 },
+    { id: 'audusd', y: 'AUDUSD=X', sym: 'AUD/USD', name: 'دلار استرالیا / دلار', flag: '🇦🇺', dec: 4 },
+    { id: 'usdcad', y: 'USDCAD=X', sym: 'USD/CAD', name: 'دلار / دلار کانادا', flag: '🇨🇦', dec: 4 },
+    { id: 'xauusd', y: 'GC=F', sym: 'XAU/USD', name: 'انس طلا', flag: '🥇', dec: 2 },
+    { id: 'brent', y: 'BZ=F', sym: 'BRENT', name: 'نفت برنت', flag: '🛢️', dec: 2 },
+    { id: 'dxy', y: 'DX-Y.NYB', sym: 'DXY', name: 'شاخص دلار', flag: '💵', dec: 2 }
   ];
+  /* TGJU: قیمت‌های ریالی با div=10 به تومان تبدیل می‌شوند */
   const IRAN_ITEMS = [
-    { id: 'usd', sym: 'USD', name: 'دلار آزاد', keys: ['price_dollar_rl', 'price_dollar_soleymani', 'dollar_rl'], flag: '💵', div: 10, unit: 'تومان' },
-    { id: 'eur', sym: 'EUR', name: 'یورو', keys: ['price_eur'], flag: '💶', div: 10, unit: 'تومان' },
-    { id: 'gold18', sym: 'GOLD', name: 'طلای ۱۸ عیار', keys: ['geram18', 'price_gold_18'], flag: '🥇', div: 10, unit: 'تومان' },
-    { id: 'sekke', sym: 'IMAMI', name: 'سکه امامی', keys: ['sekee', 'price_sekee', 'sekeb'], flag: '🪙', div: 10, unit: 'تومان' },
-    { id: 'mesghal', sym: 'MSQ', name: 'مثقال طلا', keys: ['mesghal'], flag: '⚖️', div: 10, unit: 'تومان' },
-    { id: 'ons', sym: 'XAU', name: 'انس جهانی طلا', keys: ['ons', 'price_ons'], flag: '🌕', div: 1, unit: 'دلار' }
+    { id: 'usd', sym: 'USD', name: 'دلار آزاد', key: 'price_dollar_rl', flag: '💵', div: 10, unit: 'تومان' },
+    { id: 'eur', sym: 'EUR', name: 'یورو', key: 'price_eur', flag: '💶', div: 10, unit: 'تومان' },
+    { id: 'gbp', sym: 'GBP', name: 'پوند', key: 'price_gbp', flag: '💷', div: 10, unit: 'تومان' },
+    { id: 'gold18', sym: 'GOLD18', name: 'طلای ۱۸ عیار (گرم)', key: 'geram18', flag: '🥇', div: 10, unit: 'تومان' },
+    { id: 'mesghal', sym: 'MESGHAL', name: 'مثقال طلا', key: 'mesghal', flag: '⚖️', div: 10, unit: 'تومان' },
+    { id: 'sekee', sym: 'IMAMI', name: 'سکه امامی', key: 'sekee', flag: '🪙', div: 10, unit: 'تومان' },
+    { id: 'sekeb', sym: 'BAHAR', name: 'سکه بهار آزادی', key: 'sekeb', flag: '🪙', div: 10, unit: 'تومان' },
+    { id: 'nim', sym: 'NIM', name: 'نیم سکه', key: 'nim', flag: '🥈', div: 10, unit: 'تومان' },
+    { id: 'rob', sym: 'ROB', name: 'ربع سکه', key: 'rob', flag: '🥉', div: 10, unit: 'تومان' },
+    { id: 'ons', sym: 'XAU', name: 'انس جهانی طلا', key: 'ons', flag: '🌕', div: 1, unit: '$' },
+    { id: 'silver', sym: 'XAG', name: 'انس جهانی نقره', key: 'silver', flag: '🌗', div: 1, unit: '$' }
   ];
-  const PX_TTL = { crypto: 90000, forex: 600000, iran: 300000 };
-  const PX_SRC = { crypto: 'CoinGecko', forex: 'ECB / Frankfurter', iran: 'TGJU' };
+  /* بورس ایران — شاخص کل و صندوق‌های طلای قابل‌معامله.
+     TGJU برای صندوق‌ها درصد تغییر نمی‌دهد؛ در آن صورت chg=null می‌ماند و «—» نمایش داده می‌شود. */
+  const BOURSE_ITEMS = [
+    { id: 'index', sym: 'TEDPIX', name: 'شاخص کل بورس', key: 'bourse', flag: '📈', div: 1, unit: '' },
+    { id: 'goldfund', sym: 'IDX-GOLD', name: 'شاخص صندوق‌های طلا', key: 'ime_indices_sandogh_tala', flag: '📊', div: 1, unit: '' },
+    { id: 'lotus', sym: 'طلا', name: 'صندوق لوتوس', key: 'ime_fund_lotus', flag: '🏦', div: 10, unit: 'تومان' },
+    { id: 'ayar', sym: 'عیار', name: 'صندوق عیار', key: 'ime_fund_ayar', flag: '🏦', div: 10, unit: 'تومان' },
+    { id: 'kahroba', sym: 'کهربا', name: 'صندوق کهربا', key: 'ime_fund_kahroba', flag: '🏦', div: 10, unit: 'تومان' },
+    { id: 'zar', sym: 'زر', name: 'صندوق زر', key: 'ime_fund_zar', flag: '🏦', div: 10, unit: 'تومان' },
+    { id: 'gohar', sym: 'گوهر', name: 'صندوق گوهر', key: 'ime_fund_gohar', flag: '🏦', div: 10, unit: 'تومان' },
+    { id: 'nafis', sym: 'نفیس', name: 'صندوق نفیس', key: 'ime_fund_nafis', flag: '🏦', div: 10, unit: 'تومان' },
+    { id: 'javaher', sym: 'جواهر', name: 'صندوق جواهر', key: 'ime_fund_javaher', flag: '🏦', div: 10, unit: 'تومان' },
+    { id: 'alton', sym: 'آلتون', name: 'صندوق آلتون', key: 'ime_fund_alton', flag: '🏦', div: 10, unit: 'تومان' },
+    { id: 'silverfund', sym: 'سیمین', name: 'صندوق نقره سیمین', key: 'ime_fund_silver', flag: '🏦', div: 10, unit: 'تومان' }
+  ];
+  const PX_TTL = { crypto: 90000, forex: 120000, iran: 180000, bourse: 300000 };
+  const PX_SRC = { crypto: 'CoinGecko', forex: 'Yahoo Finance', iran: 'TGJU', bourse: 'TGJU / TSETMC' };
   const pxPrev = {};
 
   function fmtRowPrice(tab, r) {
-    if (tab === 'forex') return r.price.toFixed(r.dec == null ? 4 : r.dec);
-    if (tab === 'iran') return Math.round(r.price).toLocaleString('en-US');
-    return fmtPrice(r.price);
+    if (tab === 'crypto') return fmtPrice(r.price);
+    const dec = r.dec == null ? 0 : r.dec;
+    return r.price.toLocaleString('en-US', { minimumFractionDigits: dec, maximumFractionDigits: dec });
   }
 
   function renderPrices() {
@@ -715,8 +836,10 @@
     }
 
     els.cryptoList.innerHTML = rows.length ? rows.map(function (r, i) {
+      /* chg === null یعنی منبع درصد تغییر نداده — به‌جای «۰٪» دروغین، خنثی نشان می‌دهیم */
+      const noChg = r.chg == null;
       const up = (r.chg || 0) >= 0;
-      const col = up ? 'var(--green)' : 'var(--red)';
+      const col = noChg ? 'var(--soft)' : (up ? 'var(--green)' : 'var(--red)');
       const key = tab + ':' + r.id;
       let flash = '';
       if (pxPrev[key] != null && r.price !== pxPrev[key]) flash = r.price > pxPrev[key] ? ' flash-up' : ' flash-down';
@@ -770,17 +893,16 @@
           mid +
           '<div class="c-price-col">' +
             '<span class="c-price' + flash + '">' + fmtRowPrice(tab, r) + (r.unit ? ' <i class="c-unit">' + r.unit + '</i>' : '') + '</span>' +
-            '<span class="c-chg" style="color:' + col + '">' + pctStr(r.chg || 0) + '</span>' +
+            '<span class="c-chg" style="color:' + col + '">' + (noChg ? '—' : pctStr(r.chg)) + '</span>' +
           '</div>' +
         '</div>' + detail + '</div>';
     }).join('') : '<div class="px-empty">' + (d.err ? 'دریافت داده ممکن نشد' : 'در حال دریافت…') + '</div>';
 
-    let foot = '';
-    if (rows.length) {
-      if (d.err) foot = '<span class="err">آفلاین — آخرین داده</span>';
-      else if (d.time) foot = '<span>' + d.time + '<span class="foot-sep">·</span>' + PX_SRC[tab] + '</span>';
-    }
-    els.cryptoFoot.innerHTML = foot;
+    /* وضعیت داده روی خود دکمهٔ بروزرسانی می‌نشیند — بدون پاورقی */
+    els.cryptoRefresh.classList.toggle('is-stale', !!(d.err && rows.length));
+    els.cryptoRefresh.title = d.err
+      ? 'دریافت زنده ممکن نشد — نمایش آخرین داده. برای تلاش دوباره کلیک کنید'
+      : (d.time ? 'آخرین بروزرسانی ' + d.time + ' · ' + PX_SRC[tab] : 'بروزرسانی');
   }
 
   function pxSpin(on) { els.cryptoRefresh.classList.toggle('spinning', !!on); }
@@ -801,13 +923,14 @@
     const d = state.pxData[tab];
     if (!force && d.ts && Date.now() - d.ts < PX_TTL[tab]) { return; }
     pxSpin(true);
+    if (tab === 'bourse') { loadBourse(); return; }
     if (tab === 'crypto') loadCrypto();
     else if (tab === 'forex') loadForex();
     else loadIran();
   }
 
   function loadCrypto() {
-    const ids = state.coins.split(',').map(function (s) { return s.trim(); }).filter(Boolean).slice(0, 6);
+    const ids = state.coins.split(',').map(function (s) { return s.trim(); }).filter(Boolean).slice(0, COINS_MAX);
     if (!ids.length) { pxDone('crypto', []); return; }
     const url = 'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=' + ids.join(',') + '&order=market_cap_desc&sparkline=true&price_change_percentage=24h';
     fetch(url).then(function (res) {
@@ -821,6 +944,11 @@
         const spark = (c.sparkline_in_7d && c.sparkline_in_7d.price && c.sparkline_in_7d.price.length > 3) ? c.sparkline_in_7d.price : null;
         let wk = null;
         if (spark) wk = (spark[spark.length - 1] - spark[0]) / spark[0] * 100;
+        coinInfo[c.id] = {
+          sym: (c.symbol || c.id).toUpperCase(),
+          name: (COIN_META[c.id] || {}).name || c.name || c.id,
+          img: c.image || null
+        };
         return {
           id: c.id,
           sym: (c.symbol || c.id).toUpperCase(),
@@ -843,84 +971,678 @@
     }).catch(function () { pxDone('crypto', null); });
   }
 
-  function loadForex() {
-    function iso(t) { return new Date(t).toISOString().slice(0, 10); }
-    const url = 'https://api.frankfurter.app/' + iso(Date.now() - 9 * 86400000) + '..' + iso(Date.now()) +
-      '?from=USD&to=' + FX_PAIRS.map(function (p) { return p.cur; }).join(',');
-    fetch(url).then(function (r) {
-      if (!r.ok) throw new Error('http');
-      return r.json();
-    }).then(function (data) {
-      const dates = Object.keys(data.rates || {}).sort();
-      if (dates.length < 2) throw new Error('empty');
-      const rows = FX_PAIRS.map(function (p) {
-        const series = dates
-          .map(function (dt) { return (data.rates[dt] || {})[p.cur]; })
-          .filter(function (v) { return v > 0; })
-          .map(function (v) { return p.inv ? 1 / v : v; });
-        if (series.length < 2) return null;
-        const last = series[series.length - 1], prev = series[series.length - 2];
-        const lo = Math.min.apply(null, series), hi = Math.max.apply(null, series);
-        return {
-          id: p.id, sym: p.sym, name: p.name, flag: p.flag, dec: p.dec,
-          price: last, chg: (last - prev) / prev * 100, spark: series,
-          extra: {
-            low: lo, high: hi, rangeLbl: 'بازه هفتگی',
-            stats: [
-              { label: 'تغییر هفتگی', val: pctStr((last - series[0]) / series[0] * 100) },
-              { label: 'کف هفته', val: lo.toFixed(p.dec) },
-              { label: 'سقف هفته', val: hi.toFixed(p.dec) }
-            ]
-          }
-        };
-      }).filter(Boolean);
-      if (!rows.length) throw new Error('empty');
-      pxDone('forex', rows);
-    }).catch(function () { pxDone('forex', null); });
+  /* ---- فارکس: Yahoo Finance chart API (رایگان، بدون کلید، لحظه‌ای) ---- */
+  function yahooChart(sym) {
+    const url = 'https://query1.finance.yahoo.com/v8/finance/chart/' + encodeURIComponent(sym) +
+      '?range=5d&interval=30m';
+    return fetch(url)
+      .then(function (r) { if (!r.ok) throw new Error('http'); return r.json(); })
+      .then(function (j) {
+        const res = j && j.chart && j.chart.result && j.chart.result[0];
+        if (!res || !res.meta) throw new Error('empty');
+        const m = res.meta;
+        const q = (res.indicators && res.indicators.quote && res.indicators.quote[0]) || {};
+        const series = (q.close || []).filter(function (v) { return typeof v === 'number' && isFinite(v); });
+        const price = m.regularMarketPrice;
+        if (!isFinite(price)) throw new Error('noprice');
+        const prev = m.chartPreviousClose || m.previousClose || (series.length ? series[0] : price);
+        return { price: price, prev: prev, series: series, meta: m };
+      });
   }
 
+  function loadForex() {
+    Promise.all(FX_PAIRS.map(function (p) {
+      return yahooChart(p.y)
+        .then(function (d) {
+          const chg = d.prev ? (d.price - d.prev) / d.prev * 100 : 0;
+          const lo = d.meta.regularMarketDayLow, hi = d.meta.regularMarketDayHigh;
+          const wk = d.series.length > 1 ? (d.price - d.series[0]) / d.series[0] * 100 : null;
+          return {
+            id: p.id, sym: p.sym, name: p.name, flag: p.flag, dec: p.dec,
+            price: d.price, chg: chg,
+            spark: d.series.length > 3 ? d.series : null,
+            extra: {
+              low: lo, high: hi, rangeLbl: 'بازه امروز',
+              stats: [
+                { label: 'بستهٔ قبلی', val: d.prev ? d.prev.toFixed(p.dec) : '—' },
+                { label: 'تغییر ۵ روزه', val: wk == null ? '—' : pctStr(wk) },
+                { label: 'سقف ۵۲ هفته', val: d.meta.fiftyTwoWeekHigh ? d.meta.fiftyTwoWeekHigh.toFixed(p.dec) : '—' },
+                { label: 'کف ۵۲ هفته', val: d.meta.fiftyTwoWeekLow ? d.meta.fiftyTwoWeekLow.toFixed(p.dec) : '—' }
+              ]
+            }
+          };
+        })
+        .catch(function () { return null; });   /* یک نماد شکست بخورد، بقیه بمانند */
+    })).then(function (rows) {
+      rows = rows.filter(Boolean);
+      pxDone('forex', rows.length ? rows : null);
+    });
+  }
+
+  /* ---- TGJU: بازار آزاد ارز و طلا + بورس ---- */
   function tgjuNum(v) {
     if (v == null) return NaN;
     return parseFloat(String(v).replace(/,/g, ''));
   }
+  /* دو دامنه‌ی آینه — اگر یکی از کار افتاد، دیگری امتحان می‌شود */
+  const TGJU_HOSTS = ['https://call2.tgju.org/ajax.json', 'https://call3.tgju.org/ajax.json'];
+  let tgjuCache = null, tgjuCacheTs = 0;
+
+  function fetchTgju() {
+    if (tgjuCache && Date.now() - tgjuCacheTs < 60000) return Promise.resolve(tgjuCache);
+    let chain = Promise.reject();
+    TGJU_HOSTS.forEach(function (host) {
+      chain = chain.catch(function () {
+        const ctl = new AbortController();
+        const to = setTimeout(function () { ctl.abort(); }, 9000);
+        return fetch(host, { signal: ctl.signal })
+          .then(function (r) { clearTimeout(to); if (!r.ok) throw new Error('http'); return r.json(); });
+      });
+    });
+    return chain.then(function (data) {
+      const cur = data.current || data;
+      if (!cur || typeof cur !== 'object') throw new Error('empty');
+      tgjuCache = cur; tgjuCacheTs = Date.now();
+      return cur;
+    });
+  }
+
+  /* یک آیتم TGJU را به ردیف قیمت تبدیل می‌کند. شکل داده: {p,h,l,d,dp,dt} */
+  function tgjuRow(cur, it) {
+    const raw = cur[it.key];
+    if (raw == null) return null;
+    const p = tgjuNum(typeof raw === 'object' ? raw.p : raw);
+    if (!isFinite(p) || p <= 0) return null;
+
+    let chg = null;
+    if (typeof raw === 'object' && raw.dp != null) {
+      const dp = tgjuNum(raw.dp);
+      /* dt خالی یعنی منبع تغییری اعلام نکرده — به‌جای صفرِ گمراه‌کننده، null می‌گذاریم */
+      const dt = String(raw.dt || '').toLowerCase();
+      if (isFinite(dp) && dt) chg = (dt === 'low' ? -1 : 1) * dp;
+      else if (isFinite(dp) && dp !== 0) chg = dp;
+    }
+
+    const h = typeof raw === 'object' ? tgjuNum(raw.h) : NaN;
+    const l = typeof raw === 'object' ? tgjuNum(raw.l) : NaN;
+    const dec = it.div === 1 && p < 1000 ? 2 : 0;
+
+    return {
+      id: it.id, sym: it.sym, name: it.name, flag: it.flag, unit: it.unit, dec: dec,
+      price: p / it.div, chg: chg,
+      extra: (isFinite(h) && isFinite(l) && h > l)
+        ? {
+            low: l / it.div, high: h / it.div, rangeLbl: 'بازه امروز',
+            stats: (typeof raw === 'object' && raw.t_en) ? [{ label: 'آخرین معامله', val: raw.t_en }] : []
+          }
+        : null
+    };
+  }
+
   function loadIran() {
-    const ctl = new AbortController();
-    setTimeout(function () { ctl.abort(); }, 9000);
-    fetch('https://call4.tgju.org/c/currency/price-all', { signal: ctl.signal })
-      .then(function (r) { if (!r.ok) throw new Error('http'); return r.json(); })
-      .then(function (data) {
-        const cur = data.current || data || {};
-        const rows = [];
-        IRAN_ITEMS.forEach(function (it) {
-          let raw = null;
-          for (let k = 0; k < it.keys.length; k++) {
-            if (cur[it.keys[k]] != null) { raw = cur[it.keys[k]]; break; }
-          }
-          if (raw == null) return;
-          let p, h, l, chg = 0;
-          if (typeof raw === 'object') {
-            p = tgjuNum(raw.p); h = tgjuNum(raw.h); l = tgjuNum(raw.l);
-            const dp = tgjuNum(raw.dp);
-            if (isFinite(dp)) chg = (String(raw.dt).toLowerCase() === 'low' ? -1 : 1) * dp;
-            /* برخی نسخه‌ها تغییر را با کلید جدا می‌دهند */
-          } else {
-            p = tgjuNum(raw); h = NaN; l = NaN;
-            const c2 = tgjuNum(cur['change_' + it.id] || cur[it.keys[0].replace('price_', 'change_')]);
-            if (isFinite(c2)) chg = c2;
-          }
-          if (!isFinite(p) || p <= 0) return;
-          rows.push({
-            id: it.id, sym: it.sym, name: it.name, flag: it.flag, unit: it.unit,
-            price: p / it.div, chg: chg,
-            extra: (isFinite(h) && isFinite(l) && h > l)
-              ? { low: l / it.div, high: h / it.div, rangeLbl: 'بازه امروز', stats: [] }
-              : null
-          });
-        });
+    fetchTgju()
+      .then(function (cur) {
+        const rows = IRAN_ITEMS.map(function (it) { return tgjuRow(cur, it); }).filter(Boolean);
         if (!rows.length) throw new Error('empty');
         pxDone('iran', rows);
       })
       .catch(function () { pxDone('iran', null); });
+  }
+
+  /* بورس: شاخص کل + صندوق‌های طلا از TGJU. اگر TSETMC در دسترس بود (داخل ایران)،
+     شاخص هم‌وزن و فرابورس را هم به بالای فهرست اضافه می‌کنیم. */
+  function loadBourse() {
+    const tse = fetchTsetmc().catch(function () { return []; });
+    Promise.all([fetchTgju().catch(function () { return null; }), tse])
+      .then(function (out) {
+        const cur = out[0], extraRows = out[1] || [];
+        const rows = cur
+          ? BOURSE_ITEMS.map(function (it) { return tgjuRow(cur, it); }).filter(Boolean)
+          : [];
+        /* شاخص‌های TSETMC بعد از شاخص کل می‌نشینند */
+        const merged = rows.slice(0, 1).concat(extraRows, rows.slice(1));
+        if (!merged.length) throw new Error('empty');
+        pxDone('bourse', merged);
+      })
+      .catch(function () { pxDone('bourse', null); });
+  }
+
+  /* TSETMC از خارج ایران معمولاً در دسترس نیست — پس شکستش بی‌صدا نادیده گرفته می‌شود */
+  function fetchTsetmc() {
+    const ctl = new AbortController();
+    const to = setTimeout(function () { ctl.abort(); }, 6000);
+    return fetch('https://cdn.tsetmc.com/api/ClosingPrice/GetMarketOverview/1', { signal: ctl.signal })
+      .then(function (r) { clearTimeout(to); if (!r.ok) throw new Error('http'); return r.json(); })
+      .then(function (j) {
+        const o = j && (j.marketOverview || j.MarketOverview);
+        if (!o) throw new Error('shape');
+        const rows = [];
+        const eqVal = o.indexEqualWeightedLastValue != null ? o.indexEqualWeightedLastValue : o.IndexEqualWeightedLastValue;
+        const eqChg = o.indexEqualWeightedChange != null ? o.indexEqualWeightedChange : o.IndexEqualWeightedChange;
+        if (isFinite(eqVal) && eqVal > 0) {
+          rows.push({
+            id: 'eqindex', sym: 'EQ-IDX', name: 'شاخص هم‌وزن', flag: '⚖️', unit: '', dec: 0,
+            price: eqVal,
+            chg: (isFinite(eqChg) && eqVal !== eqChg) ? (eqChg / (eqVal - eqChg)) * 100 : null,
+            extra: null
+          });
+        }
+        const tv = o.tradeValue != null ? o.tradeValue : o.TradeValue;
+        if (isFinite(tv) && tv > 0) {
+          rows.push({
+            id: 'tradeval', sym: 'VALUE', name: 'ارزش معاملات', flag: '💱', unit: 'میلیارد تومان', dec: 0,
+            price: tv / 1e13,   /* ریال → میلیارد تومان */
+            chg: null, extra: null
+          });
+        }
+        return rows;
+      });
+  }
+
+  /* ----------------------------- Coin manager (مدیریت ارزها) ----------------------------- */
+  /* رجیستری شناسه → {sym,name,img} — از دادهٔ زندهٔ CoinGecko و نتایج جستجو پر می‌شود */
+  const coinInfo = {};
+  let coinsDraft = [];
+  let coinSearchTimer = null;
+  let coinSearchSeq = 0;          /* پاسخ‌های دیرهنگام نباید نتیجهٔ تازه‌تر را بازنویسی کنند */
+  const coinSearchCache = {};
+
+  function coinMeta(id) {
+    const live = coinInfo[id], stat = COIN_META[id];
+    return {
+      sym: (live && live.sym) || (stat && stat.sym) || id.toUpperCase(),
+      name: (stat && stat.name) || (live && live.name) || id,
+      img: (live && live.img) || null
+    };
+  }
+  function coinAvatar(m, id) {
+    return '<span class="px-ava">' +
+      '<span class="px-ava-fb">' + m.sym.slice(0, 1) + '</span>' +
+      (m.img ? '<img src="' + m.img + '" alt="" loading="lazy"/>' : '') +
+    '</span>';
+  }
+
+  function faNum(n) { return String(n).replace(/\d/g, function (d) { return '۰۱۲۳۴۵۶۷۸۹'[d]; }); }
+
+  function cmEmpty(title, hint) {
+    return '<div class="cm-empty"><b>' + title + '</b>' + (hint ? '<span>' + hint + '</span>' : '') + '</div>';
+  }
+
+  function updateCoinsDirty() {
+    if (els.coinsSave) els.coinsSave.disabled = coinsDraft.join(',') === state.coins;
+  }
+
+  function renderCoinChips() {
+    if (!els.coinChips) return;
+    els.coinChips.innerHTML = coinsDraft.map(function (id, i) {
+      const m = coinMeta(id);
+      return '<div class="cm-chip" draggable="true" data-idx="' + i + '" data-id="' + id + '" title="' + m.name + ' — برای جابه‌جایی بکشید">' +
+        coinAvatar(m, id) +
+        '<span class="cm-chip-sym">' + m.sym + '</span>' +
+        '<button class="cm-chip-x" data-rm="' + id + '" aria-label="حذف ' + m.sym + '">×</button>' +
+      '</div>';
+    }).join('') || cmEmpty('هنوز ارزی انتخاب نشده', 'از فهرست پایین ارز دلخواهت را اضافه کن');
+
+    if (els.coinsCount) {
+      els.coinsCount.textContent = faNum(coinsDraft.length) + ' از ' + faNum(COINS_MAX);
+      els.coinsCount.classList.toggle('is-full', coinsDraft.length >= COINS_MAX);
+    }
+    if (els.coinsClearAll) els.coinsClearAll.hidden = !coinsDraft.length;
+    updateCoinsDirty();
+  }
+
+  function renderCoinResults(list, note) {
+    if (!els.coinResults) return;
+    const q = els.coinSearch ? els.coinSearch.value.trim() : '';
+    if (els.coinResultsLabel) els.coinResultsLabel.textContent = q ? 'نتایج جستجو' : 'ارزهای محبوب';
+
+    if (note) { els.coinResults.innerHTML = cmEmpty(note.title, note.hint); return; }
+    if (!list.length) {
+      els.coinResults.innerHTML = cmEmpty('نتیجه‌ای پیدا نشد', 'املای نام یا نماد ارز را بررسی کن');
+      return;
+    }
+
+    const full = coinsDraft.length >= COINS_MAX;
+    els.coinResults.innerHTML = list.map(function (c) {
+      const on = coinsDraft.indexOf(c.id) >= 0;
+      const dis = !on && full;
+      return '<button class="cm-row' + (on ? ' on' : '') + '" data-toggle="' + c.id + '"' +
+          (dis ? ' disabled title="به سقف ' + faNum(COINS_MAX) + ' ارز رسیده‌ای"' : '') + '>' +
+        coinAvatar({ sym: c.sym, img: c.img }, c.id) +
+        '<span class="cm-row-txt">' +
+          '<span class="cm-row-sym">' + c.sym + '</span>' +
+          '<span class="cm-row-name">' + c.name + '</span>' +
+        '</span>' +
+        (c.rank ? '<span class="cm-row-rank">#' + c.rank + '</span>' : '') +
+        '<span class="cm-row-act">' + (on ? '✓' : '+') + '<i>' + (on ? 'حذف' : 'افزودن') + '</i></span>' +
+      '</button>';
+    }).join('');
+  }
+
+  /* وقتی کادر جستجو خالی است: ارزهای شناخته‌شده‌ای که هنوز انتخاب نشده‌اند */
+  function coinSuggestions() {
+    return Object.keys(COIN_META)
+      .filter(function (id) { return coinsDraft.indexOf(id) < 0; })
+      .slice(0, 14)
+      .map(function (id) {
+        const m = coinMeta(id);
+        return { id: id, sym: m.sym, name: m.name, img: m.img, rank: null };
+      });
+  }
+
+  function coinSearch(q) {
+    q = q.trim();
+    if (!q) {
+      const sug = coinSuggestions();
+      if (!sug.length) {
+        renderCoinResults([], { title: 'همه‌ی ارزهای محبوب اضافه شده‌اند', hint: 'برای افزودن ارز دیگری، اسمش را جستجو کن' });
+      } else {
+        renderCoinResults(sug);
+      }
+      return;
+    }
+
+    if (coinSearchCache[q]) { renderCoinResults(coinSearchCache[q]); return; }
+
+    const seq = ++coinSearchSeq;
+    if (els.coinSearchSpin) els.coinSearchSpin.hidden = false;
+    if (els.coinSearchIc) els.coinSearchIc.hidden = true;
+    fetch('https://api.coingecko.com/api/v3/search?query=' + encodeURIComponent(q))
+      .then(function (r) { if (!r.ok) throw new Error('http'); return r.json(); })
+      .then(function (data) {
+        if (seq !== coinSearchSeq) return;   /* پاسخ کهنه */
+        const list = (data.coins || []).slice(0, 25).map(function (c) {
+          coinInfo[c.id] = coinInfo[c.id] || { sym: (c.symbol || '').toUpperCase(), name: c.name, img: c.thumb || c.large || null };
+          return {
+            id: c.id,
+            sym: (c.symbol || c.id).toUpperCase(),
+            name: (COIN_META[c.id] || {}).name || c.name || c.id,
+            img: c.thumb || c.large || null,
+            rank: c.market_cap_rank || null
+          };
+        });
+        coinSearchCache[q] = list;
+        renderCoinResults(list);
+      })
+      .catch(function () {
+        if (seq !== coinSearchSeq) return;
+        renderCoinResults([], { title: 'جستجو ممکن نشد', hint: 'اتصال اینترنت را بررسی کن و دوباره تلاش کن' });
+      })
+      .finally(function () {
+        if (seq !== coinSearchSeq) return;
+        if (els.coinSearchSpin) els.coinSearchSpin.hidden = true;
+        if (els.coinSearchIc) els.coinSearchIc.hidden = false;
+      });
+  }
+
+  function openCoins() {
+    coinsDraft = state.coins.split(',').map(function (s) { return s.trim(); }).filter(Boolean).slice(0, COINS_MAX);
+    if (els.coinSearch) els.coinSearch.value = '';
+    if (els.coinSearchClear) els.coinSearchClear.hidden = true;
+    renderCoinChips();
+    coinSearch('');
+    els.coinsModal.hidden = false;
+    if (els.coinSearch) setTimeout(function () { els.coinSearch.focus(); }, 40);
+  }
+  function closeCoins() {
+    clearTimeout(coinSearchTimer);
+    coinSearchSeq++;                    /* پاسخ‌های در راه بی‌اثر شوند */
+    els.coinsModal.hidden = true;
+  }
+
+  /* چیپ‌ها و فهرست باید همیشه با هم همگام بمانند — وضعیت on/off ردیف‌ها به draft وابسته است */
+  function refreshCoinUI() {
+    renderCoinChips();
+    coinSearch(els.coinSearch ? els.coinSearch.value : '');
+  }
+
+  function saveCoins() {
+    state.coins = coinsDraft.join(',');
+    state.pxData.crypto.ts = 0;        /* کش باطل شود تا لیست جدید فوراً بیاید */
+    state.pxExpanded = null;
+    persist();
+    syncCoinsSummary();
+    closeCoins();
+    if (state.pxTab !== 'crypto') { state.pxTab = 'crypto'; syncPxTabs(); }
+    renderPrices();
+    loadPrices(true);
+  }
+
+  function syncCoinsSummary() {
+    if (!els.setCoinsSummary) return;
+    const n = state.coins.split(',').filter(Boolean).length;
+    els.setCoinsSummary.textContent = n ? faNum(n) + ' ارز انتخاب شده' : 'هیچ ارزی انتخاب نشده';
+  }
+
+  function initCoinManager() {
+    if (!els.coinsModal) return;
+
+    if (els.coinSearchIc) els.coinSearchIc.innerHTML = svg('search');
+    if (els.coinsBtn) els.coinsBtn.addEventListener('click', openCoins);
+    if (els.setCoinsBtn) els.setCoinsBtn.addEventListener('click', function () {
+      els.settingsModal.hidden = true;   /* تنظیمات را می‌بندیم تا دو مودال روی هم نیفتند */
+      openCoins();
+    });
+    els.coinsClose.addEventListener('click', closeCoins);
+    els.coinsModal.addEventListener('click', closeCoins);
+    els.coinsPanel.addEventListener('click', function (e) { e.stopPropagation(); });
+    els.coinsSave.addEventListener('click', saveCoins);
+    if (els.coinsCancel) els.coinsCancel.addEventListener('click', closeCoins);
+    els.coinsReset.addEventListener('click', function () {
+      coinsDraft = COINS_DEFAULT.split(',');
+      refreshCoinUI();
+    });
+    if (els.coinsClearAll) els.coinsClearAll.addEventListener('click', function () {
+      coinsDraft = [];
+      refreshCoinUI();
+    });
+
+    /* حذف ارز */
+    els.coinChips.addEventListener('click', function (e) {
+      const b = e.target.closest('[data-rm]');
+      if (!b) return;
+      const id = b.getAttribute('data-rm');
+      coinsDraft = coinsDraft.filter(function (x) { return x !== id; });
+      refreshCoinUI();
+    });
+
+    /* افزودن/حذف با کلیک روی ردیف نتیجه (toggle) */
+    els.coinResults.addEventListener('click', function (e) {
+      const b = e.target.closest('[data-toggle]');
+      if (!b || b.disabled) return;
+      const id = b.getAttribute('data-toggle');
+      const at = coinsDraft.indexOf(id);
+      if (at >= 0) coinsDraft.splice(at, 1);
+      else if (coinsDraft.length < COINS_MAX) coinsDraft.push(id);
+      refreshCoinUI();
+    });
+
+    /* جستجو با تاخیر — تا با هر حرف یک درخواست نرود */
+    if (els.coinSearch) {
+      els.coinSearch.addEventListener('input', function (e) {
+        const v = e.target.value;
+        if (els.coinSearchClear) els.coinSearchClear.hidden = !v;
+        clearTimeout(coinSearchTimer);
+        coinSearchTimer = setTimeout(function () { coinSearch(v); }, 300);
+      });
+      /* Enter: اولین نتیجهٔ قابل‌افزودن اضافه شود */
+      els.coinSearch.addEventListener('keydown', function (e) {
+        if (e.key !== 'Enter') return;
+        const b = els.coinResults.querySelector('.cm-row:not(.on):not([disabled])');
+        if (b) b.click();
+      });
+    }
+    if (els.coinSearchClear) {
+      els.coinSearchClear.addEventListener('click', function () {
+        els.coinSearch.value = '';
+        els.coinSearchClear.hidden = true;
+        clearTimeout(coinSearchTimer);
+        coinSearch('');
+        els.coinSearch.focus();
+      });
+    }
+
+    /* جابه‌جایی با درگ */
+    let dragFrom = -1;
+    els.coinChips.addEventListener('dragstart', function (e) {
+      const chip = e.target.closest('.cm-chip');
+      if (!chip) return;
+      dragFrom = parseInt(chip.getAttribute('data-idx'), 10);
+      chip.classList.add('dragging');
+      e.dataTransfer.effectAllowed = 'move';
+      try { e.dataTransfer.setData('text/plain', String(dragFrom)); } catch (ex) {}
+    });
+    els.coinChips.addEventListener('dragend', function () {
+      dragFrom = -1;
+      Array.prototype.forEach.call(els.coinChips.querySelectorAll('.cm-chip'), function (c) {
+        c.classList.remove('dragging', 'drag-over');
+      });
+    });
+    els.coinChips.addEventListener('dragover', function (e) {
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'move';
+      const chip = e.target.closest('.cm-chip');
+      Array.prototype.forEach.call(els.coinChips.querySelectorAll('.cm-chip'), function (c) {
+        c.classList.toggle('drag-over', c === chip && !c.classList.contains('dragging'));
+      });
+    });
+    els.coinChips.addEventListener('drop', function (e) {
+      e.preventDefault();
+      const chip = e.target.closest('.cm-chip');
+      if (!chip || dragFrom < 0) return;
+      const to = parseInt(chip.getAttribute('data-idx'), 10);
+      if (isNaN(to) || to === dragFrom) return;
+      const moved = coinsDraft.splice(dragFrom, 1)[0];
+      coinsDraft.splice(to, 0, moved);
+      dragFrom = -1;
+      renderCoinChips();
+    });
+
+    syncCoinsSummary();
+  }
+
+  /* ----------------------------- News category manager (مدیریت دسته‌بندی اخبار) -----------------------------
+     برخلاف مدیریت ارزها، اینجا جستجوی زنده لازم نیست: کل فهرست دسته‌بندی‌های
+     ایران بروکر (~۷۰ مورد) یک‌بار واکشی و در حافظه کش می‌شود؛ فیلتر کردن روی
+     همان فهرست محلی انجام می‌شود. */
+  let newsCatDraft = [];
+  let newsCatDirectory = null;
+  let newsCatDirPromise = null;
+  let newsCatSearchTimer = null;
+
+  function fetchNewsCatDirectory() {
+    if (newsCatDirectory) return Promise.resolve(newsCatDirectory);
+    if (newsCatDirPromise) return newsCatDirPromise;
+    newsCatDirPromise = fetch('https://iranbroker.net/wp-json/wp/v2/categories?per_page=100&orderby=count&order=desc&_fields=id,name,slug,count')
+      .then(function (r) { if (!r.ok) throw new Error('http'); return r.json(); })
+      .then(function (data) {
+        const list = (data || []).filter(function (c) { return c.count > 0; });
+        list.forEach(function (c) {
+          if (!newsCatInfo[c.id]) newsCatInfo[c.id] = { name: c.name, color: newsCatColor(c.id, c.name) };
+          newsCatInfo[c.id].count = c.count;
+        });
+        newsCatDirectory = list;
+        return list;
+      })
+      .catch(function (e) { newsCatDirPromise = null; throw e; });
+    return newsCatDirPromise;
+  }
+
+  function newsCatDot(color) { return '<span class="cm-dot" style="background:' + color + '"></span>'; }
+
+  function updateNewsCatDirty() {
+    if (els.ncatSave) els.ncatSave.disabled = JSON.stringify(newsCatDraft) === JSON.stringify(state.newsCatIds);
+  }
+
+  function renderNewsCatChips() {
+    if (!els.ncatChips) return;
+    els.ncatChips.innerHTML = newsCatDraft.map(function (id, i) {
+      const info = newsCatInfo[id] || { name: '#' + id, color: '#6f9bf3' };
+      return '<div class="cm-chip" draggable="true" data-idx="' + i + '" data-id="' + id + '" title="' + info.name + ' — برای جابه‌جایی بکشید">' +
+        newsCatDot(info.color) +
+        '<span class="cm-chip-sym">' + info.name + '</span>' +
+        '<button class="cm-chip-x" data-rm="' + id + '" aria-label="حذف ' + info.name + '">×</button>' +
+      '</div>';
+    }).join('') || cmEmpty('هیچ دسته‌ای انتخاب نشده', 'در این حالت، جدیدترین اخبار کل سایت نمایش داده می‌شود');
+
+    if (els.ncatCount) {
+      els.ncatCount.textContent = faNum(newsCatDraft.length) + ' از ' + faNum(NEWS_CATS_MAX);
+      els.ncatCount.classList.toggle('is-full', newsCatDraft.length >= NEWS_CATS_MAX);
+    }
+    if (els.ncatClearAll) els.ncatClearAll.hidden = !newsCatDraft.length;
+    updateNewsCatDirty();
+  }
+
+  function renderNewsCatResults(list, note) {
+    if (!els.ncatResults) return;
+    const q = els.ncatSearch ? els.ncatSearch.value.trim() : '';
+    if (els.ncatResultsLabel) els.ncatResultsLabel.textContent = q ? 'نتایج جستجو' : 'دسته‌بندی‌های محبوب';
+    if (note) { els.ncatResults.innerHTML = cmEmpty(note.title, note.hint); return; }
+    if (!list.length) { els.ncatResults.innerHTML = cmEmpty('نتیجه‌ای پیدا نشد', 'نام دیگری را جستجو کن'); return; }
+
+    const full = newsCatDraft.length >= NEWS_CATS_MAX;
+    els.ncatResults.innerHTML = list.map(function (c) {
+      const on = newsCatDraft.indexOf(c.id) >= 0;
+      const dis = !on && full;
+      const info = newsCatInfo[c.id] || { color: newsCatColor(c.id, c.name) };
+      return '<button class="cm-row' + (on ? ' on' : '') + '" data-toggle="' + c.id + '"' +
+          (dis ? ' disabled title="به سقف ' + faNum(NEWS_CATS_MAX) + ' دسته رسیده‌ای"' : '') + '>' +
+        newsCatDot(info.color) +
+        '<span class="cm-row-txt"><span class="cm-row-sym">' + c.name + '</span></span>' +
+        (c.count ? '<span class="cm-row-rank">' + faNum(c.count) + ' خبر</span>' : '') +
+        '<span class="cm-row-act">' + (on ? '✓' : '+') + '<i>' + (on ? 'حذف' : 'افزودن') + '</i></span>' +
+      '</button>';
+    }).join('');
+  }
+
+  function newsCatSearch(q) {
+    q = (q || '').trim();
+    const dir = newsCatDirectory || [];
+    let list;
+    if (!q) {
+      list = dir.filter(function (c) { return newsCatDraft.indexOf(c.id) < 0; }).slice(0, 16);
+    } else {
+      const qq = q.toLowerCase();
+      list = dir.filter(function (c) {
+        return c.name.indexOf(q) >= 0 || (c.slug || '').toLowerCase().indexOf(qq) >= 0;
+      }).slice(0, 30);
+    }
+    renderNewsCatResults(list);
+  }
+
+  function refreshNewsCatUI() {
+    renderNewsCatChips();
+    newsCatSearch(els.ncatSearch ? els.ncatSearch.value : '');
+  }
+
+  function openNewsCats() {
+    newsCatDraft = (state.newsCatIds || []).slice(0, NEWS_CATS_MAX);
+    if (els.ncatSearch) els.ncatSearch.value = '';
+    if (els.ncatSearchClear) els.ncatSearchClear.hidden = true;
+    renderNewsCatChips();
+
+    if (els.ncatSearchSpin) els.ncatSearchSpin.hidden = false;
+    if (els.ncatSearchIc) els.ncatSearchIc.hidden = true;
+    renderNewsCatResults([], { title: 'در حال بارگذاری فهرست دسته‌ها…' });
+    fetchNewsCatDirectory()
+      .then(function () { newsCatSearch(els.ncatSearch ? els.ncatSearch.value : ''); })
+      .catch(function () { renderNewsCatResults([], { title: 'دریافت فهرست ممکن نشد', hint: 'اتصال اینترنت را بررسی کن و دوباره امتحان کن' }); })
+      .finally(function () {
+        if (els.ncatSearchSpin) els.ncatSearchSpin.hidden = true;
+        if (els.ncatSearchIc) els.ncatSearchIc.hidden = false;
+      });
+
+    els.ncatModal.hidden = false;
+    if (els.ncatSearch) setTimeout(function () { els.ncatSearch.focus(); }, 40);
+  }
+  function closeNewsCats() {
+    clearTimeout(newsCatSearchTimer);
+    els.ncatModal.hidden = true;
+  }
+
+  function saveNewsCats() {
+    state.newsCatIds = newsCatDraft.slice();
+    persist();
+    closeNewsCats();
+    state.newsCat = 'همه';   /* فیلتر نمایشی چیپ‌های کارت اخبار به «همه» برگردد؛ منبع عوض شده */
+    loadNews();
+  }
+
+  function initNewsCatManager() {
+    if (!els.ncatModal) return;
+
+    if (els.ncatSearchIc) els.ncatSearchIc.innerHTML = svg('search');
+    if (els.ncatBtn) { els.ncatBtn.innerHTML = svg('tag'); els.ncatBtn.addEventListener('click', openNewsCats); }
+    els.ncatClose.addEventListener('click', closeNewsCats);
+    els.ncatModal.addEventListener('click', closeNewsCats);
+    els.ncatPanel.addEventListener('click', function (e) { e.stopPropagation(); });
+    els.ncatSave.addEventListener('click', saveNewsCats);
+    if (els.ncatCancel) els.ncatCancel.addEventListener('click', closeNewsCats);
+    els.ncatReset.addEventListener('click', function () {
+      newsCatDraft = NEWS_CAT_DEFAULTS.map(function (c) { return c.id; });
+      refreshNewsCatUI();
+    });
+    if (els.ncatClearAll) els.ncatClearAll.addEventListener('click', function () {
+      newsCatDraft = [];
+      refreshNewsCatUI();
+    });
+
+    els.ncatChips.addEventListener('click', function (e) {
+      const b = e.target.closest('[data-rm]');
+      if (!b) return;
+      const id = parseInt(b.getAttribute('data-rm'), 10);
+      newsCatDraft = newsCatDraft.filter(function (x) { return x !== id; });
+      refreshNewsCatUI();
+    });
+
+    els.ncatResults.addEventListener('click', function (e) {
+      const b = e.target.closest('[data-toggle]');
+      if (!b || b.disabled) return;
+      const id = parseInt(b.getAttribute('data-toggle'), 10);
+      const at = newsCatDraft.indexOf(id);
+      if (at >= 0) newsCatDraft.splice(at, 1);
+      else if (newsCatDraft.length < NEWS_CATS_MAX) newsCatDraft.push(id);
+      refreshNewsCatUI();
+    });
+
+    if (els.ncatSearch) {
+      els.ncatSearch.addEventListener('input', function (e) {
+        const v = e.target.value;
+        if (els.ncatSearchClear) els.ncatSearchClear.hidden = !v;
+        clearTimeout(newsCatSearchTimer);
+        newsCatSearchTimer = setTimeout(function () { newsCatSearch(v); }, 150);
+      });
+      els.ncatSearch.addEventListener('keydown', function (e) {
+        if (e.key !== 'Enter') return;
+        const b = els.ncatResults.querySelector('.cm-row:not(.on):not([disabled])');
+        if (b) b.click();
+      });
+    }
+    if (els.ncatSearchClear) {
+      els.ncatSearchClear.addEventListener('click', function () {
+        els.ncatSearch.value = '';
+        els.ncatSearchClear.hidden = true;
+        clearTimeout(newsCatSearchTimer);
+        newsCatSearch('');
+        els.ncatSearch.focus();
+      });
+    }
+
+    /* جابه‌جایی با درگ — هم‌سو با مدیریت ارزها */
+    let dragFrom = -1;
+    els.ncatChips.addEventListener('dragstart', function (e) {
+      const chip = e.target.closest('.cm-chip');
+      if (!chip) return;
+      dragFrom = parseInt(chip.getAttribute('data-idx'), 10);
+      chip.classList.add('dragging');
+      e.dataTransfer.effectAllowed = 'move';
+      try { e.dataTransfer.setData('text/plain', String(dragFrom)); } catch (ex) {}
+    });
+    els.ncatChips.addEventListener('dragend', function () {
+      dragFrom = -1;
+      Array.prototype.forEach.call(els.ncatChips.querySelectorAll('.cm-chip'), function (c) {
+        c.classList.remove('dragging', 'drag-over');
+      });
+    });
+    els.ncatChips.addEventListener('dragover', function (e) {
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'move';
+      const chip = e.target.closest('.cm-chip');
+      Array.prototype.forEach.call(els.ncatChips.querySelectorAll('.cm-chip'), function (c) {
+        c.classList.toggle('drag-over', c === chip && !c.classList.contains('dragging'));
+      });
+    });
+    els.ncatChips.addEventListener('drop', function (e) {
+      e.preventDefault();
+      const chip = e.target.closest('.cm-chip');
+      if (!chip || dragFrom < 0) return;
+      const to = parseInt(chip.getAttribute('data-idx'), 10);
+      if (isNaN(to) || to === dragFrom) return;
+      const moved = newsCatDraft.splice(dragFrom, 1)[0];
+      newsCatDraft.splice(to, 0, moved);
+      dragFrom = -1;
+      renderNewsCatChips();
+    });
   }
 
   /* ----------------------------- Tip ----------------------------- */
@@ -1143,7 +1865,7 @@
   function openSettings() {
     els.setName.value = state.name;
     els.setEngine.value = state.engine;
-    els.setCoins.value = state.coins;
+    syncCoinsSummary();
     els.setCrypto.checked = state.showCrypto;
     els.setGrid.checked = state.showGrid;
     syncSeg(els.setLayout, 'layout', state.layout);
@@ -1362,12 +2084,18 @@
       'bg-grid', 'theme-btn', 'settings-btn', 'focus-btn',
       'hero-date', 'clock', 'hero-greeting', 'hero-active', 'hero-utc',
       'search-box', 'search-icon', 'search-input', 'scope-label', 'search-go', 'suggest', 'engines',
-      'tools-grid', 'crypto-card', 'crypto-list', 'crypto-foot', 'crypto-refresh',
+      'tools-grid', 'crypto-card', 'crypto-list', 'crypto-refresh',
       'px-tabs',
       'markets-wrap', 'markets-utc-badge',
       'bn-chips', 'bento-news-list',
       'quick-links', 'settings-modal', 'settings-panel', 'settings-close', 'settings-save',
-      'set-name', 'set-engine', 'set-layout', 'set-accent', 'set-grid', 'set-crypto', 'set-coins',
+      'set-name', 'set-engine', 'set-layout', 'set-accent', 'set-grid', 'set-crypto',
+      'set-coins-btn', 'set-coins-summary', 'coins-btn', 'coins-modal', 'coins-panel', 'coins-close',
+      'coins-save', 'coins-reset', 'coins-count', 'coin-chips', 'coin-results', 'coin-search', 'coin-search-spin',
+      'coin-search-ic', 'coin-search-clear', 'coin-results-label', 'coins-cancel', 'coins-clear-all',
+      'ncat-btn', 'ncat-modal', 'ncat-panel', 'ncat-close', 'ncat-save', 'ncat-reset', 'ncat-cancel',
+      'ncat-count', 'ncat-chips', 'ncat-clear-all', 'ncat-results', 'ncat-results-label',
+      'ncat-search', 'ncat-search-ic', 'ncat-search-clear', 'ncat-search-spin',
       'set-theme-mode', 'bg-picker', 'bg-opt-default', 'bg-gallery', 'bg-upload'
     ].forEach(function (id) {
       const camel = id.replace(/-([a-z])/g, function (_, c) { return c.toUpperCase(); });
@@ -1380,6 +2108,8 @@
     Array.prototype.forEach.call(els.pxTabs.querySelectorAll('button'), function (t) {
       t.classList.toggle('active', t.getAttribute('data-ptab') === state.pxTab);
     });
+    /* مدیریت ارزها فقط برای تب کریپتو معنا دارد */
+    if (els.coinsBtn) els.coinsBtn.hidden = state.pxTab !== 'crypto';
   }
 
   function init() {
@@ -1484,11 +2214,6 @@
     els.settingsPanel.addEventListener('click', function (e) { e.stopPropagation(); });
     els.setName.addEventListener('input', function (e) { state.name = e.target.value; renderTime(); persist(); });
     els.setEngine.addEventListener('change', function (e) { state.engine = e.target.value; setEngine(e.target.value); persist(); });
-    els.setCoins.addEventListener('input', function (e) {
-      state.coins = e.target.value;
-      state.pxData.crypto.ts = 0; /* کش کریپتو باطل شود تا لیست جدید فوراً لود شود */
-      persist();
-    });
     els.setGrid.addEventListener('change', function (e) { state.showGrid = e.target.checked; applyGrid(); persist(); });
     els.setCrypto.addEventListener('change', function (e) {
       state.showCrypto = e.target.checked; applyShowCrypto(); persist();
@@ -1544,7 +2269,10 @@
     }
 
     document.addEventListener('keydown', function (e) {
-      if (e.key === 'Escape' && !els.settingsModal.hidden) closeSettings();
+      if (e.key !== 'Escape') return;
+      if (els.coinsModal && !els.coinsModal.hidden) closeCoins();   /* بالاترین مودال اول بسته شود */
+      else if (els.ncatModal && !els.ncatModal.hidden) closeNewsCats();
+      else if (!els.settingsModal.hidden) closeSettings();
     });
 
     // timers
@@ -1557,6 +2285,9 @@
 
     // focus search for quick typing
     els.searchInput.focus();
+
+    initCoinManager();
+    initNewsCatManager();
 
     initSpotlight();
     initSparkles();

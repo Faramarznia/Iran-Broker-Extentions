@@ -16,12 +16,16 @@
   "permissions": ["storage", "notifications"],
   "host_permissions": [
     "https://api.coingecko.com/*",
+    "https://query1.finance.yahoo.com/*",
+    "https://query2.finance.yahoo.com/*",
+    "https://call2.tgju.org/*",
+    "https://call3.tgju.org/*",
+    "https://cdn.tsetmc.com/*",
     "https://api.frankfurter.app/*",
     "https://open.er-api.com/*",
     "https://nfs.faireconomy.media/*",
     "https://iranbroker.net/*",
     "https://forum.iranbroker.net/*",
-    "https://call4.tgju.org/*",
     "https://api.accesstoexchange.com/*",
     "https://api.open-meteo.com/*",
     "https://geocoding-api.open-meteo.com/*",
@@ -29,6 +33,6 @@
     "https://api.gapgpt.app/*"
   ],
   "content_security_policy": {
-    "extension_pages": "script-src 'self'; object-src 'self'; connect-src 'self' https://api.coingecko.com https://api.frankfurter.app https://open.er-api.com https://nfs.faireconomy.media https://iranbroker.net https://forum.iranbroker.net https://call4.tgju.org https://api.accesstoexchange.com https://api.open-meteo.com https://geocoding-api.open-meteo.com https://api.anthropic.com https://api.gapgpt.app;"
+    "extension_pages": "script-src 'self'; object-src 'self'; connect-src 'self' https://api.coingecko.com https://query1.finance.yahoo.com https://query2.finance.yahoo.com https://call2.tgju.org https://call3.tgju.org https://cdn.tsetmc.com https://api.frankfurter.app https://open.er-api.com https://nfs.faireconomy.media https://iranbroker.net https://forum.iranbroker.net https://api.accesstoexchange.com https://api.open-meteo.com https://geocoding-api.open-meteo.com https://api.anthropic.com https://api.gapgpt.app;"
   }
 }

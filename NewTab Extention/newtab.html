@@ -125,15 +125,19 @@
                   <span class="dot"></span>
                   <h3>قیمت لحظه‌ای</h3>
                 </div>
-                <button class="refresh-btn" id="crypto-refresh" title="بروزرسانی" aria-label="بروزرسانی"></button>
+                <div class="px-head-actions">
+                  <button class="refresh-btn" id="coins-btn" title="مدیریت ارزها"
+                    aria-label="مدیریت ارزها"></button>
+                  <button class="refresh-btn" id="crypto-refresh" title="بروزرسانی" aria-label="بروزرسانی"></button>
+                </div>
               </div>
               <div class="px-tabs" id="px-tabs" role="tablist">
                 <button data-ptab="crypto" class="active">کریپتو</button>
                 <button data-ptab="forex">فارکس</button>
                 <button data-ptab="iran">بازار ایران</button>
+                <button data-ptab="bourse">بورس</button>
               </div>
               <div class="crypto-list" id="crypto-list"></div>
-              <div class="crypto-foot" id="crypto-foot"></div>
             </div>
 
             <!-- market timeline -->
@@ -156,8 +160,11 @@
                   <span class="dot"></span>
                   <h3>اخبار بازار</h3>
                 </div>
-                <a class="bento-news-all" href="https://iranbroker.net/news/" target="_blank" rel="noopener">همه
-                  اخبار</a>
+                <div class="px-head-actions">
+                  <button class="refresh-btn" id="ncat-btn" title="مدیریت دسته‌بندی‌ها" aria-label="مدیریت دسته‌بندی‌ها"></button>
+                  <a class="bento-news-all" href="https://iranbroker.net/news/" target="_blank" rel="noopener">همه
+                    اخبار</a>
+                </div>
               </div>
               <div class="bn-chips" id="bn-chips" hidden></div>
               <div class="bento-news-list" id="bento-news-list"></div>
@@ -456,8 +463,11 @@
 
             <div class="s-section">
               <div class="s-section-label">ارزهای دیجیتال نمایشی</div>
-              <input class="s-input" type="text" id="set-coins" placeholder="bitcoin,ethereum,tether" />
-              <div class="s-hint">با کاما جدا کنید — حداکثر ۶ ارز</div>
+              <button class="s-open-btn" id="set-coins-btn">
+                <span id="set-coins-summary">— ارز انتخاب شده</span>
+                <span class="s-open-btn-cta">مدیریت</span>
+              </button>
+              <div class="s-hint">افزودن، حذف و جابه‌جایی ارزهای کارت قیمت لحظه‌ای</div>
             </div>
 
           </div>
@@ -468,6 +478,126 @@
           <span class="mf-ver">v2.0</span>
           <button class="btn-primary" id="settings-save">ذخیره تغییرات</button>
         </div>
+
+      </div>
+    </div>
+
+    <!-- ===== COIN MANAGER MODAL ===== -->
+    <div class="modal-overlay" id="coins-modal" hidden>
+      <div class="cm" id="coins-panel" role="dialog" aria-modal="true" aria-labelledby="cm-title">
+
+        <header class="cm-head">
+          <div class="cm-head-txt">
+            <h3 class="cm-title" id="cm-title">مدیریت ارزها</h3>
+            <p class="cm-sub">ارزهایی که در کارت قیمت لحظه‌ای نمایش داده می‌شوند</p>
+          </div>
+          <button class="cm-close" id="coins-close" aria-label="بستن">
+            <svg viewBox="0 0 20 20" fill="none" aria-hidden="true">
+              <path d="M5.5 5.5l9 9M14.5 5.5l-9 9" stroke="currentColor" stroke-width="1.7"
+                stroke-linecap="round" />
+            </svg>
+          </button>
+        </header>
+
+        <div class="cm-search">
+          <span class="cm-search-ic" id="coin-search-ic" aria-hidden="true"></span>
+          <input type="text" id="coin-search" placeholder="جستجوی نام یا نماد ارز…" autocomplete="off"
+            spellcheck="false" dir="ltr" />
+          <span class="cm-spin" id="coin-search-spin" hidden></span>
+          <button class="cm-clear" id="coin-search-clear" aria-label="پاک کردن جستجو" hidden>
+            <svg viewBox="0 0 16 16" fill="none" aria-hidden="true">
+              <path d="M4.5 4.5l7 7M11.5 4.5l-7 7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
+            </svg>
+          </button>
+        </div>
+
+        <div class="cm-body">
+
+          <section class="cm-sec cm-sec-tray">
+            <div class="cm-sec-head">
+              <span class="cm-sec-title">انتخاب‌شده</span>
+              <span class="cm-count" id="coins-count"></span>
+              <button class="cm-link" id="coins-clear-all">پاک کردن همه</button>
+            </div>
+            <div class="cm-tray" id="coin-chips"></div>
+          </section>
+
+          <section class="cm-sec cm-sec-list">
+            <div class="cm-sec-head">
+              <span class="cm-sec-title" id="coin-results-label">ارزهای محبوب</span>
+            </div>
+            <div class="cm-list" id="coin-results"></div>
+          </section>
+
+        </div>
+
+        <footer class="cm-foot">
+          <button class="cm-btn cm-btn-ghost" id="coins-reset">بازگردانی پیش‌فرض</button>
+          <div class="cm-foot-actions">
+            <button class="cm-btn cm-btn-ghost" id="coins-cancel">انصراف</button>
+            <button class="cm-btn cm-btn-save" id="coins-save">ذخیره</button>
+          </div>
+        </footer>
+
+      </div>
+    </div>
+
+    <!-- ===== NEWS CATEGORY MANAGER MODAL ===== -->
+    <div class="modal-overlay" id="ncat-modal" hidden>
+      <div class="cm" id="ncat-panel" role="dialog" aria-modal="true" aria-labelledby="ncat-title">
+
+        <header class="cm-head">
+          <div class="cm-head-txt">
+            <h3 class="cm-title" id="ncat-title">مدیریت دسته‌بندی اخبار</h3>
+            <p class="cm-sub">دسته‌هایی که در کارت اخبار بازار نمایش داده می‌شوند</p>
+          </div>
+          <button class="cm-close" id="ncat-close" aria-label="بستن">
+            <svg viewBox="0 0 20 20" fill="none" aria-hidden="true">
+              <path d="M5.5 5.5l9 9M14.5 5.5l-9 9" stroke="currentColor" stroke-width="1.7"
+                stroke-linecap="round" />
+            </svg>
+          </button>
+        </header>
+
+        <div class="cm-search">
+          <span class="cm-search-ic" id="ncat-search-ic" aria-hidden="true"></span>
+          <input type="text" id="ncat-search" placeholder="جستجوی دسته‌بندی… مثلاً طلا یا فارکس" autocomplete="off"
+            spellcheck="false" />
+          <span class="cm-spin" id="ncat-search-spin" hidden></span>
+          <button class="cm-clear" id="ncat-search-clear" aria-label="پاک کردن جستجو" hidden>
+            <svg viewBox="0 0 16 16" fill="none" aria-hidden="true">
+              <path d="M4.5 4.5l7 7M11.5 4.5l-7 7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
+            </svg>
+          </button>
+        </div>
+
+        <div class="cm-body">
+
+          <section class="cm-sec cm-sec-tray">
+            <div class="cm-sec-head">
+              <span class="cm-sec-title">انتخاب‌شده</span>
+              <span class="cm-count" id="ncat-count"></span>
+              <button class="cm-link" id="ncat-clear-all">پاک کردن همه</button>
+            </div>
+            <div class="cm-tray" id="ncat-chips"></div>
+          </section>
+
+          <section class="cm-sec cm-sec-list">
+            <div class="cm-sec-head">
+              <span class="cm-sec-title" id="ncat-results-label">دسته‌بندی‌های محبوب</span>
+            </div>
+            <div class="cm-list" id="ncat-results"></div>
+          </section>
+
+        </div>
+
+        <footer class="cm-foot">
+          <button class="cm-btn cm-btn-ghost" id="ncat-reset">بازگردانی پیش‌فرض</button>
+          <div class="cm-foot-actions">
+            <button class="cm-btn cm-btn-ghost" id="ncat-cancel">انصراف</button>
+            <button class="cm-btn cm-btn-save" id="ncat-save">ذخیره</button>
+          </div>
+        </footer>
 
       </div>
     </div>

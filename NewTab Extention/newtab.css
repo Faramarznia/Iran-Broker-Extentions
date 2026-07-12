@@ -695,8 +695,20 @@ a {
   gap: 1px;
   flex: 1;
   min-height: 0;
+  /* در چیدمان‌هایی که کارت ارتفاع آزاد دارد، سقف می‌گذاریم تا لیست
+     داخل خودش اسکرول بخورد و کارت را کش ندهد */
+  max-height: 300px;
   overflow-y: auto;
-  scrollbar-width: thin
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  /* محو شدن نرم لبه‌ی پایین به‌عنوان نشانه‌ی ادامه‌داشتن لیست */
+  -webkit-mask-image: linear-gradient(180deg, #000 calc(100% - 22px), transparent);
+  mask-image: linear-gradient(180deg, #000 calc(100% - 22px), transparent)
+}
+
+/* در چیدمان دیتا محور کارت خودش ارتفاع ثابت دارد — سقف را برمی‌داریم */
+body[data-layout="data"] .crypto-list {
+  max-height: none
 }
 
 .c-row {
@@ -798,18 +810,7 @@ a {
   direction: ltr
 }
 
-.crypto-foot {
-  font-size: 10px;
-  color: var(--soft);
-  margin-top: 10px;
-  text-align: center;
-  padding-top: 9px;
-  opacity: .75
-}
 
-.crypto-foot .err {
-  color: var(--orange)
-}
 
 /* forex ring */
 .ring-card h3 {
@@ -976,8 +977,21 @@ a {
   flex-direction: column;
   gap: 0;
   flex: 1;
+  min-height: 0;
+  /* در چیدمان‌هایی که کارت ارتفاع آزاد دارد، سقف می‌گذاریم تا لیست
+     داخل خودش اسکرول بخورد و کارت را کش ندهد — هم‌رفتار با کارت قیمت لحظه‌ای */
+  max-height: 300px;
   overflow-y: auto;
-  overflow-x: hidden
+  overflow-x: hidden;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  /* محو شدن نرم لبه‌ی پایین به‌عنوان نشانه‌ی ادامه‌داشتن لیست */
+  -webkit-mask-image: linear-gradient(180deg, #000 calc(100% - 22px), transparent);
+  mask-image: linear-gradient(180deg, #000 calc(100% - 22px), transparent)
+}
+
+body[data-layout="data"] .bento-news-list {
+  max-height: none
 }
 
 .bento-news-list::-webkit-scrollbar {
@@ -8227,11 +8241,17 @@ body[data-theme="light"] .airo-overlay {
 /* --- price card: tabs --- */
 .px-tabs {
   display: flex;
-  gap: 16px;
+  gap: 14px;
   border-bottom: 1px solid var(--border);
   margin-bottom: 8px;
   padding: 0 2px;
-  flex-shrink: 0
+  flex-shrink: 0;
+  overflow-x: auto;
+  scrollbar-width: none
+}
+
+.px-tabs::-webkit-scrollbar {
+  display: none
 }
 
 .px-tabs button {
@@ -8244,6 +8264,8 @@ body[data-theme="light"] .airo-overlay {
   padding: 0 0 7px;
   margin-bottom: -1px;
   cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
   border-bottom: 1.5px solid transparent;
   transition: color .18s, border-color .18s
 }
@@ -8442,15 +8464,7 @@ body[data-theme="light"] .airo-overlay {
   padding: 20px 0
 }
 
-.foot-sep {
-  margin: 0 5px;
-  opacity: .5
-}
 
-.crypto-foot b {
-  font-weight: 600;
-  font-variant-numeric: tabular-nums
-}
 
 .crypto-list::-webkit-scrollbar { width: 3px }
 
@@ -8509,11 +8523,13 @@ body[data-theme="light"] .airo-overlay {
 /* --- news card --- */
 .bn-chips {
   display: flex;
-  gap: 13px;
+  gap: 14px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 8px;
+  padding: 0 2px;
+  flex-shrink: 0;
   overflow-x: auto;
-  padding: 0 2px 8px;
-  scrollbar-width: none;
-  flex-shrink: 0
+  scrollbar-width: none
 }
 
 .bn-chips::-webkit-scrollbar { display: none }
@@ -8522,14 +8538,16 @@ body[data-theme="light"] .airo-overlay {
   border: 0;
   background: transparent;
   color: var(--soft);
-  font-size: 10.5px;
+  font-size: 11.5px;
   font-weight: 600;
   font-family: inherit;
-  padding: 3px 2px;
+  padding: 0 0 7px;
+  margin-bottom: -1px;
   cursor: pointer;
   white-space: nowrap;
+  flex-shrink: 0;
   border-bottom: 1.5px solid transparent;
-  transition: color .15s, border-color .15s
+  transition: color .18s, border-color .18s
 }
 
 .bn-chip:hover {
@@ -8537,7 +8555,7 @@ body[data-theme="light"] .airo-overlay {
 }
 
 .bn-chip.active {
-  color: var(--chip, var(--primary));
+  color: var(--text);
   border-bottom-color: var(--chip, var(--primary))
 }
 
@@ -8562,13 +8580,11 @@ body[data-theme="light"] .airo-overlay {
   flex-shrink: 0
 }
 
-.bn-item.read,
-.bn-hero.read {
+.bn-item.read {
   opacity: .5
 }
 
-.bn-item.read:hover,
-.bn-hero.read:hover {
+.bn-item.read:hover {
   opacity: .8
 }
 
@@ -8579,59 +8595,626 @@ body[data-theme="light"] .airo-overlay {
   inset: 0
 }
 
-/* خبر شاخص با تصویر بزرگ */
-.bn-hero {
-  position: relative;
-  display: block;
-  border-radius: 12px;
-  overflow: hidden;
-  margin-bottom: 8px;
-  text-decoration: none;
-  background: var(--surface2);
-  flex-shrink: 0
-}
-
-.bn-hero img {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform .4s ease
-}
-
-.bn-hero:hover img {
-  transform: scale(1.05)
-}
-
-.bn-hero-txt {
-  position: relative;
-  z-index: 2;
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-  justify-content: flex-end;
-  min-height: 96px;
-  padding: 36px 11px 9px;
-  background: linear-gradient(180deg, transparent 10%, rgba(5, 8, 18, .88))
-}
-
-.bn-hero-title {
-  font-size: 12.5px;
-  font-weight: 700;
-  line-height: 1.75;
-  color: #fff;
-  text-shadow: 0 1px 8px rgba(0, 0, 0, .55);
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden
-}
-
-.bn-hero .bn-time { color: rgba(255, 255, 255, .8) }
-
 /* --- tools dock: فضای بیشتر برای بنتو در چیدمان دیتا محور --- */
 body[data-layout="data"] .content-block {
   gap: 13px
+}
+
+/* دادهٔ کهنه/آفلاین — روی خود دکمهٔ بروزرسانی */
+.refresh-btn.is-stale {
+  color: var(--orange);
+  border-color: var(--orange)
+}
+
+/* ===================================================================
+   COIN MANAGER — مودال مدیریت ارزهای کارت قیمت لحظه‌ای
+   پوستهٔ مستقل (cm-*) — از مودال تنظیمات ارث نمی‌برد.
+   =================================================================== */
+
+/* دکمه‌ی مدیریت کنار بروزرسانی در سربرگ کارت */
+.px-head-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px
+}
+
+/* دکمه‌ی ورود از تنظیمات */
+.s-open-btn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  gap: 10px;
+  padding: 11px 14px;
+  border-radius: 12px;
+  border: 1.5px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  font-family: inherit;
+  font-size: 13.5px;
+  cursor: pointer;
+  transition: border-color .18s
+}
+
+.s-open-btn:hover {
+  border-color: var(--border2)
+}
+
+.s-open-btn-cta {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--primary)
+}
+
+/* ── shell ── */
+.cm {
+  display: flex;
+  flex-direction: column;
+  width: min(500px, 94vw);
+  /* ارتفاع ثابت: با افزودن/حذف ارز، مودال بالا-پایین نمی‌پرد */
+  height: min(620px, 88vh);
+  background: var(--surfaceSolid);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  animation: modalIn .18s cubic-bezier(.4, 0, .2, 1)
+}
+
+body[data-theme="glass"] .cm {
+  background: rgba(12, 16, 27, .82);
+  -webkit-backdrop-filter: blur(28px) saturate(180%);
+  backdrop-filter: blur(28px) saturate(180%);
+  border-color: rgba(255, 255, 255, .11)
+}
+
+/* ── head ── */
+.cm-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 19px 20px 15px;
+  flex-shrink: 0
+}
+
+.cm-title {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.3
+}
+
+.cm-sub {
+  margin: 3px 0 0;
+  font-size: 11.5px;
+  line-height: 1.6;
+  color: var(--soft)
+}
+
+.cm-close {
+  width: 30px;
+  height: 30px;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  border: 0;
+  border-radius: 9px;
+  background: transparent;
+  color: var(--soft);
+  cursor: pointer;
+  transition: background .15s, color .15s
+}
+
+.cm-close svg {
+  width: 16px;
+  height: 16px
+}
+
+.cm-close:hover {
+  background: var(--surface2);
+  color: var(--text)
+}
+
+/* ── search (چسبیده زیر هدر، همیشه در دسترس) ── */
+.cm-search {
+  position: relative;
+  flex-shrink: 0;
+  margin: 0 20px 4px
+}
+
+.cm-search input {
+  width: 100%;
+  box-sizing: border-box;
+  height: 42px;
+  padding: 0 40px 0 38px;      /* راست: ذره‌بین · چپ: پاک‌کن */
+  border-radius: 12px;
+  border: 1.5px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  font-family: inherit;
+  font-size: 13.5px;
+  outline: none;
+  transition: border-color .18s, box-shadow .18s
+}
+
+.cm-search input:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--primarySoft)
+}
+
+/* placeholder فارسی داخل اینپوت LTR نباید به‌هم بریزد */
+.cm-search input::placeholder {
+  direction: rtl;
+  text-align: right;
+  color: var(--soft)
+}
+
+.cm-search-ic {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  width: 15px;
+  height: 15px;
+  margin-top: -7.5px;
+  color: var(--soft);
+  pointer-events: none
+}
+
+.cm-search-ic svg {
+  width: 100%;
+  height: 100%
+}
+
+.cm-spin {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  width: 14px;
+  height: 14px;
+  margin-top: -7px;
+  border: 2px solid var(--border2);
+  border-top-color: var(--primary);
+  border-radius: 99px;
+  animation: spin .7s linear infinite
+}
+
+.cm-clear {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  width: 22px;
+  height: 22px;
+  margin-top: -11px;
+  display: grid;
+  place-items: center;
+  border: 0;
+  border-radius: 99px;
+  background: var(--surface2);
+  color: var(--soft);
+  cursor: pointer;
+  transition: background .15s, color .15s
+}
+
+.cm-clear svg {
+  width: 11px;
+  height: 11px
+}
+
+.cm-clear:hover {
+  background: var(--border);
+  color: var(--text)
+}
+
+/* ── body ── */
+.cm-body {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 0 20px
+}
+
+.cm-sec-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 2px 8px
+}
+
+.cm-sec-title {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--sub);
+  letter-spacing: .2px
+}
+
+.cm-count {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--soft);
+  background: var(--surface2);
+  border-radius: 99px;
+  padding: 2px 8px
+}
+
+.cm-count.is-full {
+  color: var(--orange);
+  background: rgba(246, 167, 35, .12)
+}
+
+/* لینک متنی کم‌رنگ — تا وقتی لازم نیست، جلب توجه نکند */
+.cm-link {
+  margin-inline-start: auto;
+  border: 0;
+  background: transparent;
+  color: var(--soft);
+  font-family: inherit;
+  font-size: 10.5px;
+  font-weight: 600;
+  padding: 2px 4px;
+  cursor: pointer;
+  transition: color .15s
+}
+
+.cm-link:hover {
+  color: var(--red)
+}
+
+.cm-link[hidden] {
+  display: none
+}
+
+/* ── selected tray ── */
+.cm-sec-tray {
+  flex-shrink: 0
+}
+
+.cm-tray {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  min-height: 54px;
+  max-height: 116px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  padding: 8px;
+  border-radius: 13px;
+  background: var(--surface);
+  border: 1px solid var(--border)
+}
+
+.cm-tray::-webkit-scrollbar {
+  width: 3px
+}
+
+.cm-tray::-webkit-scrollbar-thumb {
+  background: var(--border2);
+  border-radius: 99px
+}
+
+.cm-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 30px;
+  padding: 0 5px 0 8px;
+  border-radius: 99px;
+  border: 1px solid var(--border);
+  background: var(--surface2);
+  cursor: grab;
+  user-select: none;
+  transition: border-color .15s, box-shadow .15s, opacity .15s, transform .15s
+}
+
+.cm-chip:hover {
+  border-color: var(--border2)
+}
+
+.cm-chip:active {
+  cursor: grabbing
+}
+
+.cm-chip.dragging {
+  opacity: .35;
+  cursor: grabbing
+}
+
+.cm-chip.drag-over {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--primarySoft);
+  transform: scale(1.04)
+}
+
+.cm-chip .px-ava {
+  width: 20px;
+  height: 20px
+}
+
+.cm-chip-sym {
+  font-size: 11.5px;
+  font-weight: 700;
+  direction: ltr
+}
+
+.cm-chip-x {
+  width: 18px;
+  height: 18px;
+  display: grid;
+  place-items: center;
+  border: 0;
+  border-radius: 99px;
+  background: transparent;
+  color: var(--soft);
+  font-size: 15px;
+  line-height: 1;
+  cursor: pointer;
+  transition: background .15s, color .15s
+}
+
+.cm-chip-x:hover {
+  background: var(--redSoft);
+  color: var(--red)
+}
+
+/* ── results list (تنها ناحیه‌ای که رشد می‌کند) ── */
+.cm-sec-list {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column
+}
+
+.cm-list {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding-bottom: 8px;
+  /* محو نرم لبه‌ی پایین — نشانه‌ی ادامه‌ی فهرست */
+  -webkit-mask-image: linear-gradient(180deg, #000 calc(100% - 20px), transparent);
+  mask-image: linear-gradient(180deg, #000 calc(100% - 20px), transparent)
+}
+
+.cm-list::-webkit-scrollbar {
+  width: 3px
+}
+
+.cm-list::-webkit-scrollbar-thumb {
+  background: var(--border2);
+  border-radius: 99px
+}
+
+.cm-row {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  width: 100%;
+  padding: 8px 10px;
+  border: 0;
+  border-radius: 12px;
+  background: transparent;
+  color: var(--text);
+  font-family: inherit;
+  text-align: right;
+  cursor: pointer;
+  transition: background .15s
+}
+
+.cm-row:hover:not(:disabled) {
+  background: var(--surface2)
+}
+
+.cm-row:disabled {
+  opacity: .38;
+  cursor: default
+}
+
+.cm-row .px-ava {
+  width: 28px;
+  height: 28px
+}
+
+.cm-row-txt {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  line-height: 1.35
+}
+
+.cm-row-sym {
+  font-size: 12.5px;
+  font-weight: 700;
+  direction: ltr;
+  text-align: right
+}
+
+.cm-row-name {
+  font-size: 10.5px;
+  color: var(--soft);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis
+}
+
+.cm-row-rank {
+  font-size: 10px;
+  color: var(--soft);
+  font-variant-numeric: tabular-nums;
+  direction: ltr;
+  flex-shrink: 0
+}
+
+/* اکشن: دایره‌ای که روی هاور به پیل برچسب‌دار باز می‌شود */
+.cm-row-act {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  height: 24px;
+  min-width: 24px;
+  padding: 0 5px;
+  flex-shrink: 0;
+  border-radius: 99px;
+  background: var(--primarySoft);
+  color: var(--primary);
+  font-size: 13px;
+  font-weight: 700;
+  transition: padding .16s ease, background .15s, color .15s
+}
+
+.cm-row-act i {
+  display: none;
+  font-style: normal;
+  font-size: 10.5px;
+  font-weight: 600
+}
+
+.cm-row:hover:not(:disabled) .cm-row-act {
+  padding: 0 10px
+}
+
+.cm-row:hover:not(:disabled) .cm-row-act i {
+  display: inline
+}
+
+/* ارزی که از قبل انتخاب شده: تیک سبز — و هاور یعنی «حذف» */
+.cm-row.on .cm-row-act {
+  background: var(--greenSoft);
+  color: var(--green)
+}
+
+.cm-row.on:hover .cm-row-act {
+  background: var(--redSoft);
+  color: var(--red)
+}
+
+/* ── empty states ── */
+.cm-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  flex: 1;
+  width: 100%;
+  min-height: 90px;
+  padding: 18px 12px;
+  text-align: center
+}
+
+.cm-empty b {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--sub)
+}
+
+.cm-empty span {
+  font-size: 11px;
+  color: var(--soft);
+  line-height: 1.7
+}
+
+/* ── foot ── */
+.cm-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-shrink: 0;
+  padding: 14px 20px;
+  border-top: 1px solid var(--border);
+  background: var(--surface)
+}
+
+body[data-theme="glass"] .cm-foot {
+  background: rgba(255, 255, 255, .04)
+}
+
+.cm-foot-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px
+}
+
+.cm-btn {
+  font-family: inherit;
+  font-size: 12.5px;
+  font-weight: 600;
+  padding: 9px 16px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background .15s, border-color .15s, color .15s, opacity .15s
+}
+
+.cm-btn-ghost {
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--sub)
+}
+
+.cm-btn-ghost:hover {
+  color: var(--text);
+  border-color: var(--border2)
+}
+
+.cm-btn-save {
+  border: 1px solid transparent;
+  background: var(--primaryStrong);
+  color: #fff;
+  box-shadow: 0 4px 14px -4px var(--primaryStrong)
+}
+
+.cm-btn-save:hover {
+  filter: brightness(1.08)
+}
+
+/* تا وقتی تغییر ذخیره‌نشده‌ای نیست، ذخیره خاموش است */
+.cm-btn-save:disabled {
+  opacity: .4;
+  cursor: default;
+  pointer-events: none;
+  box-shadow: none
+}
+
+@media (max-width:560px) {
+  .cm {
+    height: 92vh
+  }
+
+  .cm-row-rank {
+    display: none
+  }
+}
+
+/* ===================================================================
+   NEWS CATEGORY MANAGER — از پوستهٔ .cm-* مدیریت ارزها استفاده می‌کند.
+   تنها تفاوت: دسته‌بندی لوگو ندارد؛ به‌جایش یک نقطهٔ رنگی (.cm-dot) می‌آید.
+   =================================================================== */
+.cm-dot {
+  width: 11px;
+  height: 11px;
+  border-radius: 99px;
+  flex-shrink: 0;
+  box-shadow: 0 0 0 3px var(--surface2)
+}
+
+.cm-chip .cm-dot {
+  width: 9px;
+  height: 9px;
+  box-shadow: none;
+  margin: 0 1px
+}
+
+.cm-row .cm-dot {
+  width: 12px;
+  height: 12px;
+  margin-inline-start: 2px
 }
