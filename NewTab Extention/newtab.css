@@ -6840,6 +6840,7 @@ body[data-layout="hub"] .hub-aside-cal { gap: 16px }
 .hub-modal-bg[hidden] { display: none !important }
 
 .hub-modal {
+  position: relative;              /* absolute children stay inside the modal, not the fixed backdrop */
   background: var(--surface);
   border: 1px solid var(--border2);
   border-radius: 22px;
@@ -6921,6 +6922,7 @@ body[data-layout="hub"] .hub-aside-cal { gap: 16px }
   margin-bottom: 4px
 }
 .hqa-prev-ic {
+  position: relative;              /* containing block for the absolute .hqa-fav */
   width: 58px; height: 58px;
   border-radius: 16px;
   background: var(--qac, #185adb);
@@ -6929,8 +6931,11 @@ body[data-layout="hub"] .hub-aside-cal { gap: 16px }
   font-size: 26px;
   font-weight: 700;
   box-shadow: 0 8px 22px rgba(0,0,0,.3);
+  overflow: hidden;
   transition: background .2s
 }
+/* the preview tile is larger than a grid tile → scale the favicon inset to match */
+.hqa-prev-ic .hqa-fav { padding: 11px }
 
 .hub-qa-colors {
   display: flex;
