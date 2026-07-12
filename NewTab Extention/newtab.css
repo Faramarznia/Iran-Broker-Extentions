@@ -958,18 +958,27 @@ body[data-layout="data"] .crypto-list {
   overflow: hidden
 }
 
+/* دکمه‌ای هم‌قواره با refresh-btn/ncat-btn کنارش — تا با هم یک مجموعهٔ یکپارچه دیده شوند */
 .bento-news-all {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 30px;
+  padding: 0 13px;
+  border-radius: 9px;
+  border: 1px solid var(--border);
+  background: var(--surface2);
+  color: var(--primary);
   font-size: 11.5px;
   font-weight: 600;
-  color: var(--primary);
   text-decoration: none;
   white-space: nowrap;
-  opacity: .8;
-  transition: opacity .15s
+  transition: border-color .15s, background .15s
 }
 
 .bento-news-all:hover {
-  opacity: 1
+  border-color: var(--border2);
+  background: var(--surface)
 }
 
 .bento-news-list {
@@ -1930,7 +1939,7 @@ body[data-layout="data"] .content-block {
 }
 
 body[data-layout="data"] .hero-search-wrap {
-  gap: 0
+  gap: 24px
 }
 
 body[data-layout="data"] .sec-hero {
@@ -4224,6 +4233,292 @@ body[data-layout="data"] .sidebar-community.collapsed .sb-content {
   pointer-events: none
 }
 
+/* ═══════════════════════════════════════
+   ARTICLES SIDEBAR — fixed overlay, LEFT edge
+   (mirror of the community panel, richer content)
+═══════════════════════════════════════ */
+body[data-layout="data"] .sidebar-articles {
+  position: fixed;
+  left: 0;
+  top: 32px;
+  height: calc(100vh - 64px);
+  width: 268px;
+  border-radius: 0 16px 16px 0;
+  border-left: none;
+  padding: 0;
+  overflow: visible;
+  z-index: 30;
+  transition: width .34s cubic-bezier(.22, 1, .36, 1), box-shadow .34s
+}
+
+/* accent edge that breathes while open */
+body[data-layout="data"] .sidebar-articles::after {
+  content: '';
+  position: absolute;
+  inset-inline-end: -1px;
+  top: 18%;
+  height: 64%;
+  width: 2px;
+  border-radius: 2px;
+  background: linear-gradient(180deg, transparent, var(--primary), transparent);
+  opacity: .55;
+  animation: arEdge 3.6s ease-in-out infinite;
+  pointer-events: none
+}
+@keyframes arEdge {
+  0%, 100% { opacity: .25; transform: scaleY(.7) }
+  50%      { opacity: .7;  transform: scaleY(1) }
+}
+body[data-layout="data"] .sidebar-articles.collapsed::after { display: none }
+
+body[data-layout="data"] .sidebar-articles.collapsed {
+  width: 36px;
+  box-shadow: none
+}
+body[data-layout="data"] .sidebar-articles.collapsed .sb-tab { display: flex }
+body[data-layout="data"] .sidebar-articles.collapsed .sb-content {
+  opacity: 0;
+  pointer-events: none
+}
+
+/* collapse arrow mirrors the community one (opposite edge) */
+.sidebar-articles .sb-toggle svg { transform: rotate(0deg) }
+.sidebar-articles.collapsed .sb-toggle svg { transform: rotate(180deg) }
+
+.sb-head-actions { display: flex; align-items: center; gap: 5px; flex-shrink: 0 }
+#sb-art-refresh svg { transition: transform .6s cubic-bezier(.22, 1, .36, 1) }
+#sb-art-refresh.spin svg { transform: rotate(-360deg) }
+
+.sb-dot-art {
+  background: var(--primary);
+  box-shadow: 0 0 0 3px var(--primarySoft)
+}
+
+/* vertical tab (collapsed state) */
+.sb-tab-art {
+  flex-direction: column;
+  gap: 10px
+}
+.sb-tab-art .sb-tab-art-ic {
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 8px;
+  color: var(--primary);
+  background: var(--primarySoft);
+  transition: transform .25s ease
+}
+.sb-tab-art:hover .sb-tab-art-ic { transform: translateY(-2px) }
+
+/* category chips */
+.art-chips {
+  display: flex;
+  gap: 5px;
+  flex-wrap: wrap;
+  padding: 2px 2px 10px;
+  flex-shrink: 0
+}
+.ar-chip {
+  border: 1px solid color-mix(in srgb, var(--chip, var(--primary)) 30%, transparent);
+  border-radius: 20px;
+  background: transparent;
+  color: var(--sub);
+  font-family: inherit;
+  font-size: 10.5px;
+  font-weight: 700;
+  padding: 4px 10px;
+  cursor: pointer;
+  transition: color .14s, background .14s, border-color .14s
+}
+.ar-chip:hover { color: var(--text); background: var(--surface2) }
+.ar-chip.active {
+  color: var(--chip, var(--primary));
+  background: color-mix(in srgb, var(--chip, var(--primary)) 13%, transparent);
+  border-color: color-mix(in srgb, var(--chip, var(--primary)) 55%, transparent)
+}
+
+/* ── staggered entrance (replayed on every open) ── */
+@keyframes arIn {
+  from { opacity: 0; transform: translateX(-14px); filter: blur(3px) }
+  to   { opacity: 1; transform: none; filter: none }
+}
+.sidebar-articles .ar-stag {
+  animation: arIn .45s cubic-bezier(.22, 1, .36, 1) both;
+  animation-delay: calc(var(--i, 0) * 45ms)
+}
+
+/* ── hero card (newest article) ── */
+.ar-hero {
+  position: relative;
+  display: block;
+  border-radius: 14px;
+  overflow: hidden;
+  aspect-ratio: 16 / 9.5;
+  margin-bottom: 8px;
+  flex-shrink: 0;
+  background: var(--surface2);
+  text-decoration: none;
+  isolation: isolate
+}
+.ar-hero-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform .5s cubic-bezier(.22, 1, .36, 1)
+}
+.ar-hero:hover .ar-hero-img { transform: scale(1.06) }
+.ar-hero-grad {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(0,0,0,.05) 30%, rgba(6,8,14,.88) 100%);
+  z-index: 1
+}
+.ar-hero-body {
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0;
+  z-index: 2;
+  padding: 10px 11px
+}
+.ar-hero-meta { display: flex; align-items: center; gap: 5px; margin-bottom: 6px }
+.ar-badge {
+  font-size: 9.5px;
+  font-weight: 800;
+  color: #fff;
+  border-radius: 20px;
+  padding: 2px 8px
+}
+.ar-fresh {
+  font-size: 9px;
+  font-weight: 800;
+  color: var(--green);
+  background: rgba(31, 193, 107, .18);
+  border-radius: 20px;
+  padding: 2px 6px
+}
+.ar-hero-title {
+  font-size: 12.8px;
+  font-weight: 800;
+  line-height: 1.6;
+  color: #fff;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden
+}
+.ar-hero-time { margin-top: 4px; font-size: 10px; color: rgba(255, 255, 255, .65) }
+
+/* ── compact rows ── */
+.ar-item {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 8px 6px;
+  border-radius: 12px;
+  text-decoration: none;
+  transition: background .14s
+}
+.ar-item:hover { background: var(--surface2) }
+.ar-item:hover .ar-go { opacity: 1; transform: translateX(-2px) }
+
+.ar-thumb {
+  position: relative;
+  width: 50px;
+  height: 50px;
+  border-radius: 11px;
+  overflow: hidden;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center
+}
+.ar-thumb-ph { font-size: 12px; font-weight: 800 }
+.ar-thumb-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover
+}
+
+.ar-body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px }
+.ar-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text);
+  line-height: 1.55;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden
+}
+.ar-meta {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 10px;
+  color: var(--soft)
+}
+.ar-meta-dot { width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0 }
+.ar-meta-cat { max-width: 80px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap }
+.ar-meta-sep { opacity: .6 }
+
+.ar-go {
+  flex-shrink: 0;
+  color: var(--soft);
+  opacity: 0;
+  transition: opacity .16s, transform .16s
+}
+
+/* ── skeleton shimmer ── */
+@keyframes arShimmer {
+  from { background-position: 200% 0 }
+  to   { background-position: -200% 0 }
+}
+.ar-skel {
+  border-radius: 11px;
+  background: linear-gradient(90deg, var(--surface2) 25%, var(--border) 50%, var(--surface2) 75%);
+  background-size: 200% 100%;
+  animation: arShimmer 1.4s linear infinite
+}
+.ar-skel-hero { aspect-ratio: 16 / 9.5; border-radius: 14px; margin-bottom: 10px; flex-shrink: 0 }
+.ar-skel-row { display: flex; gap: 9px; padding: 8px 6px; align-items: center }
+.ar-skel-thumb { width: 50px; height: 50px; flex-shrink: 0 }
+.ar-skel-lines { flex: 1; display: flex; flex-direction: column; gap: 7px }
+.ar-skel-l1 { height: 11px; width: 92% }
+.ar-skel-l2 { height: 9px; width: 55% }
+
+/* ── error / empty ── */
+.ar-err {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  margin: auto 0;
+  padding: 26px 12px;
+  text-align: center;
+  font-size: 12px;
+  color: var(--soft)
+}
+.ar-err-ic { font-size: 24px }
+.ar-retry {
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  background: var(--surface2);
+  color: var(--text);
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 6px 14px;
+  cursor: pointer;
+  transition: background .14s
+}
+.ar-retry:hover { background: var(--border) }
+
+.sb-more-art:hover { color: var(--primary) }
+
 /* ── Layout: simple (minimal centered) ── */
 body[data-layout="simple"] .sidebar {
   display: none
@@ -5899,10 +6194,10 @@ body[data-layout="hub"] .hub-quick {
 /* ── Wide layout: aside columns flank the centred hero/search, running
    from the search box's top edge to the bottom of the page; quick-access
    matches the search box's width ── */
-@media (min-width: 1081px) {
+@media (min-width: 1400px) {
   body[data-layout="hub"] .page-col {
     display: grid;
-    grid-template-columns: 1fr 310px minmax(0, 660px) 310px 1fr;
+    grid-template-columns: 1fr 310px 660px 310px 1fr;
     grid-template-rows: auto auto auto 1fr;
     grid-template-areas:
       "head   head head   head  head"
@@ -9217,4 +9512,52 @@ body[data-theme="glass"] .cm-foot {
   width: 12px;
   height: 12px;
   margin-inline-start: 2px
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   SEARCH BLOCK — یک هندسهٔ واحد در هر سه حالت (مرجع: حالت ساده)
+   فقط ابعاد و فاصله‌ها؛ رنگ و افکت هر تم/حالت دست‌نخورده می‌ماند.
+═══════════════════════════════════════════════════════════════ */
+body[data-layout] .sec-search {
+  max-width: 660px;
+  width: 100%;
+  margin: 0 auto
+}
+
+body[data-layout] .search-box {
+  gap: 10px;
+  padding: 8px 20px 8px 14px;
+  border-radius: 99px
+}
+
+body[data-layout] .search-box .s-ic,
+body[data-layout] .search-box .s-ic svg {
+  width: 20px;
+  height: 20px
+}
+
+body[data-layout] .search-box input {
+  font-size: 16px;
+  padding: 11px 2px
+}
+
+body[data-layout] .scope-label {
+  font-size: 12px;
+  padding: 5px 11px
+}
+
+body[data-layout] .search-go {
+  width: 42px;
+  height: 42px
+}
+
+body[data-layout] .engines {
+  gap: 7px;
+  margin-top: 13px
+}
+
+body[data-layout] .engines button {
+  gap: 6px;
+  font-size: 12.5px;
+  padding: 7px 16px
 }

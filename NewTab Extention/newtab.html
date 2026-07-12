@@ -216,6 +216,47 @@
       </div>
     </aside>
 
+    <!-- Articles sidebar: fixed overlay panel (left edge) -->
+    <aside class="sidebar sidebar-articles" id="sb-articles">
+      <button class="sb-tab sb-tab-art" id="sb-art-tab" aria-label="باز کردن مقالات">
+        <span class="sb-tab-art-ic" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+          </svg>
+        </span>
+        <span>مقالات ایران بروکر</span>
+      </button>
+      <div class="sb-content">
+        <div class="sb-head">
+          <div class="sb-head-info">
+            <span class="sb-dot sb-dot-art"></span>
+            <span class="sb-title">مقالات ایران بروکر</span>
+          </div>
+          <div class="sb-head-actions">
+            <button class="sb-toggle" id="sb-art-refresh" aria-label="بروزرسانی مقالات" title="بروزرسانی">
+              <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M13.5 8a5.5 5.5 0 1 1-1.6-3.9M13.5 1.8v2.7h-2.7" stroke="currentColor" stroke-width="1.5"
+                  stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+            </button>
+            <button class="sb-toggle" id="sb-art-toggle" aria-label="جمع کردن">
+              <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M10 12L6 8l4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                  stroke-linejoin="round" />
+              </svg>
+            </button>
+          </div>
+        </div>
+        <div class="art-chips" id="art-chips" hidden></div>
+        <div class="sb-list" id="sb-art-list"></div>
+        <div class="sb-footer">
+          <a class="sb-more sb-more-art" href="https://iranbroker.net/" target="_blank" rel="noopener">مشاهدهٔ همهٔ مقالات</a>
+        </div>
+      </div>
+    </aside>
+
     <!-- ===== AIRO — AI CHAT MODAL ===== -->
     <div class="airo-overlay" id="airo-overlay" hidden>
       <div class="airo-modal" id="airo-panel" data-mood="idle">
@@ -1004,6 +1045,7 @@
   <script src="js/focus.js"></script>
   <script src="js/journal.js"></script>
   <script src="js/hub.js"></script>
+  <script src="js/articles.js"></script>
   <script src="js/tour.js"></script>
 </body>
 
