@@ -112,17 +112,8 @@
           <aside class="hub-aside hub-aside-tasks" id="hub-tasks-box"></aside>
         </div><!-- /hub-panels -->
 
-        <!-- ===== CONTENT BLOCK (tools + bento) ===== -->
+        <!-- ===== CONTENT BLOCK (bento + tools dock) ===== -->
         <div class="content-block">
-
-          <!-- ===== TOOLS ===== -->
-          <section class="sec-tools">
-            <div class="tools-head">
-              <h2>ابزارهای ایران بروکر</h2>
-              <span class="hint">دسترسی سریع به مقایسه‌ها و داده‌ها</span>
-            </div>
-            <div class="tools-grid" id="tools-grid"></div>
-          </section>
 
           <!-- ===== BENTO ===== -->
           <section class="sec-bento">
@@ -134,18 +125,13 @@
                   <span class="dot"></span>
                   <h3>قیمت لحظه‌ای</h3>
                 </div>
-                <div class="head-actions">
-                  <button class="refresh-btn sort-btn" id="crypto-sort" title="مرتب‌سازی: پیش‌فرض"
-                    aria-label="مرتب‌سازی"></button>
-                  <button class="refresh-btn" id="crypto-refresh" title="بروزرسانی" aria-label="بروزرسانی"></button>
-                </div>
+                <button class="refresh-btn" id="crypto-refresh" title="بروزرسانی" aria-label="بروزرسانی"></button>
               </div>
               <div class="px-tabs" id="px-tabs" role="tablist">
                 <button data-ptab="crypto" class="active">کریپتو</button>
                 <button data-ptab="forex">فارکس</button>
                 <button data-ptab="iran">بازار ایران</button>
               </div>
-              <div class="px-pulse" id="px-pulse" hidden></div>
               <div class="crypto-list" id="crypto-list"></div>
               <div class="crypto-foot" id="crypto-foot"></div>
             </div>
@@ -170,16 +156,20 @@
                   <span class="dot"></span>
                   <h3>اخبار بازار</h3>
                 </div>
-                <div class="head-actions">
-                  <button class="refresh-btn refresh-sm" id="news-refresh" title="بروزرسانی اخبار"
-                    aria-label="بروزرسانی اخبار"></button>
-                  <a class="bento-news-all" href="https://iranbroker.net/news/" target="_blank" rel="noopener">همه
-                    اخبار</a>
-                </div>
+                <a class="bento-news-all" href="https://iranbroker.net/news/" target="_blank" rel="noopener">همه
+                  اخبار</a>
               </div>
               <div class="bn-chips" id="bn-chips" hidden></div>
               <div class="bento-news-list" id="bento-news-list"></div>
             </div>
+          </section>
+
+          <!-- ===== TOOLS DOCK (minimal strip) ===== -->
+          <section class="sec-tools" aria-label="ابزارهای ایران بروکر">
+            <div class="tools-dock-line" aria-hidden="true">
+              <span class="tools-dock-label">ابزارهای ایران بروکر</span>
+            </div>
+            <div class="tools-grid" id="tools-grid"></div>
           </section>
 
         </div>
