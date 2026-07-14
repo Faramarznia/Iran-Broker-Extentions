@@ -242,9 +242,9 @@
   /* ─────────── init ─────────── */
   function init() {
     var sb = $('sb-articles'); if (!sb) return;
-    /* پیش‌فرض بسته — مثل پنل کامیونیتی */
-    try { if (localStorage.getItem(COLLAPSE_KEY) !== '0') sb.classList.add('collapsed'); }
-    catch (e) { sb.classList.add('collapsed'); }
+    /* پنل از HTML به‌صورت بسته رندر می‌شود تا هنگام بارگذاری چشمک نزند. */
+    try { if (localStorage.getItem(COLLAPSE_KEY) === '0') sb.classList.remove('collapsed'); }
+    catch (e) {}
 
     function toggle() {
       var closing = !sb.classList.contains('collapsed');
