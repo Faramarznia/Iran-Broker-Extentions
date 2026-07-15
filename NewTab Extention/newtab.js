@@ -2113,6 +2113,13 @@
     if (els.coinsBtn) els.coinsBtn.hidden = state.pxTab !== 'crypto';
   }
 
+  var pageRevealed = false;
+  function revealPage() {
+    if (pageRevealed) return;
+    pageRevealed = true;
+    document.body.classList.add('page-ready');
+  }
+
   function init() {
     cacheEls();
     load();
@@ -2293,8 +2300,11 @@
     initSpotlight();
     initSparkles();
     initShaderBg();
+
+    requestAnimationFrame(revealPage);
   }
 
+  window.setTimeout(revealPage, 1200);
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
   else init();
 

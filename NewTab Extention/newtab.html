@@ -10,25 +10,7 @@
   <link rel="stylesheet" href="newtab.css" />
 </head>
 
-<body class="is-loading" data-theme="dark" data-layout="simple">
-  <div class="app-loader" id="app-loader" role="status" aria-live="polite" aria-label="در حال آماده‌سازی داشبورد">
-    <div class="app-loader-mark" aria-hidden="true">
-      <span class="app-loader-halo"></span>
-      <svg viewBox="0 0 120 120" focusable="false">
-        <circle class="app-loader-orbit" cx="62" cy="54" r="38" />
-        <path class="app-loader-handle" d="M35 82 20 97" />
-        <path class="app-loader-trace" d="M34 65 48 51 59 61 80 40" />
-        <path class="app-loader-arrow" d="m72 40 8 0 0 8" />
-        <circle class="app-loader-pulse" cx="80" cy="40" r="3.5" />
-      </svg>
-    </div>
-    <div class="app-loader-copy">
-      <strong>ایران بروکر</strong>
-      <span>نبض بازار در حال همگام‌سازی است</span>
-    </div>
-    <div class="app-loader-progress" aria-hidden="true"><i></i></div>
-  </div>
-
+<body class="page-entering" data-theme="dark" data-layout="simple">
   <div class="stage-root">
     <canvas id="shader-bg-canvas"></canvas>
     <div class="bg-overlay" id="bg-overlay"></div>
@@ -1069,7 +1051,6 @@
     </div>
   </div>
 
-  <script src="js/loader.js"></script>
   <script src="newtab.js"></script>
   <script src="js/airo.js"></script>
   <script src="js/focus.js"></script>
