@@ -17,13 +17,9 @@
     return panels().filter(function (p) { return !p.classList.contains('collapsed'); });
   }
 
-  /* پنل فقط در حالت «داده» اورلی است؛ در بقیهٔ چیدمان‌ها اصلاً دیده نمی‌شود */
-  function isOverlayMode() {
-    return document.body.getAttribute('data-layout') === 'data';
-  }
-
+  /* پنل‌ها در همهٔ چیدمان‌ها به‌صورت اورلی شناور دیده می‌شوند */
   function sync() {
-    document.body.classList.toggle('sb-open', isOverlayMode() && openOnes().length > 0);
+    document.body.classList.toggle('sb-open', openOnes().length > 0);
   }
 
   /* بستن با کلیک روی scrim یا Esc — همان دکمهٔ toggle را می‌زنیم تا

@@ -1762,7 +1762,7 @@
     els.heroDate.textContent = dateStr;
 
     const h = now.getHours();
-    const g = h >= 5 && h < 12 ? 'صبحت بخیر' : h >= 12 && h < 17 ? 'ظهرت بخیر' : h >= 17 && h < 21 ? 'عصرت بخیر' : 'شب‌ت بخیر';
+    const g = h >= 5 && h < 12 ? 'صبحت بخیر' : h >= 12 && h < 17 ? 'ظهرت بخیر' : h >= 17 && h < 21 ? 'عصرت بخیر' : 'شبت بخیر';
     els.heroGreeting.textContent = g + (state.name ? '، ' + state.name : ' رفیق');
 
     // sessions
@@ -1953,6 +1953,14 @@
 
     var click = { x: -5, y: -5, age: 99 };
     var t = 0, rafId;
+    /* شیدر یک گرادیان نرم و کندحرکت است؛ نیازی به رزولوشن کامل صفحه یا رفرش‌ریت
+       نمایشگر (که روی نمایشگرهای ۱۲۰/۱۴۴هرتزی هزینهٔ GPU را بی‌دلیل ۲برابر می‌کرد) ندارد.
+       با رندر در ۶۰٪ ابعاد + سقف ~۳۰fps، ظاهر یکسان می‌ماند ولی هزینهٔ محاسبه به میزان
+       قابل‌توجهی (روی نمایشگر ۶۰هرتزی معمولی: تقریباً ۴برابر) کم می‌شود. */
+    var RENDER_SCALE = 0.6;
+    var FRAME_MS = 1000 / 30;
+    var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var lastTs = 0;
 
     window.addEventListener('click', function (e) {
       if (e.target.closest('button,a,input,select,textarea,.card,.sidebar,.modal-overlay,.airo-overlay,.topbar,.engines,.sparkle-canvas,.crypto-card,.markets-card,.quick-links,.sb-tab,.sec-hero,.hero-search-wrap')) return;
@@ -1962,27 +1970,36 @@
     });
 
     function resize() {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
+      canvas.width = Math.max(1, Math.round(window.innerWidth * RENDER_SCALE));
+      canvas.height = Math.max(1, Math.round(window.innerHeight * RENDER_SCALE));
       gl.viewport(0, 0, canvas.width, canvas.height);
     }
-    function draw() {
-      t += 0.05;
-      if (click.age < 1.4) click.age += 0.022;
+    function render(stepScale) {
+      t += 0.05 * stepScale;
+      if (click.age < 1.4) click.age += 0.022 * stepScale;
       gl.uniform1f(timeLoc, t);
       gl.uniform2f(resLoc, canvas.width, canvas.height);
       gl.uniform2f(clickPosLoc, click.x, click.y);
       gl.uniform1f(clickAgeLoc, click.age);
       gl.drawArrays(gl.TRIANGLES, 0, 6);
+    }
+    function draw(now) {
       rafId = requestAnimationFrame(draw);
+      var dt = lastTs ? (now - lastTs) : 16.6;
+      if (dt < FRAME_MS) return;
+      lastTs = now;
+      /* stepScale نرمال‌سازی سرعت انیمیشن نسبت به زمان واقعی است، نه تعداد فریم،
+         تا سرعت حرکت روی هر رفرش‌ریتی یکسان بماند. */
+      render(dt / (1000 / 60));
     }
 
     resize();
-    draw();
+    if (reduceMotion) { render(1); }
+    else { draw(); }
     window.addEventListener('resize', resize);
     document.addEventListener('visibilitychange', function () {
       if (document.hidden) cancelAnimationFrame(rafId);
-      else { rafId = requestAnimationFrame(draw); }
+      else if (!reduceMotion) { lastTs = 0; rafId = requestAnimationFrame(draw); }
     });
   }
 
@@ -2007,6 +2024,7 @@
   function initSparkles() {
     const canvas = document.getElementById('sp-canvas');
     if (!canvas || !canvas.getContext) return;
+    if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     const ctx = canvas.getContext('2d');
     let W = 0, H = 0, particles = [], rafId;
     var mx = -999, my = -999;

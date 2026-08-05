@@ -4194,7 +4194,7 @@ body[data-theme="glass"] .s-select:focus {
 }
 
 /* ── Community sidebar: fixed overlay panel in data mode ── */
-body[data-layout="data"] .sidebar-community {
+.sidebar-community {
   position: fixed;
   right: 0;
   top: 32px;
@@ -4208,7 +4208,7 @@ body[data-layout="data"] .sidebar-community {
   transition: width .28s cubic-bezier(.4, 0, .2, 1), box-shadow .28s
 }
 
-body[data-layout="data"] .sidebar-community.collapsed {
+.sidebar-community.collapsed {
   width: 36px;
   box-shadow: none
 }
@@ -4245,7 +4245,7 @@ body[data-layout="data"] .sidebar-community.collapsed {
   font-family: inherit
 }
 
-body[data-layout="data"] .sidebar-community.collapsed .sb-tab {
+.sidebar-community.collapsed .sb-tab {
   display: flex
 }
 
@@ -4273,7 +4273,7 @@ body[data-layout="data"] .sidebar-community.collapsed .sb-tab {
   border-radius: 99px
 }
 
-body[data-layout="data"] .sidebar-community.collapsed .sb-content {
+.sidebar-community.collapsed .sb-content {
   opacity: 0;
   pointer-events: none
 }
@@ -4282,7 +4282,7 @@ body[data-layout="data"] .sidebar-community.collapsed .sb-content {
    ARTICLES SIDEBAR — fixed overlay, LEFT edge
    (mirror of the community panel, richer content)
 ═══════════════════════════════════════ */
-body[data-layout="data"] .sidebar-articles {
+.sidebar-articles {
   position: fixed;
   left: 0;
   top: 32px;
@@ -4296,12 +4296,12 @@ body[data-layout="data"] .sidebar-articles {
   transition: width .34s cubic-bezier(.22, 1, .36, 1), box-shadow .34s
 }
 
-body[data-layout="data"] .sidebar-articles.collapsed {
+.sidebar-articles.collapsed {
   width: 36px;
   box-shadow: none
 }
-body[data-layout="data"] .sidebar-articles.collapsed .sb-tab { display: flex }
-body[data-layout="data"] .sidebar-articles.collapsed .sb-content {
+.sidebar-articles.collapsed .sb-tab { display: flex }
+.sidebar-articles.collapsed .sb-content {
   opacity: 0;
   pointer-events: none
 }
@@ -4533,8 +4533,8 @@ body[data-layout="data"] .sidebar-articles.collapsed .sb-content {
    باز: جهش فنری از دل همان کپسول + ورود پلکانی محتوا
    (بعد از بلاک‌های هر دو ساید‌بار تا در cascade برنده شود)
 ═══════════════════════════════════════ */
-body[data-layout="data"] .sidebar-community,
-body[data-layout="data"] .sidebar-articles {
+.sidebar-community,
+.sidebar-articles {
   transition:
     width .5s cubic-bezier(.34, 1.25, .4, 1),
     top .5s cubic-bezier(.34, 1.25, .4, 1),
@@ -4544,13 +4544,13 @@ body[data-layout="data"] .sidebar-articles {
 }
 
 /* پنل باز: عرض بیشتر + سایهٔ مینیمال */
-body[data-layout="data"] .sidebar-community:not(.collapsed),
-body[data-layout="data"] .sidebar-articles:not(.collapsed) {
+.sidebar-community:not(.collapsed),
+.sidebar-articles:not(.collapsed) {
   width: 360px;
   z-index: 41            /* بالای scrim */
 }
-body[data-layout="data"] .sidebar-community:not(.collapsed) { box-shadow: -6px 0 24px -18px rgba(0, 0, 0, .55) }
-body[data-layout="data"] .sidebar-articles:not(.collapsed)  { box-shadow:  6px 0 24px -18px rgba(0, 0, 0, .55) }
+.sidebar-community:not(.collapsed) { box-shadow: -6px 0 24px -18px rgba(0, 0, 0, .55) }
+.sidebar-articles:not(.collapsed)  { box-shadow:  6px 0 24px -18px rgba(0, 0, 0, .55) }
 
 /* ── scrim: با باز شدن هر پنل، بقیهٔ صفحه تیره می‌شود ── */
 .sb-scrim {
@@ -4564,7 +4564,7 @@ body[data-layout="data"] .sidebar-articles:not(.collapsed)  { box-shadow:  6px 0
   pointer-events: none;
   transition: opacity .34s ease
 }
-body[data-layout="data"].sb-open .sb-scrim {
+body.sb-open .sb-scrim {
   opacity: 1;
   pointer-events: auto
 }
@@ -4572,8 +4572,8 @@ body[data-layout="data"].sb-open .sb-scrim {
   .sb-scrim { transition-duration: .01s }
 }
 
-body[data-layout="data"] .sidebar-community.collapsed,
-body[data-layout="data"] .sidebar-articles.collapsed {
+.sidebar-community.collapsed,
+.sidebar-articles.collapsed {
   top: calc(50% - 76px);
   height: 152px;
   width: 32px;
@@ -4581,15 +4581,15 @@ body[data-layout="data"] .sidebar-articles.collapsed {
   cursor: pointer
 }
 /* مستطیل ساده با گوشه‌های گرد رو به داخل صفحه */
-body[data-layout="data"] .sidebar-community.collapsed { border-radius: 10px 0 0 10px }
-body[data-layout="data"] .sidebar-articles.collapsed  { border-radius: 0 10px 10px 0 }
+.sidebar-community.collapsed { border-radius: 10px 0 0 10px }
+.sidebar-articles.collapsed  { border-radius: 0 10px 10px 0 }
 
 /* سایهٔ مینیمال — فقط یک لبهٔ نرم، بدون هاله */
-body[data-layout="data"] .sidebar-community.collapsed { box-shadow: -2px 0 10px -6px rgba(0, 0, 0, .35) }
-body[data-layout="data"] .sidebar-articles.collapsed  { box-shadow:  2px 0 10px -6px rgba(0, 0, 0, .35) }
+.sidebar-community.collapsed { box-shadow: -2px 0 10px -6px rgba(0, 0, 0, .35) }
+.sidebar-articles.collapsed  { box-shadow:  2px 0 10px -6px rgba(0, 0, 0, .35) }
 
-body[data-layout="data"] .sidebar-community.collapsed:hover,
-body[data-layout="data"] .sidebar-articles.collapsed:hover {
+.sidebar-community.collapsed:hover,
+.sidebar-articles.collapsed:hover {
   width: 36px;
   border-color: var(--border2)
 }
@@ -4630,29 +4630,29 @@ body[data-layout="data"] .sidebar-articles.collapsed:hover {
   from { opacity: 0; transform: translateX(-16px); filter: blur(3px) }
   to   { opacity: 1; transform: none; filter: none }
 }
-body[data-layout="data"] .sidebar-community:not(.collapsed) .sb-head,
-body[data-layout="data"] .sidebar-community:not(.collapsed) .comm-tabs,
-body[data-layout="data"] .sidebar-community:not(.collapsed) .sb-list > *,
-body[data-layout="data"] .sidebar-community:not(.collapsed) .sb-footer {
+.sidebar-community:not(.collapsed) .sb-head,
+.sidebar-community:not(.collapsed) .comm-tabs,
+.sidebar-community:not(.collapsed) .sb-list > *,
+.sidebar-community:not(.collapsed) .sb-footer {
   animation: sbRowInR .42s cubic-bezier(.22, 1, .36, 1) both
 }
-body[data-layout="data"] .sidebar-articles:not(.collapsed) .sb-head,
-body[data-layout="data"] .sidebar-articles:not(.collapsed) .art-chips,
-body[data-layout="data"] .sidebar-articles:not(.collapsed) .sb-footer {
+.sidebar-articles:not(.collapsed) .sb-head,
+.sidebar-articles:not(.collapsed) .art-chips,
+.sidebar-articles:not(.collapsed) .sb-footer {
   animation: sbRowInL .42s cubic-bezier(.22, 1, .36, 1) both
 }
 /* آبشار تاخیرها: هدر → تب‌ها → ردیف‌ها → فوتر */
-body[data-layout="data"] .sidebar:not(.collapsed) .sb-head { animation-delay: .14s }
-body[data-layout="data"] .sidebar-community:not(.collapsed) .comm-tabs,
-body[data-layout="data"] .sidebar-articles:not(.collapsed) .art-chips { animation-delay: .2s }
-body[data-layout="data"] .sidebar-community:not(.collapsed) .sb-list > :nth-child(1) { animation-delay: .24s }
-body[data-layout="data"] .sidebar-community:not(.collapsed) .sb-list > :nth-child(2) { animation-delay: .28s }
-body[data-layout="data"] .sidebar-community:not(.collapsed) .sb-list > :nth-child(3) { animation-delay: .32s }
-body[data-layout="data"] .sidebar-community:not(.collapsed) .sb-list > :nth-child(4) { animation-delay: .36s }
-body[data-layout="data"] .sidebar-community:not(.collapsed) .sb-list > :nth-child(5) { animation-delay: .4s }
-body[data-layout="data"] .sidebar-community:not(.collapsed) .sb-list > :nth-child(6) { animation-delay: .44s }
-body[data-layout="data"] .sidebar-community:not(.collapsed) .sb-list > :nth-child(n+7) { animation-delay: .48s }
-body[data-layout="data"] .sidebar:not(.collapsed) .sb-footer { animation-delay: .5s }
+.sidebar:not(.collapsed) .sb-head { animation-delay: .14s }
+.sidebar-community:not(.collapsed) .comm-tabs,
+.sidebar-articles:not(.collapsed) .art-chips { animation-delay: .2s }
+.sidebar-community:not(.collapsed) .sb-list > :nth-child(1) { animation-delay: .24s }
+.sidebar-community:not(.collapsed) .sb-list > :nth-child(2) { animation-delay: .28s }
+.sidebar-community:not(.collapsed) .sb-list > :nth-child(3) { animation-delay: .32s }
+.sidebar-community:not(.collapsed) .sb-list > :nth-child(4) { animation-delay: .36s }
+.sidebar-community:not(.collapsed) .sb-list > :nth-child(5) { animation-delay: .4s }
+.sidebar-community:not(.collapsed) .sb-list > :nth-child(6) { animation-delay: .44s }
+.sidebar-community:not(.collapsed) .sb-list > :nth-child(n+7) { animation-delay: .48s }
+.sidebar:not(.collapsed) .sb-footer { animation-delay: .5s }
 
 /* مقالات: استَگر ردیف‌ها با --i از JS مدیریت می‌شود؛ فقط تاخیر پایه بگیرد */
 .sidebar-articles .ar-stag {
@@ -4660,30 +4660,28 @@ body[data-layout="data"] .sidebar:not(.collapsed) .sb-footer { animation-delay: 
 }
 
 /* هنگام بسته بودن، محتوای محو نباید کلیک بخورد و fade سریع باشد */
-body[data-layout="data"] .sidebar-community.collapsed .sb-content,
-body[data-layout="data"] .sidebar-articles.collapsed .sb-content {
+.sidebar-community.collapsed .sb-content,
+.sidebar-articles.collapsed .sb-content {
   transition: opacity .12s
 }
 
 @media (prefers-reduced-motion: reduce) {
-  body[data-layout="data"] .sidebar-community,
-  body[data-layout="data"] .sidebar-articles,
+  .sidebar-community,
+  .sidebar-articles,
   .sb-tab .sb-tab-ic,
   .sidebar-articles .ar-stag,
-  body[data-layout="data"] .sidebar:not(.collapsed) .sb-head,
-  body[data-layout="data"] .sidebar:not(.collapsed) .sb-footer,
-  body[data-layout="data"] .sidebar-community:not(.collapsed) .comm-tabs,
-  body[data-layout="data"] .sidebar-community:not(.collapsed) .sb-list > *,
-  body[data-layout="data"] .sidebar-articles:not(.collapsed) .art-chips {
+  .sidebar:not(.collapsed) .sb-head,
+  .sidebar:not(.collapsed) .sb-footer,
+  .sidebar-community:not(.collapsed) .comm-tabs,
+  .sidebar-community:not(.collapsed) .sb-list > *,
+  .sidebar-articles:not(.collapsed) .art-chips {
     animation: none;
     transition-duration: .01s
   }
 }
 
 /* ── Layout: simple (minimal centered) ── */
-body[data-layout="simple"] .sidebar {
-  display: none
-}
+/* دو ساید‌بار کامیونیتی/مقالات به‌صورت کپسول شناور در همهٔ چیدمان‌ها دیده می‌شوند؛ اینجا مخفی نمی‌شوند */
 
 body[data-layout="simple"] .layout-wrap {
   gap: 0;
@@ -6296,7 +6294,7 @@ body[data-layout="simple"] .hero-search-wrap {
 
 /* ── Hub mode ── */
 body[data-layout="hub"] .content-block { display: none }
-body[data-layout="hub"] .sidebar       { display: none }
+/* دو ساید‌بار کامیونیتی/مقالات به‌صورت کپسول شناور در همهٔ چیدمان‌ها (از جمله هاب) دیده می‌شوند */
 
 /* Hub scrolls naturally */
 body[data-layout="hub"] .stage-root {
@@ -6380,6 +6378,28 @@ body[data-layout="hub"] .hub-quick {
     max-width: 660px;
     width: 100%;
     margin: 0 auto
+  }
+}
+
+/* On shorter screens (e.g. laptops) the cal/tasks columns' natural
+   content height can exceed the room between the search row and the
+   bottom of the page, pushing them past the fold. Let them also run
+   alongside the hero block instead of starting at the search row —
+   this uses the otherwise-empty margin beside the clock instead of
+   leaving the boxes squeezed into a short band with dead space above
+   them — and cap+scroll internally as a fallback for extreme cases. */
+@media (min-width: 1400px) and (max-height: 1010px) {
+  body[data-layout="hub"] .page-col {
+    grid-template-areas:
+      "head head head   head  head"
+      ".    cal  hero   tasks ."
+      ".    cal  search tasks ."
+      ".    cal  quick  tasks .";
+  }
+  body[data-layout="hub"] .hub-aside-cal,
+  body[data-layout="hub"] .hub-aside-tasks {
+    max-height: calc(100vh - 64px);
+    overflow-y: auto;
   }
 }
 

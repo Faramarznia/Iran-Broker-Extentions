@@ -1259,15 +1259,33 @@
     renderTasks();
     renderQuick();
 
-    /* keep the «الان» line + late/next tags honest; rebuild after midnight */
-    setInterval(function(){
-      if(todayKey()!==lastDayKey){ buildTasksBox(); }
-      if(!editingId) renderTasks();
-    }, 30000);
+    /* این پنل فقط در چیدمان «هاب» دیده می‌شود؛ در سایر چیدمان‌ها display:none است.
+       برای پرهیز از فچ شبکه و تایمر دائمی بی‌مصرف، دادهٔ زنده فقط وقتی هاب واقعاً
+       فعال است بارگذاری می‌شود (چه از ابتدا، چه با سوییچ چیدمان از تنظیمات). */
+    var liveStarted = false;
+    function startLiveData(){
+      if (liveStarted) return;
+      liveStarted = true;
+      /* keep the «الان» line + late/next tags honest; rebuild after midnight */
+      setInterval(function(){
+        if(todayKey()!==lastDayKey){ buildTasksBox(); }
+        if(!editingId) renderTasks();
+      }, 30000);
+      loadEcon();
+      loadWeather();
+    }
 
-    /* async data — only fetch when relevant (always safe though) */
-    loadEcon();
-    loadWeather();
+    if (document.body.getAttribute('data-layout') === 'hub') {
+      startLiveData();
+    } else {
+      var layoutObs = new MutationObserver(function(){
+        if (document.body.getAttribute('data-layout') === 'hub') {
+          startLiveData();
+          layoutObs.disconnect();
+        }
+      });
+      layoutObs.observe(document.body, { attributes: true, attributeFilter: ['data-layout'] });
+    }
   }
 
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', init);
