@@ -832,15 +832,6 @@ body[data-layout="data"] .crypto-list {
   vector-effect: non-scaling-stroke
 }
 
-/* نقطهٔ آخرین قیمت — کنار ستون قیمت */
-.cs-end {
-  vector-effect: non-scaling-stroke
-}
-
-.c-row:hover .cs-end {
-  r: 2.8
-}
-
 /* ستون قیمت: چپ‌چین و هم‌تراز در باکس خودش */
 .c-price-col {
   display: flex;
@@ -1977,7 +1968,10 @@ body[data-layout="data"] .page-col {
   flex: 1;
   width: 100%;
   height: 100%;
-  padding: 32px;
+  /* left/right padding leaves room for the collapsed community/articles
+     tabs (fixed to the viewport edge, ~32-36px wide) plus a 24px gap
+     so they never touch the bento cards */
+  padding: 32px 60px;
   gap: 11px;
   align-items: stretch
 }
@@ -2028,7 +2022,40 @@ body[data-layout="data"] .quick-links a {
   padding: 6px 13px
 }
 
+/* On shorter viewports (laptop screens) the hero clock/search block is
+   fixed-size, so it eats into the room the 100vh-capped page-col leaves
+   for the bento cards below — and since the cards clip with overflow:
+   hidden instead of just getting tight, they end up looking cropped and
+   messy rather than merely compact. Shrink the hero + search + spacing
+   so more height goes to the cards. */
+@media (max-height: 920px) {
+  body[data-layout="data"] .page-col {
+    padding-top: 20px;
+    padding-bottom: 20px;
+    gap: 8px
+  }
+  body[data-layout="data"] .hero-search-wrap { gap: 14px }
+  body[data-layout="data"] .hero-date { font-size: 12px }
+  body[data-layout="data"] .hero-greeting { font-size: 15px; margin-bottom: 6px }
+  body[data-layout="data"] .clock { font-size: 48px }
+  body[data-layout="data"] .hero-session { font-size: 11px; margin-top: 0 }
+  body[data-layout="data"] .search-box { padding: 5px 16px 5px 12px }
+  body[data-layout="data"] .search-box input { padding: 7px 2px; font-size: 14px }
+  body[data-layout="data"] .search-go { width: 36px; height: 36px }
+  body[data-layout="data"] .engines { margin-top: 8px }
+  body[data-layout="data"] .engines button { padding: 5px 13px }
+  body[data-layout="data"] .content-block { gap: 14px }
+  body[data-layout="data"] .sec-tools { gap: 5px }
+  body[data-layout="data"] .card { padding: 12px 14px }
+  body[data-layout="data"] .card-head { margin-bottom: 8px }
+}
 
+@media (max-height: 760px) {
+  body[data-layout="data"] .hero-date,
+  body[data-layout="data"] .hero-session { display: none }
+  body[data-layout="data"] .hero-greeting { margin-bottom: 2px }
+  body[data-layout="data"] .clock { font-size: 40px }
+}
 
 /* ===== Responsive ===== */
 @media (max-width:1000px) {
@@ -4744,42 +4771,10 @@ body[data-layout="simple"] .hero-search-wrap {
   font-size: 12px
 }
 
-/* ── Floating button ── */
-.jr-fab {
-  position: fixed;
-  left: 20px;
-  bottom: 20px;
-  z-index: 10;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  height: 44px;
-  padding: 0 16px 0 20px;
-  background: var(--surfaceSolid);
-  color: var(--text);
-  border: 1px solid var(--border);
-  border-radius: 14px;
-  box-shadow: var(--shadow);
-  cursor: pointer;
-  font-family: inherit;
-  font-size: 13px;
-  font-weight: 700;
-  transition: transform .18s, border-color .2s, background .2s;
-}
-
-.jr-fab:hover {
-  transform: translateY(-2px);
-  border-color: var(--border2)
-}
-
-.jr-fab svg {
-  width: 19px;
-  height: 19px;
-  color: var(--primary)
-}
-
-.jr-fab-label {
-  line-height: 1
+/* ── Journal launcher: lives in the topbar as a plain .icon-btn — needs
+   position:relative only so the reminder dot below can anchor to it ── */
+#journal-btn {
+  position: relative
 }
 
 .jr-fab-badge {
@@ -6252,14 +6247,6 @@ body[data-layout="simple"] .hero-search-wrap {
     height: 100vh;
     border-radius: 0;
     border: none
-  }
-
-  .jr-fab-label {
-    display: none
-  }
-
-  .jr-fab {
-    padding: 0 12px
   }
 }
 

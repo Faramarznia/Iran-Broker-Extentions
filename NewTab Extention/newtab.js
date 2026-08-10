@@ -864,7 +864,6 @@
           '<path class="cs-area" d="' + ch.area + '" fill="url(#' + gid + ')"/>' +
           '<line class="cs-base" x1="0" y1="' + ch.baseY + '" x2="' + SPARK.w + '" y2="' + ch.baseY + '"/>' +
           '<path class="cs-line" d="' + ch.line + '" fill="none" stroke="' + col + '"/>' +
-          '<circle class="cs-end" cx="' + ch.endX + '" cy="' + ch.endY + '" r="2" fill="' + col + '"/>' +
         '</svg>';
       } else if (r.extra && isFinite(r.extra.low) && isFinite(r.extra.high) && r.extra.high > r.extra.low) {
         mid = rangeBar('px-range-mini', r.extra.low, r.extra.high, r.price, col);

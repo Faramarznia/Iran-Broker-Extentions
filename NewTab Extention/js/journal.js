@@ -544,22 +544,23 @@
   var root = null, btn = null;
 
   function buildButton() {
-    btn = el('<button class="jr-fab" id="jr-fab" title="ژورنال معاملاتی" aria-label="ژورنال معاملاتی">' +
-      '<svg viewBox="0 0 20 20" fill="none" aria-hidden="true">' +
-      '<rect x="2.5" y="8" width="3" height="6" rx=".6" fill="currentColor" opacity=".75"/>' +
-      '<line x1="4" y1="5.5" x2="4" y2="8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>' +
-      '<line x1="4" y1="14" x2="4" y2="16" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>' +
-      '<rect x="8.5" y="4" width="3" height="8" rx=".6" fill="currentColor"/>' +
-      '<line x1="10" y1="2" x2="10" y2="4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>' +
-      '<line x1="10" y1="12" x2="10" y2="14.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>' +
-      '<rect x="14.5" y="9" width="3" height="5" rx=".6" fill="currentColor" opacity=".75"/>' +
-      '<line x1="16" y1="6.5" x2="16" y2="9" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>' +
-      '<line x1="16" y1="14" x2="16" y2="16.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>' +
-      '</svg>' +
-      '<span class="jr-fab-label">ژورنال</span>' +
-      '<span class="jr-fab-dot" id="jr-fab-dot" hidden></span>' +
-      '</button>');
-    document.body.appendChild(btn);
+    btn = $id('journal-btn');
+    if (!btn) return;
+    btn.innerHTML =
+      '<span class="icon">' +
+        '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true">' +
+          '<rect x="3" y="9.5" width="3.4" height="7" rx=".7" fill="currentColor" opacity=".75"/>' +
+          '<line x1="4.7" y1="6.6" x2="4.7" y2="9.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>' +
+          '<line x1="4.7" y1="16.5" x2="4.7" y2="19.2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>' +
+          '<rect x="10.3" y="4.8" width="3.4" height="9.6" rx=".7" fill="currentColor"/>' +
+          '<line x1="12" y1="2.4" x2="12" y2="4.8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>' +
+          '<line x1="12" y1="14.4" x2="12" y2="17.4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>' +
+          '<rect x="17.6" y="10.8" width="3.4" height="6" rx=".7" fill="currentColor" opacity=".75"/>' +
+          '<line x1="19.3" y1="7.8" x2="19.3" y2="10.8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>' +
+          '<line x1="19.3" y1="16.8" x2="19.3" y2="19.8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>' +
+        '</svg>' +
+      '</span>' +
+      '<span class="jr-fab-dot" id="jr-fab-dot" hidden></span>';
     btn.addEventListener('click', open);
     refreshButton();
   }
