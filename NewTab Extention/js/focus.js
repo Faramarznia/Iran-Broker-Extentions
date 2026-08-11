@@ -8,6 +8,11 @@
   var RING_R     = 140;
   var SVG_CX     = 160, SVG_CY = 160;
   var CIRC       = 2 * Math.PI * RING_R; // ≈ 879.65
+  var BREAK_R    = 104;
+  var BREAK_CIRC = 2 * Math.PI * BREAK_R; // ≈ 653.45
+
+  var IS_MAC = /Mac|iPhone|iPad|iPod/i.test((navigator.platform || '') + ' ' + (navigator.userAgent || ''));
+  var FS_KEY = IS_MAC ? '⌃⌘F' : 'F11';
 
   var QUOTES = [
     { text: 'تمرکز یعنی نه گفتن به صد ایده‌ی خوب.', author: 'استیو جابز' },
@@ -31,7 +36,12 @@
     'کمی کشش و حرکت بده — نشستن طولانی خستگی می‌آورد.'
   ];
 
-  var BREATH_SEQ = [['دم بگیر', 4500], ['نگه دار', 2000], ['بازدم', 4500]];
+  // [label, duration(ms), orb-scale-target]
+  var BREATH_SEQ = [
+    ['دم بگیر', 4000, 1.0],
+    ['نگه دار', 1800, 1.0],
+    ['بازدم',  4200, 0.6]
+  ];
 
   /* ─── State ─── */
   var s = {
@@ -65,6 +75,7 @@
   var breathTimeout       = null;
   var breathIdx           = 0;
   var resetConfirmTimeout = null;
+  var weWentFs            = false;
   var audioCtx            = null;
   var audioSource         = null;
   var audioGain           = null;
@@ -219,9 +230,10 @@
       s.pomPhase = 'short'; s.pomRound = 2;
       s.remaining = 4 * 60; s.total = 5 * 60; s.running = true;
       showScreen('focus-break-screen');
-      var title = $('focus-break-title'); if (title) title.textContent = toFa(5) + ' دقیقه استراحت';
-      var tip = $('focus-break-tip'); if (tip) tip.textContent = randomItem(BREAK_TIPS);
-      renderBreak(); startBreath();
+      var st  = $('focus-break-status'); if (st)  st.textContent  = 'استراحت کوتاه';
+      var sub = $('focus-break-sub');    if (sub) sub.textContent = breakSubText(false);
+      setBreakTip(false);
+      snapBreakRing(); renderBreak(); startBreath();
       clearInterval(tickInterval); tickInterval = setInterval(breakTick, 1000);
 
     } else if (name === 'focus-end-screen') {
@@ -239,6 +251,41 @@
   function toggleGlobalTheme() {
     var globalBtn = document.getElementById('theme-btn');
     if (globalBtn) globalBtn.click();
+  }
+
+  /* ─── Fullscreen ─── */
+  function isFs() {
+    return !!(document.fullscreenElement || document.webkitFullscreenElement);
+  }
+
+  function toggleFullscreen() {
+    try {
+      if (isFs()) {
+        (document.exitFullscreen || document.webkitExitFullscreen).call(document);
+        weWentFs = false;
+      } else {
+        var el = document.documentElement;
+        (el.requestFullscreen || el.webkitRequestFullscreen).call(el);
+        weWentFs = true;
+      }
+    } catch (e) {}
+  }
+
+  function updateFsUI() {
+    var on = isFs();
+    var enter = document.querySelector('#fc-fs-btn .fc-fs-ico-enter');
+    var exit  = document.querySelector('#fc-fs-btn .fc-fs-ico-exit');
+    if (enter) enter.hidden = on;
+    if (exit)  exit.hidden  = !on;
+    var btn = $('fc-fs-btn');
+    if (btn) {
+      btn.title = on ? 'خروج از تمام‌صفحه (F)' : 'تمام‌صفحه (F)';
+      btn.setAttribute('aria-label', btn.title);
+    }
+    var suggest = $('fc-fs-suggest');
+    if (suggest) suggest.hidden = on;               // once fullscreen, the pitch is moot
+    var kbd = $('fc-fs-kbd');
+    if (kbd) kbd.textContent = FS_KEY;              // native browser shortcut per-OS
   }
 
   /* ─── Focus button badge ─── */
@@ -260,21 +307,31 @@
     var progress = s.total > 0 ? s.remaining / s.total : 0;
     var offset   = CIRC * (1 - progress);
     var color;
-    if (s.screen === 'focus-break-screen') color = 'var(--green)';
-    else if (progress <= 1/12) color = 'var(--red)';
+    if (progress <= 1/12) color = 'var(--red)';
     else if (progress <= 0.2)  color = 'var(--orange)';
     else                       color = 'var(--primary)';
 
     var ring = $('focus-ring-progress');
     if (ring) { ring.style.strokeDashoffset = offset.toFixed(2); ring.style.stroke = color; }
 
+    var ang = (1 - progress) * 2 * Math.PI;
+    var cx  = (SVG_CX + RING_R * Math.sin(ang)).toFixed(2);
+    var cy  = (SVG_CY - RING_R * Math.cos(ang)).toFixed(2);
+
     var dot = $('focus-ring-dot');
-    if (dot) {
-      var ang = (1 - progress) * 2 * Math.PI;
-      dot.setAttribute('cx', (SVG_CX + RING_R * Math.sin(ang)).toFixed(2));
-      dot.setAttribute('cy', (SVG_CY - RING_R * Math.cos(ang)).toFixed(2));
-      dot.style.fill = color;
-    }
+    if (dot) { dot.setAttribute('cx', cx); dot.setAttribute('cy', cy); dot.style.stroke = color; }
+    var halo = $('focus-ring-dot-halo');
+    if (halo) { halo.setAttribute('cx', cx); halo.setAttribute('cy', cy); halo.style.fill = color; }
+  }
+
+  /* Kill the rewind animation for one frame when the timer jumps to a new
+     phase (0 → full), so the ring/bead snap into place instead of spinning back. */
+  function snapRing() {
+    var svg = $('focus-ring-svg'); if (!svg) return;
+    svg.classList.add('fc-instant');
+    requestAnimationFrame(function () {
+      requestAnimationFrame(function () { svg.classList.remove('fc-instant'); });
+    });
   }
 
   /* ─── Setup UI sync ─── */
@@ -336,6 +393,7 @@
     showContainer();
     showScreen('focus-setup');
     syncSetupUI();
+    updateFsUI();
   }
 
   /* ─── Quote / Intro screen ─── */
@@ -352,6 +410,7 @@
   function goTimer() {
     s.running = true;
     showScreen('focus-timer-screen');
+    snapRing();
     renderTimerUI();
     startTicking();
   }
@@ -465,7 +524,7 @@
         s.pomPhase  = 'work';
         s.remaining = s.pomWorkMins * 60; s.total = s.remaining;
         s.running   = true;
-        showScreen('focus-timer-screen'); renderTimerUI(); startTicking();
+        showScreen('focus-timer-screen'); snapRing(); renderTimerUI(); startTicking();
       }
     } else {
       showEndScreen();
@@ -491,6 +550,7 @@
         s.pomRound = 1; s.pomPhase = 'work';
         s.remaining = s.pomWorkMins * 60; s.total = s.remaining;
       } else { s.remaining = s.total; }
+      snapRing();
       renderTimerUI();
     } else {
       btn.dataset.confirm = '1'; btn.classList.add('fc-confirm');
@@ -510,18 +570,57 @@
   }
 
   /* ─── Break screen ─── */
+  var breathReduce = false;
+
   function startBreath() {
     clearTimeout(breathTimeout); breathIdx = 0;
+    breathReduce = !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
+    var orb = $('fc-breathe-orb');
+    if (orb) { orb.style.transition = 'none'; orb.style.transform = 'scale(0.6)'; orb.getBoundingClientRect(); }
     function step() {
-      var el = $('fc-breath-label'); if (el) el.textContent = BREATH_SEQ[breathIdx][0];
+      var ph = BREATH_SEQ[breathIdx];
+      var el = $('fc-breath-label'); if (el) el.textContent = ph[0];
+      if (orb && !breathReduce) {
+        orb.style.transition = 'transform ' + ph[1] + 'ms ease-in-out';
+        orb.style.transform  = 'scale(' + ph[2] + ')';
+      }
+      orb && orb.classList.toggle('is-hold', breathIdx === 1);
       breathTimeout = setTimeout(function() {
         breathIdx = (breathIdx + 1) % BREATH_SEQ.length; step();
-      }, BREATH_SEQ[breathIdx][1]);
+      }, ph[1]);
     }
     step();
   }
 
-  function stopBreath() { clearTimeout(breathTimeout); }
+  function stopBreath() {
+    clearTimeout(breathTimeout);
+    var orb = $('fc-breathe-orb'); if (orb) orb.classList.remove('is-hold');
+  }
+
+  function setBreakTip(fade) {
+    var box = $('focus-break-tip-box'), el = $('focus-break-tip');
+    if (!el) return;
+    if (fade && box && !breathReduce) {
+      box.classList.add('fc-tip-fade');
+      setTimeout(function() { el.textContent = randomItem(BREAK_TIPS); box.classList.remove('fc-tip-fade'); }, 340);
+    } else {
+      el.textContent = randomItem(BREAK_TIPS);
+    }
+  }
+
+  function breakSubText(isLong) {
+    if (isLong) return 'خستگی رو کامل در کن — نزدیک پایان جلسه‌ای';
+    var next = Math.min(s.pomRound + 1, s.pomTotalRounds);
+    return 'بعد از این، دور ' + toFa(next) + ' از ' + toFa(s.pomTotalRounds) + ' شروع می‌شود';
+  }
+
+  function snapBreakRing() {
+    var ring = $('focus-break-ring'); if (!ring) return;
+    ring.style.transition = 'none';
+    ring.style.strokeDashoffset = '0';
+    ring.getBoundingClientRect();
+    requestAnimationFrame(function() { ring.style.transition = ''; });
+  }
 
   function showBreakScreen() {
     var isLong  = (s.pomPhase === 'long');
@@ -529,10 +628,11 @@
     s.remaining = breakSec; s.total = breakSec; s.running = true;
     showScreen('focus-break-screen');
 
-    var title = $('focus-break-title');
-    if (title) title.textContent = (isLong ? toFa(s.pomLongMins) : toFa(s.pomShortMins)) + ' دقیقه استراحت' + (isLong ? ' بلند' : '');
-    var tip = $('focus-break-tip'); if (tip) tip.textContent = randomItem(BREAK_TIPS);
+    var st  = $('focus-break-status'); if (st)  st.textContent  = isLong ? 'استراحت بلند' : 'استراحت کوتاه';
+    var sub = $('focus-break-sub');    if (sub) sub.textContent = breakSubText(isLong);
+    setBreakTip(false);
 
+    snapBreakRing();
     renderBreak();
     startBreath();
     clearInterval(tickInterval);
@@ -541,14 +641,18 @@
 
   function renderBreak() {
     var bt = $('focus-break-time'); if (bt) bt.textContent = fmt(s.remaining);
-    var fill = $('focus-break-fill');
-    if (fill) fill.style.width = ((1 - s.remaining / s.total) * 100).toFixed(1) + '%';
+    var ring = $('focus-break-ring');
+    if (ring) {
+      var progress = s.total > 0 ? s.remaining / s.total : 0;
+      ring.style.strokeDashoffset = (BREAK_CIRC * (1 - progress)).toFixed(2);
+    }
     updateFocusBtn();
   }
 
   function breakTick() {
     s.remaining = Math.max(0, s.remaining - 1);
     renderBreak();
+    if (s.remaining > 0 && s.remaining % 20 === 0) setBreakTip(true);
     if (s.remaining <= 0) {
       clearInterval(tickInterval); stopBreath();
       if (s.pomPhase === 'long') { showEndScreen(); return; }
@@ -556,7 +660,7 @@
       s.pomPhase  = 'work';
       s.remaining = s.pomWorkMins * 60; s.total = s.remaining;
       s.running   = true;
-      showScreen('focus-timer-screen'); renderTimerUI(); startTicking();
+      showScreen('focus-timer-screen'); snapRing(); renderTimerUI(); startTicking();
     }
   }
 
@@ -593,6 +697,10 @@
     clearInterval(tickInterval); clearTimeout(quoteTimeout);
     stopSound(); stopBreath();
     s.running = false; s.screen = null;
+    if (weWentFs && isFs()) {
+      try { (document.exitFullscreen || document.webkitExitFullscreen).call(document); } catch(e) {}
+    }
+    weWentFs = false;
     hideContainer(); updateFocusBtn();
   }
 
@@ -617,6 +725,15 @@
     // Theme toggle — reuses the project's global theme system
     var themeBtn = $('fc-theme-btn');
     if (themeBtn) themeBtn.addEventListener('click', toggleGlobalTheme);
+
+    // Fullscreen toggle + suggestion
+    var fsBtn = $('fc-fs-btn');
+    if (fsBtn) fsBtn.addEventListener('click', toggleFullscreen);
+    var fsSuggest = $('fc-fs-suggest');
+    if (fsSuggest) fsSuggest.addEventListener('click', toggleFullscreen);
+    document.addEventListener('fullscreenchange', updateFsUI);
+    document.addEventListener('webkitfullscreenchange', updateFsUI);
+    updateFsUI();
 
     // Preview / state switcher pills
     document.querySelectorAll('.fc-preview-pill').forEach(function(p) {
@@ -732,7 +849,7 @@
       s.pomPhase  = 'work';
       s.remaining = s.pomWorkMins * 60; s.total = s.remaining;
       s.running   = true;
-      showScreen('focus-timer-screen'); renderTimerUI(); startTicking();
+      showScreen('focus-timer-screen'); snapRing(); renderTimerUI(); startTicking();
     });
 
     // End screen
@@ -744,6 +861,8 @@
     // Keyboard
     document.addEventListener('keydown', function(e) {
       var c = $('focus-container'); if (!c || c.hidden) return;
+      var typing = /^(INPUT|TEXTAREA|SELECT)$/.test((e.target && e.target.tagName) || '');
+      if (!typing && (e.key === 'f' || e.key === 'F')) { e.preventDefault(); toggleFullscreen(); return; }
       if (s.screen === 'focus-timer-screen') {
         if (e.key === ' ') { e.preventDefault(); togglePause(); }
         if (e.key === 'Escape') closeAll();

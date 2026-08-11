@@ -72,6 +72,28 @@
           </div>
         </header>
 
+        <!-- ===== FOREX NEWS TIMELINE RIBBON (top of page, all layouts) ===== -->
+        <div class="news-ribbon" id="news-ribbon" data-state="calm" hidden>
+          <div class="nr-flag">
+            <span class="nr-flag-dot" aria-hidden="true"></span>
+            <span class="nr-flag-text">تقویم فارکس</span>
+          </div>
+
+          <button class="nr-next" id="nr-next" type="button" aria-haspopup="true" aria-expanded="false"
+            title="برنامهٔ خبری امروز">
+            <span class="nr-impact" id="nr-impact" aria-hidden="true"></span>
+            <span class="nr-cur" id="nr-cur"></span>
+            <span class="nr-name" id="nr-name">در حال بارگذاری…</span>
+            <span class="nr-count" id="nr-count"></span>
+          </button>
+
+          <div class="nr-track" id="nr-track" aria-hidden="true">
+            <span class="nr-now" id="nr-now"></span>
+          </div>
+
+          <div class="nr-pop" id="nr-pop" role="menu" hidden></div>
+        </div><!-- /news-ribbon -->
+
         <!-- ===== HERO + SEARCH ===== -->
         <div class="hero-search-wrap">
           <div class="hero-center">
@@ -90,12 +112,12 @@
                   autocomplete="off" spellcheck="false" />
                 <span class="scope-label" id="scope-label">گوگل</span>
                 <button class="search-go" id="search-go" title="جستجو" aria-label="جستجو"></button>
+                <div class="sp-glow-a" aria-hidden="true"></div>
+                <div class="sp-glow-b" aria-hidden="true"></div>
               </div>
               <ul class="suggest" id="suggest" hidden></ul>
               <div class="engines" id="engines"></div>
               <div class="sparkles-strip" aria-hidden="true">
-                <div class="sp-glow-a"></div>
-                <div class="sp-glow-b"></div>
                 <canvas id="sp-canvas"></canvas>
               </div>
             </section>
@@ -484,6 +506,26 @@
                     <span class="ios-track"></span>
                   </div>
                 </label>
+                <label class="tog-row" for="set-calendar">
+                  <div class="tog-info">
+                    <span class="tog-title">تقویم شمسی</span>
+                    <span class="tog-desc">نمایش تاریخ بالای ساعت به شمسی به‌جای میلادی</span>
+                  </div>
+                  <div class="ios-tog">
+                    <input type="checkbox" id="set-calendar" checked />
+                    <span class="ios-track"></span>
+                  </div>
+                </label>
+                <label class="tog-row" for="set-news-timeline">
+                  <div class="tog-info">
+                    <span class="tog-title">تایم‌لاین اخبار فارکس</span>
+                    <span class="tog-desc">نوار بالای صفحه با شمارش معکوس تا خبر مهم بعدی و حالت بریکینگ نیوز</span>
+                  </div>
+                  <div class="ios-tog">
+                    <input type="checkbox" id="set-news-timeline" checked />
+                    <span class="ios-track"></span>
+                  </div>
+                </label>
               </div>
             </div>
 
@@ -671,6 +713,16 @@
             <path d="M12 3a9 9 0 0 0 0 18z" fill="currentColor" stroke="none" />
           </svg>
         </button>
+        <button id="fc-fs-btn" class="fc-icon-btn" title="تمام‌صفحه (F)" aria-label="تمام‌صفحه">
+          <svg class="fc-fs-ico-enter" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" />
+          </svg>
+          <svg class="fc-fs-ico-exit" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" hidden>
+            <path d="M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5" />
+          </svg>
+        </button>
         <button id="fc-close-btn" class="fc-icon-btn" title="بستن (Esc)" aria-label="بستن">
           <svg width="15" height="15" viewBox="0 0 20 20" fill="none">
             <path d="M5 5l10 10M15 5L5 15" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
@@ -843,6 +895,18 @@
               aria-label="ولوم" />
           </div>
 
+          <!-- Fullscreen suggestion -->
+          <button type="button" class="fc-fs-suggest" id="fc-fs-suggest">
+            <span class="fc-fs-suggest-ico">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" />
+              </svg>
+            </span>
+            <span class="fc-fs-suggest-txt">برای تمرکز عمیق‌تر، مرورگر را تمام‌صفحه کن</span>
+            <span class="fc-fs-kbd" id="fc-fs-kbd">F11</span>
+          </button>
+
           <!-- Start -->
           <button class="fc-start-btn" id="start-focus-btn">شروع تمرکز</button>
 
@@ -876,7 +940,8 @@
           <svg id="focus-ring-svg" viewBox="0 0 320 320" aria-hidden="true">
             <circle id="focus-ring-track" cx="160" cy="160" r="140" />
             <circle id="focus-ring-progress" cx="160" cy="160" r="140" />
-            <circle id="focus-ring-dot" cx="160" cy="20" r="5.5" />
+            <circle id="focus-ring-dot-halo" cx="160" cy="20" r="11" />
+            <circle id="focus-ring-dot" cx="160" cy="20" r="6" />
           </svg>
           <div class="fc-center">
             <span class="fc-mode-label" id="focus-mode-label">تمرکز</span>
@@ -934,28 +999,43 @@
             </svg></button>
         </div>
 
-        <span class="fc-kbd-hint">Space توقف/ادامه · Esc خروج</span>
+        <span class="fc-kbd-hint">Space توقف/ادامه · F تمام‌صفحه · Esc خروج</span>
       </div>
 
       <!-- State 4: Break -->
       <div id="focus-break-screen" class="focus-state" hidden>
-        <span class="fc-break-status">استراحت</span>
-        <h2 id="focus-break-title" class="fc-break-title"></h2>
-        <div class="fc-breathe-wrap">
-          <div class="fc-breathe-circle"></div>
-          <span id="fc-breath-label" class="fc-breath-label">دم بگیر</span>
+        <span class="fc-break-status" id="focus-break-status">استراحت کوتاه</span>
+        <p class="fc-break-sub" id="focus-break-sub">چند لحظه نفس تازه کن</p>
+
+        <div class="fc-break-core">
+          <svg class="fc-break-ring-svg" viewBox="0 0 240 240" aria-hidden="true">
+            <circle class="fc-break-ring-track" cx="120" cy="120" r="104" />
+            <circle id="focus-break-ring" class="fc-break-ring-prog" cx="120" cy="120" r="104" />
+          </svg>
+          <div class="fc-breathe-orb" id="fc-breathe-orb">
+            <span id="fc-breath-label" class="fc-breath-label">آماده باش</span>
+          </div>
         </div>
-        <span class="fc-break-time" id="focus-break-time">05:00</span>
-        <div class="fc-break-progress">
-          <div class="fc-break-fill" id="focus-break-fill"></div>
+
+        <div class="fc-break-meta">
+          <span class="fc-break-time" id="focus-break-time">05:00</span>
+          <span class="fc-break-guide">همراهِ دایره نفس بکش</span>
         </div>
-        <div class="fc-break-tip">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="#1fc16b" style="flex-shrink:0;margin-top:2px">
+
+        <div class="fc-break-tip" id="focus-break-tip-box">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" style="flex-shrink:0;margin-top:2px">
             <path d="M9 21h6v-1H9v1zm3-19a7 7 0 0 0-4 12.7V17h8v-2.3A7 7 0 0 0 12 2z" />
           </svg>
           <span id="focus-break-tip"></span>
         </div>
-        <button class="fc-skip-break-btn" id="focus-skip-break">رد کردن استراحت</button>
+
+        <button class="fc-skip-break-btn" id="focus-skip-break">
+          آماده‌ام، ادامه بده
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M13 5l7 7-7 7M20 12H4" />
+          </svg>
+        </button>
       </div>
 
       <!-- State 5: End -->
@@ -1060,6 +1140,7 @@
   <script src="js/articles.js"></script>
   <script src="js/sidebars.js"></script>
   <script src="js/tour.js"></script>
+  <script src="js/news-timeline.js"></script>
 </body>
 
 </html>

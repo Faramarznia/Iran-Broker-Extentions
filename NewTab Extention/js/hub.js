@@ -392,7 +392,9 @@
 
     var url='https://api.open-meteo.com/v1/forecast?latitude='+city.lat+'&longitude='+city.lon+
             '&current=temperature_2m,apparent_temperature,relative_humidity_2m,wind_speed_10m,weather_code,is_day'+
-            '&daily=weather_code,temperature_2m_max,temperature_2m_min&timezone=auto&forecast_days=4';
+            '&hourly=temperature_2m,weather_code,is_day'+
+            '&daily=weather_code,temperature_2m_max,temperature_2m_min,sunrise,sunset'+
+            '&timezone=auto&forecast_days=4';
 
     fetch(url)
       .then(function(r){ return r.ok?r.json():null; })
@@ -407,94 +409,283 @@
     var rb=$('hub-weather-retry'); if(rb) rb.addEventListener('click', loadWeather);
   }
 
+  /* condition → accent bucket (a single accent hue per condition) */
+  function condOf(ic){
+    switch(ic){
+      case 'sun':       return 'clear';
+      case 'sun-cloud': return 'partly';
+      case 'cloud':     return 'cloudy';
+      case 'fog':       return 'fog';
+      case 'drizzle':
+      case 'rain':      return 'rain';
+      case 'snow':      return 'snow';
+      case 'storm':     return 'storm';
+      default:          return 'clear';
+    }
+  }
+
+  /* minimal monoline glyphs — inherit the accent via currentColor */
+  function mIcon(name,isDay){
+    var A='<svg class="wx-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">';
+    switch(name){
+      case 'sun': return isDay
+        ? A+'<circle cx="12" cy="12" r="4.2"/><g class="wx-rays"><line x1="12" y1="2.4" x2="12" y2="4.5"/><line x1="12" y1="19.5" x2="12" y2="21.6"/><line x1="2.4" y1="12" x2="4.5" y2="12"/><line x1="19.5" y1="12" x2="21.6" y2="12"/><line x1="5.1" y1="5.1" x2="6.6" y2="6.6"/><line x1="17.4" y1="17.4" x2="18.9" y2="18.9"/><line x1="18.9" y1="5.1" x2="17.4" y2="6.6"/><line x1="6.6" y1="17.4" x2="5.1" y2="18.9"/></g></svg>'
+        : A+'<path d="M20 14.2A7.4 7.4 0 0 1 9.8 4 6.4 6.4 0 1 0 20 14.2z"/></svg>';
+      case 'sun-cloud': return isDay
+        ? A+'<circle cx="8.4" cy="7.4" r="2.7"/><g class="wx-rays"><line x1="8.4" y1="2" x2="8.4" y2="3.1"/><line x1="3" y1="7.4" x2="4.1" y2="7.4"/><line x1="4.5" y1="3.5" x2="5.3" y2="4.3"/><line x1="12.3" y1="3.5" x2="11.5" y2="4.3"/></g><path d="M8 19h8a3.1 3.1 0 0 0 .2-6.2 4.5 4.5 0 0 0-8.6.7A2.9 2.9 0 0 0 8 19z"/></svg>'
+        : A+'<path d="M11 5.4A3.3 3.3 0 1 0 8.7 8.9"/><path d="M8 19h8a3.1 3.1 0 0 0 .2-6.2 4.5 4.5 0 0 0-8.6.7A2.9 2.9 0 0 0 8 19z"/></svg>';
+      case 'cloud': return A+'<path d="M7.5 18h8.7a3.5 3.5 0 0 0 .2-7 5 5 0 0 0-9.6-.8A3.3 3.3 0 0 0 7.5 18z"/></svg>';
+      case 'fog': return A+'<path d="M6.6 12.4h9.2a3.2 3.2 0 0 0 .2-6.4 4.7 4.7 0 0 0-9-.6"/><line x1="4.2" y1="16.4" x2="17.8" y2="16.4"/><line x1="6.6" y1="19.8" x2="15.4" y2="19.8"/></svg>';
+      case 'drizzle':
+      case 'rain': return A+'<path d="M7.5 14.5h8.7a3.4 3.4 0 0 0 .2-6.8 5 5 0 0 0-9.6-.7A3.2 3.2 0 0 0 7.5 14.5z"/><g class="wx-drops"><line x1="9.2" y1="17" x2="8.3" y2="20"/><line x1="12.8" y1="17" x2="11.9" y2="20.6"/><line x1="16.2" y1="17" x2="15.3" y2="20"/></g></svg>';
+      case 'snow': return A+'<path d="M7.5 13.6h8.7a3.4 3.4 0 0 0 .2-6.8 5 5 0 0 0-9.6-.7A3.2 3.2 0 0 0 7.5 13.6z"/><g stroke-width="1.3"><line x1="9.4" y1="17" x2="9.4" y2="20.4"/><line x1="7.9" y1="18.7" x2="10.9" y2="18.7"/><line x1="15" y1="17" x2="15" y2="20.4"/><line x1="13.5" y1="18.7" x2="16.5" y2="18.7"/></g></svg>';
+      case 'storm': return A+'<path d="M7.5 13.4h8.7a3.4 3.4 0 0 0 .2-6.8 5 5 0 0 0-9.6-.7A3.2 3.2 0 0 0 7.5 13.4z"/><path d="M12.6 13.6l-2.3 3.9h2.1L11.7 21l3.3-4.4h-2.2z"/></svg>';
+      default: return A+'<circle cx="12" cy="12" r="4.2"/></svg>';
+    }
+  }
+
+  var PIN_SVG='<svg class="hw-ci" viewBox="0 0 24 24" fill="none"><path d="M12 21s6-5.2 6-10a6 6 0 1 0-12 0c0 4.8 6 10 6 10z" stroke="currentColor" stroke-width="1.6"/><circle cx="12" cy="11" r="2.1" stroke="currentColor" stroke-width="1.6"/></svg>';
+  var CHEV_SVG='<svg class="hw-cv" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+
+  /* ── small helpers for the hourly chart ── */
+  function hm(iso){ var dt=new Date(iso); return fa(p2(dt.getHours()))+':'+fa(p2(dt.getMinutes())); }
+  /* Catmull-Rom → cubic-bezier: a smooth path through the points */
+  function smooth(pts){
+    if(pts.length<2) return '';
+    var d='M'+pts[0].x+','+pts[0].y;
+    for(var i=0;i<pts.length-1;i++){
+      var p0=pts[i-1]||pts[i], p1=pts[i], p2=pts[i+1], p3=pts[i+2]||p2;
+      var c1x=p1.x+(p2.x-p0.x)/6, c1y=p1.y+(p2.y-p0.y)/6;
+      var c2x=p2.x-(p3.x-p1.x)/6, c2y=p2.y-(p3.y-p1.y)/6;
+      d+=' C'+c1x.toFixed(2)+','+c1y.toFixed(2)+' '+c2x.toFixed(2)+','+c2y.toFixed(2)+' '+p2.x.toFixed(2)+','+p2.y.toFixed(2);
+    }
+    return d;
+  }
+
+  /* the signature: next-24h temperature curve with a gradient fill, sunrise/
+     sunset markers and a live hover readout. RTL → «now» sits at the right. */
+  function hourlyChart(d){
+    var Hd=d.hourly; if(!Hd||!Hd.time||!Hd.temperature_2m) return null;
+    /* anchor «now» to the API's own local clock (current.time is in the
+       location's timezone, same scale as hourly.time) so the marker lands on
+       the right hour regardless of the browser's timezone */
+    var times=Hd.time, temps=Hd.temperature_2m,
+        now=(d.current&&d.current.time)?new Date(d.current.time).getTime():Date.now();
+    var start=0, best=Infinity;
+    for(var i=0;i<times.length;i++){ var df=Math.abs(new Date(times[i]).getTime()-now); if(df<best){best=df;start=i;} }
+    var N=Math.min(24, times.length-start); if(N<4) return null;
+    var t0=new Date(times[start]).getTime();
+    var vals=[]; for(var j=0;j<N;j++) vals.push(temps[start+j]);
+    var tmax=Math.max.apply(null,vals), tmin=Math.min.apply(null,vals), span=(tmax-tmin)||1;
+    var HH=62, padT=14, padB=16;
+    function yAt(t){ return +(padT+(tmax-t)/span*(HH-padT-padB)).toFixed(2); }
+    function xAt(h){ return +(95-(h/(N-1))*90).toFixed(2); }
+    var pts=[], maxIdx=0, minIdx=0;
+    for(var k=0;k<N;k++){
+      pts.push({x:xAt(k), y:yAt(vals[k]), temp:Math.round(vals[k]), label:hm(times[start+k])});
+      if(vals[k]>vals[maxIdx]) maxIdx=k;
+      if(vals[k]<vals[minIdx]) minIdx=k;
+    }
+    var line=smooth(pts);
+    var area=line+' L'+pts[N-1].x+','+HH+' L'+pts[0].x+','+HH+' Z';
+
+    /* sunrise / sunset ticks that fall inside the window */
+    var ticks='';
+    function tick(iso,kind){
+      if(!iso) return; var h=(new Date(iso).getTime()-t0)/3600000;
+      if(h<0||h>N-1) return;
+      ticks+='<span class="wx-suntick '+kind+'" style="left:'+xAt(h).toFixed(2)+'%" title="'+(kind==='rise'?'طلوع':'غروب')+' '+hm(iso)+'"></span>';
+    }
+    if(d.daily&&d.daily.sunrise){
+      for(var s=0;s<d.daily.sunrise.length;s++){ tick(d.daily.sunrise[s],'rise'); tick(d.daily.sunset[s],'set'); }
+    }
+
+    var peak='<span class="wx-peak" style="left:'+pts[maxIdx].x+'%;top:'+pts[maxIdx].y+'px">'+fa(Math.round(tmax))+'°</span>';
+    var trough='<span class="wx-trough" style="left:'+pts[minIdx].x+'%;top:'+pts[minIdx].y+'px">'+fa(Math.round(tmin))+'°</span>';
+    var nowDot='<span class="wx-now" style="left:'+pts[0].x+'%;top:'+pts[0].y+'px"></span>';
+
+    var svg='<svg class="wx-curve" viewBox="0 0 100 '+HH+'" preserveAspectRatio="none" aria-hidden="true">'+
+        '<defs><linearGradient id="wxArea" x1="0" y1="0" x2="0" y2="1">'+
+          '<stop offset="0" style="stop-color:var(--wx);stop-opacity:.34"/>'+
+          '<stop offset="1" style="stop-color:var(--wx);stop-opacity:0"/>'+
+        '</linearGradient></defs>'+
+        '<path class="wx-fill" d="'+area+'" fill="url(#wxArea)"/>'+
+        '<path class="wx-stroke" d="'+line+'"/>'+
+      '</svg>';
+
+    var html='<div class="wx-plot" id="wx-plot" style="--wxH:'+HH+'px" role="img" aria-label="نمودار دمای ۲۴ ساعت آینده">'+
+        svg+ticks+peak+trough+nowDot+
+        '<span class="wx-cross" id="wx-cross"></span>'+
+        '<span class="wx-crossdot" id="wx-crossdot"></span>'+
+        '<div class="wx-tip" id="wx-tip"></div>'+
+      '</div>';
+    return { html:html, pts:pts };
+  }
+
+  function wireHover(chart){
+    var plot=$('wx-plot'); if(!plot) return;
+    var cross=$('wx-cross'), dot=$('wx-crossdot'), tip=$('wx-tip');
+    var pts=chart.pts, N=pts.length;
+    function move(e){
+      var r=plot.getBoundingClientRect(); if(!r.width) return;
+      var cx=(e.touches&&e.touches[0])?e.touches[0].clientX:e.clientX;
+      var f=(r.right-cx)/r.width; f=Math.max(0,Math.min(1,f));   // RTL: right edge = now
+      var idx=Math.round(f*(N-1)); var p=pts[idx];
+      plot.classList.add('is-hover');
+      cross.style.left=p.x+'%';
+      dot.style.left=p.x+'%'; dot.style.top=p.y+'px';
+      var tx=Math.max(15,Math.min(85,p.x));
+      tip.style.left=tx+'%';
+      tip.innerHTML='<b>'+fa(p.temp)+'°</b><span>'+p.label+'</span>';
+    }
+    function leave(){ plot.classList.remove('is-hover'); }
+    plot.addEventListener('pointermove',move);
+    plot.addEventListener('pointerleave',leave);
+    plot.addEventListener('pointerdown',move);
+  }
+
+  /* compact 4-day forecast strip */
+  function daysStrip(daily){
+    var n=Math.min(4, daily.time.length); if(n<2) return '';
+    var days=['یک‌شنبه','دوشنبه','سه‌شنبه','چهارشنبه','پنج‌شنبه','جمعه','شنبه'];
+    var out='';
+    for(var i=0;i<n;i++){
+      var dt=new Date(daily.time[i]+'T00:00:00');
+      var dwc=WCODE[daily.weather_code[i]]||{i:'sun'};
+      var lbl=i===0?'امروز':(i===1?'فردا':days[dt.getDay()]);
+      out+='<div class="wx-d'+(i===0?' now':'')+'">'+
+             '<span class="wx-d-l">'+lbl+'</span>'+
+             '<span class="wx-d-i">'+mIcon(dwc.i,true)+'</span>'+
+             '<span class="wx-d-t">'+fa(Math.round(daily.temperature_2m_max[i]))+'°<i>'+fa(Math.round(daily.temperature_2m_min[i]))+'°</i></span>'+
+           '</div>';
+    }
+    return '<div class="wx-days">'+out+'</div>';
+  }
+
   function renderWeather(d,city){
     var box=$('hub-weather'); if(!box) return;
     var cur=d.current;
     var isDay=cur.is_day===1;
-    var code=cur.weather_code;
-    var wc=WCODE[code]||{l:'—',i:'sun'};
+    var wc=WCODE[cur.weather_code]||{l:'—',i:'sun'};
     var temp=Math.round(cur.temperature_2m);
     var feels=Math.round(cur.apparent_temperature);
     var hum=Math.round(cur.relative_humidity_2m);
     var wind=Math.round(cur.wind_speed_10m);
 
-    box.setAttribute('data-sky', isDay?(code<=2?'clear-day':'cloud-day'):(code<=2?'clear-night':'cloud-night'));
+    box.setAttribute('data-cond', condOf(wc.i));
+    box.setAttribute('data-day', isDay?'1':'0');
 
-    var fc='';
-    if(d.daily&&d.daily.time){
-      var days=['یکشنبه','دوشنبه','سه‌شنبه','چهارشنبه','پنجشنبه','جمعه','شنبه'];
-      for(var i=1;i<d.daily.time.length;i++){
-        var dt=new Date(d.daily.time[i]+'T00:00:00');
-        var dwc=WCODE[d.daily.weather_code[i]]||{i:'sun'};
-        var lbl = i===1 ? 'فردا' : days[dt.getDay()];
-        fc+='<div class="hw-fc-day">'+
-              '<span class="hw-fc-lbl">'+lbl+'</span>'+
-              '<span class="hw-fc-ic">'+wIcon(dwc.i,true)+'</span>'+
-              '<span class="hw-fc-tmp">'+fa(Math.round(d.daily.temperature_2m_max[i]))+'°<i>'+fa(Math.round(d.daily.temperature_2m_min[i]))+'°</i></span>'+
-            '</div>';
-      }
+    var chart = (d.hourly) ? hourlyChart(d) : null;
+
+    var sunRow='';
+    if(d.daily&&d.daily.sunrise&&d.daily.sunrise[0]){
+      var riseSvg='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 18h16"/><path d="M8 18a4 4 0 0 1 8 0"/><path d="M12 3v3M5.6 7.6l1.4 1.4M18.4 7.6 17 9"/></svg>';
+      var setSvg='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 18h16"/><path d="M8 18a4 4 0 0 1 8 0"/><path d="M12 9V6M9 8l3 3 3-3"/></svg>';
+      sunRow='<div class="wx-sun">'+
+          '<span class="wx-sun-i rise">'+riseSvg+'<em>طلوع</em><b>'+hm(d.daily.sunrise[0])+'</b></span>'+
+          '<span class="wx-sun-i set">'+setSvg+'<em>غروب</em><b>'+hm(d.daily.sunset[0])+'</b></span>'+
+        '</div>';
     }
 
+    var TH='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M10 13.4V5.5a2 2 0 1 1 4 0v7.9a4 4 0 1 1-4 0z"/></svg>';
+    var DR='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M12 3.5s6 6.4 6 10.2A6 6 0 1 1 6 13.7C6 9.9 12 3.5 12 3.5z"/></svg>';
+    var WD='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M3 8.5h10a2.4 2.4 0 1 0-2.4-2.4M3 13.5h13.5a2.6 2.6 0 1 1-2.6 2.6"/></svg>';
+
     box.innerHTML=
-      '<div class="hw-glow" aria-hidden="true"></div>'+
-      '<div class="hw-main">'+
-        '<div class="hw-icon">'+wIcon(wc.i,isDay)+'</div>'+
-        '<div class="hw-now">'+
-          '<div class="hw-temp">'+fa(temp)+'<span class="hw-deg">°C</span></div>'+
-          '<div class="hw-cond">'+esc(wc.l)+'</div>'+
-        '</div>'+
-        '<button class="hw-city" id="hub-weather-city" title="تغییر شهر">'+
-          '<svg viewBox="0 0 24 24" width="13" height="13" fill="none"><path d="M12 21s7-5.5 7-11a7 7 0 1 0-14 0c0 5.5 7 11 7 11z" stroke="currentColor" stroke-width="1.7"/><circle cx="12" cy="10" r="2.4" stroke="currentColor" stroke-width="1.7"/></svg>'+
-          '<span>'+esc(city.name)+'</span>'+
+      '<div class="wx-top">'+
+        '<div class="wx-cond"><span class="wx-ico">'+mIcon(wc.i,isDay)+'</span>'+
+          '<span class="wx-cond-l">'+esc(wc.l)+'</span></div>'+
+        '<button class="wx-city" id="hub-weather-city" aria-haspopup="listbox" aria-expanded="false" title="تغییر شهر">'+
+          PIN_SVG+'<span>'+esc(city.name)+'</span>'+CHEV_SVG+
         '</button>'+
       '</div>'+
-      '<div class="hw-meta">'+
-        '<span class="hw-meta-i">حس‌ واقعی <b>'+fa(feels)+'°</b></span>'+
-        '<span class="hw-meta-i">رطوبت <b>'+fa(hum)+'٪</b></span>'+
-        '<span class="hw-meta-i">باد <b>'+fa(wind)+'</b> km/h</span>'+
+      '<div class="wx-hero">'+
+        '<div class="wx-temp">'+fa(temp)+'<span class="wx-deg">°</span></div>'+
+        '<div class="wx-stats">'+
+          '<span class="wx-stat">'+TH+'<b>'+fa(feels)+'°</b><em>حس‌شده</em></span>'+
+          '<span class="wx-stat">'+DR+'<b>'+fa(hum)+'٪</b><em>رطوبت</em></span>'+
+          '<span class="wx-stat">'+WD+'<b>'+fa(wind)+'</b><em>km/h</em></span>'+
+        '</div>'+
       '</div>'+
-      (fc?'<div class="hw-forecast">'+fc+'</div>':'');
+      (chart?'<div class="wx-chartwrap">'+chart.html+'</div>'+sunRow:'')+
+      (d.daily&&d.daily.time?daysStrip(d.daily):'');
 
     var cityBtn=$('hub-weather-city');
-    if(cityBtn) cityBtn.addEventListener('click', promptCity);
+    if(cityBtn) cityBtn.addEventListener('click', function(e){
+      e.stopPropagation();
+      if($('hub-citymenu')) closeCityMenu(); else openCityMenu();
+    });
+    if(chart) wireHover(chart);
   }
 
-  function promptCity(){
-    var box=$('hub-weather'); if(!box) return;
-    var wrap=el('div','hw-city-edit',
-      '<input type="text" id="hub-city-inp" placeholder="نام شهر (مثلاً Mashhad)…" autocomplete="off" />'+
-      '<div class="hw-city-results" id="hub-city-results"></div>');
-    box.appendChild(wrap);
+  /* ── city picker: a compact popover anchored to the pill (no layout shift) ── */
+  var _cmDoc=null, _cmEsc=null;
+
+  function closeCityMenu(){
+    var m=$('hub-citymenu'); if(m&&m.parentNode) m.parentNode.removeChild(m);
+    var b=$('hub-weather-city'); if(b) b.setAttribute('aria-expanded','false');
+    if(_cmDoc){ document.removeEventListener('mousedown',_cmDoc,true); _cmDoc=null; }
+    if(_cmEsc){ document.removeEventListener('keydown',_cmEsc,true); _cmEsc=null; }
+  }
+
+  function openCityMenu(){
+    var card=$('hub-weather'); if(!card) return;
+    var menu=el('div','hw-citymenu');
+    menu.id='hub-citymenu';
+    menu.innerHTML=
+      '<div class="hw-cm-search">'+
+        '<svg viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="1.8"/><path d="M20 20l-3.6-3.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>'+
+        '<input type="text" id="hub-city-inp" placeholder="جستجوی شهر…" autocomplete="off" spellcheck="false" />'+
+      '</div>'+
+      '<div class="hw-cm-list" id="hub-city-results" role="listbox">'+
+        '<div class="hw-cm-hint">نام شهر را بنویسید</div>'+
+      '</div>';
+    card.appendChild(menu);
+    var btn=$('hub-weather-city'); if(btn) btn.setAttribute('aria-expanded','true');
+
     var inp=$('hub-city-inp'); inp.focus();
     var t;
     inp.addEventListener('input',function(){
       clearTimeout(t);
       var q=inp.value.trim();
-      if(q.length<2){ $('hub-city-results').innerHTML=''; return; }
-      t=setTimeout(function(){ searchCity(q); },350);
+      if(q.length<2){ $('hub-city-results').innerHTML='<div class="hw-cm-hint">دست‌کم دو حرف بنویسید</div>'; return; }
+      t=setTimeout(function(){ searchCity(q); },320);
     });
-    inp.addEventListener('keydown',function(e){ if(e.key==='Escape') loadWeather(); });
+
+    _cmDoc=function(e){
+      var m=$('hub-citymenu'), b=$('hub-weather-city');
+      if(m&&!m.contains(e.target)&&(!b||!b.contains(e.target))) closeCityMenu();
+    };
+    _cmEsc=function(e){ if(e.key==='Escape'){ e.preventDefault(); closeCityMenu(); var bb=$('hub-weather-city'); if(bb) bb.focus(); } };
+    setTimeout(function(){
+      document.addEventListener('mousedown',_cmDoc,true);
+      document.addEventListener('keydown',_cmEsc,true);
+    },0);
   }
 
   function searchCity(q){
     var box=$('hub-city-results'); if(!box) return;
-    box.innerHTML='<div class="hw-city-loading">جستجو…</div>';
-    fetch('https://geocoding-api.open-meteo.com/v1/search?name='+encodeURIComponent(q)+'&count=5&language=fa')
+    box.innerHTML='<div class="hw-cm-loading">در حال جستجو…</div>';
+    fetch('https://geocoding-api.open-meteo.com/v1/search?name='+encodeURIComponent(q)+'&count=6&language=fa')
       .then(function(r){ return r.ok?r.json():null; })
       .then(function(d){
-        if(!d||!d.results||!d.results.length){ box.innerHTML='<div class="hw-city-loading">شهری یافت نشد</div>'; return; }
-        box.innerHTML='';
+        var box2=$('hub-city-results'); if(!box2) return;
+        if(!d||!d.results||!d.results.length){ box2.innerHTML='<div class="hw-cm-hint">شهری پیدا نشد</div>'; return; }
+        box2.innerHTML='';
         d.results.forEach(function(c){
-          var nm=c.name+(c.admin1?'، '+c.admin1:'')+(c.country?' · '+c.country:'');
-          var b=el('button','hw-city-opt',esc(nm));
+          var sub=[c.admin1,c.country].filter(Boolean).join(' · ');
+          var b=el('button','hw-cm-opt',
+            '<span class="pin">'+PIN_SVG+'</span>'+
+            '<span class="hw-cm-txt"><b>'+esc(c.name)+'</b>'+(sub?'<em>'+esc(sub)+'</em>':'')+'</span>');
+          b.setAttribute('role','option');
           b.addEventListener('click',function(){
             DB.weatherCity={name:c.name, lat:c.latitude, lon:c.longitude};
-            save(); loadWeather();
+            save(); closeCityMenu(); loadWeather();
           });
-          box.appendChild(b);
+          box2.appendChild(b);
         });
       })
-      .catch(function(){ box.innerHTML='<div class="hw-city-loading">خطا در جستجو</div>'; });
+      .catch(function(){ var box2=$('hub-city-results'); if(box2) box2.innerHTML='<div class="hw-cm-hint">خطا در جستجو</div>'; });
   }
 
   /* ═══════════════════════════════════════

@@ -211,6 +211,7 @@
   const PERSIST_KEY = 'ib_newtab_v2';
   const state = {
     theme: 'dark', layout: 'simple', accent: '#185adb', showGrid: true,
+    jalaliCalendar: true,
     name: '', engine: 'google', activeEngine: 'google',
     coins: COINS_DEFAULT,
     showCrypto: true, query: '', sugIdx: -1, tipIndex: 0,
@@ -237,7 +238,7 @@
   function load() {
     var saved = {};
     try { saved = JSON.parse(localStorage.getItem(PERSIST_KEY) || '{}'); } catch (e) {}
-    ['theme', 'layout', 'accent', 'showGrid', 'name', 'engine', 'coins', 'showCrypto', 'tipIndex', 'bgMode', 'bgIndex', 'pxTab', 'mktAxis', 'newsCatIds'].forEach(function (k) {
+    ['theme', 'layout', 'accent', 'showGrid', 'jalaliCalendar', 'name', 'engine', 'coins', 'showCrypto', 'tipIndex', 'bgMode', 'bgIndex', 'pxTab', 'mktAxis', 'newsCatIds'].forEach(function (k) {
       if (saved[k] !== undefined) state[k] = saved[k];
     });
     /* کسانی که هرگز لیست را دستکاری نکرده‌اند، پیش‌فرض بلندِ جدید را بگیرند */
@@ -254,6 +255,7 @@
   function persist() {
     const o = {
       theme: state.theme, layout: state.layout, accent: state.accent, showGrid: state.showGrid,
+      jalaliCalendar: state.jalaliCalendar,
       name: state.name, engine: state.engine, coins: state.coins,
       showCrypto: state.showCrypto, tipIndex: state.tipIndex,
       bgMode: state.bgMode, bgIndex: state.bgIndex,
@@ -1749,16 +1751,21 @@
   }
 
   /* ----------------------------- Time-dependent render ----------------------------- */
+  function formatHeroDate(now) {
+    if (state.jalaliCalendar) {
+      try { return new Intl.DateTimeFormat('fa-IR', { day: 'numeric', month: 'long' }).format(now); }
+      catch (e) { return now.toLocaleDateString('fa-IR'); }
+    }
+    try { return new Intl.DateTimeFormat('fa-IR-u-ca-gregory', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }).format(now); }
+    catch (e) { return now.toLocaleDateString('fa-IR'); }
+  }
   function renderTime() {
     const now = new Date();
     const hh = String(now.getHours()).padStart(2, '0');
     const mm = String(now.getMinutes()).padStart(2, '0');
     els.clock.textContent = hh + ':' + mm;
 
-    let dateStr;
-    try { dateStr = new Intl.DateTimeFormat('fa-IR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }).format(now); }
-    catch (e) { dateStr = now.toLocaleDateString('fa-IR'); }
-    els.heroDate.textContent = dateStr;
+    els.heroDate.textContent = formatHeroDate(now);
 
     const h = now.getHours();
     const g = h >= 5 && h < 12 ? 'صبحت بخیر' : h >= 12 && h < 17 ? 'ظهرت بخیر' : h >= 17 && h < 21 ? 'عصرت بخیر' : 'شبت بخیر';
@@ -1868,6 +1875,7 @@
     syncCoinsSummary();
     els.setCrypto.checked = state.showCrypto;
     els.setGrid.checked = state.showGrid;
+    els.setCalendar.checked = state.jalaliCalendar;
     syncSeg(els.setLayout, 'layout', state.layout);
     syncSwatches();
     syncSeg(els.setThemeMode, 'theme', state.theme);
@@ -2107,7 +2115,7 @@
       'markets-wrap', 'markets-utc-badge',
       'bn-chips', 'bento-news-list',
       'quick-links', 'settings-modal', 'settings-panel', 'settings-close', 'settings-save',
-      'set-name', 'set-engine', 'set-layout', 'set-accent', 'set-grid', 'set-crypto',
+      'set-name', 'set-engine', 'set-layout', 'set-accent', 'set-grid', 'set-crypto', 'set-calendar',
       'set-coins-btn', 'set-coins-summary', 'coins-btn', 'coins-modal', 'coins-panel', 'coins-close',
       'coins-save', 'coins-reset', 'coins-count', 'coin-chips', 'coin-results', 'coin-search', 'coin-search-spin',
       'coin-search-ic', 'coin-search-clear', 'coin-results-label', 'coins-cancel', 'coins-clear-all',
@@ -2240,6 +2248,7 @@
     els.setName.addEventListener('input', function (e) { state.name = e.target.value; renderTime(); persist(); });
     els.setEngine.addEventListener('change', function (e) { state.engine = e.target.value; setEngine(e.target.value); persist(); });
     els.setGrid.addEventListener('change', function (e) { state.showGrid = e.target.checked; applyGrid(); persist(); });
+    els.setCalendar.addEventListener('change', function (e) { state.jalaliCalendar = e.target.checked; renderTime(); persist(); });
     els.setCrypto.addEventListener('change', function (e) {
       state.showCrypto = e.target.checked; applyShowCrypto(); persist();
       if (state.showCrypto) loadPrices(false);
