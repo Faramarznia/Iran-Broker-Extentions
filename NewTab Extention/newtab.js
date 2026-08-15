@@ -1835,12 +1835,13 @@
     el.innerHTML = GALLERY.map(function(item, i) {
       var active = (state.bgMode === 'gallery' && state.bgIndex === i) ? ' active' : '';
       return '<button class="bg-thumb' + active + '" data-idx="' + i + '" title="' + item.label + '" style="background:' + item.gradient + '">' +
-        '<img src="' + item.file + '" alt="' + item.label + '" loading="lazy" ' +
-          'onerror="this.style.display=\'none\'" />' +
+        '<img src="' + item.file + '" alt="' + item.label + '" loading="lazy" />' +
         '<span class="bg-thumb-label">' + item.label + '</span>' +
       '</button>';
     }).join('');
     el.querySelectorAll('.bg-thumb').forEach(function(btn) {
+      var img = btn.querySelector('img');
+      if (img) img.addEventListener('error', function() { img.style.display = 'none'; });
       btn.addEventListener('click', function() {
         state.bgMode = 'gallery';
         state.bgIndex = parseInt(btn.getAttribute('data-idx'));

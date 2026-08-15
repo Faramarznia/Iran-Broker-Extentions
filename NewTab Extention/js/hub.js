@@ -462,9 +462,24 @@
     return d;
   }
 
+  /* ── viewport-height density: how much of the card can we afford to show?
+     browser chrome (tabs/bookmarks/extension rows) eats far more of the
+     window than the page itself gets credit for, so these thresholds are
+     deliberately conservative: the 24h chart — the single biggest thing in
+     this card — only appears on genuinely tall screens. «cozy» (the common
+     case) and «mini» both drop it and show just the essentials, which is
+     what keeps the card small and keeps the page from scrolling. ── */
+  function wxTier(){
+    var h=window.innerHeight||800;
+    if(h<700) return 'mini';
+    if(h<950) return 'cozy';
+    return 'full';
+  }
+  var WX_HH={ full:50 };   // cozy/mini skip the chart entirely
+
   /* the signature: next-24h temperature curve with a gradient fill, sunrise/
      sunset markers and a live hover readout. RTL → «now» sits at the right. */
-  function hourlyChart(d){
+  function hourlyChart(d,HH){
     var Hd=d.hourly; if(!Hd||!Hd.time||!Hd.temperature_2m) return null;
     /* anchor «now» to the API's own local clock (current.time is in the
        location's timezone, same scale as hourly.time) so the marker lands on
@@ -477,7 +492,7 @@
     var t0=new Date(times[start]).getTime();
     var vals=[]; for(var j=0;j<N;j++) vals.push(temps[start+j]);
     var tmax=Math.max.apply(null,vals), tmin=Math.min.apply(null,vals), span=(tmax-tmin)||1;
-    var HH=62, padT=14, padB=16;
+    HH=HH||62; var padT=Math.round(HH*.23), padB=Math.round(HH*.26);
     function yAt(t){ return +(padT+(tmax-t)/span*(HH-padT-padB)).toFixed(2); }
     function xAt(h){ return +(95-(h/(N-1))*90).toFixed(2); }
     var pts=[], maxIdx=0, minIdx=0;
@@ -562,8 +577,11 @@
     return '<div class="wx-days">'+out+'</div>';
   }
 
+  var _wxLast=null;   // {d, city} of the last successful render, for resize-driven re-density
+
   function renderWeather(d,city){
     var box=$('hub-weather'); if(!box) return;
+    _wxLast={d:d, city:city};
     var cur=d.current;
     var isDay=cur.is_day===1;
     var wc=WCODE[cur.weather_code]||{l:'—',i:'sun'};
@@ -575,10 +593,13 @@
     box.setAttribute('data-cond', condOf(wc.i));
     box.setAttribute('data-day', isDay?'1':'0');
 
-    var chart = (d.hourly) ? hourlyChart(d) : null;
+    /* how much room do we have? fewer pixels → fewer optional sections */
+    var tier=wxTier();
+    box.setAttribute('data-density', tier);
+    var chart = (d.hourly && WX_HH[tier]) ? hourlyChart(d, WX_HH[tier]) : null;
 
     var sunRow='';
-    if(d.daily&&d.daily.sunrise&&d.daily.sunrise[0]){
+    if(tier==='full' && d.daily&&d.daily.sunrise&&d.daily.sunrise[0]){
       var riseSvg='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 18h16"/><path d="M8 18a4 4 0 0 1 8 0"/><path d="M12 3v3M5.6 7.6l1.4 1.4M18.4 7.6 17 9"/></svg>';
       var setSvg='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 18h16"/><path d="M8 18a4 4 0 0 1 8 0"/><path d="M12 9V6M9 8l3 3 3-3"/></svg>';
       sunRow='<div class="wx-sun">'+
@@ -617,6 +638,19 @@
     });
     if(chart) wireHover(chart);
   }
+
+  /* re-render at the new density if a live resize crosses a tier boundary
+     (e.g. the window is un-maximized, or split-view narrows the screen) —
+     the card should never be stuck showing the wrong amount of detail */
+  var _wxResizeT=null;
+  window.addEventListener('resize', function(){
+    clearTimeout(_wxResizeT);
+    _wxResizeT=setTimeout(function(){
+      if(!_wxLast) return;
+      var box=$('hub-weather'); if(!box) return;
+      if(box.getAttribute('data-density')!==wxTier()) renderWeather(_wxLast.d,_wxLast.city);
+    },180);
+  });
 
   /* ── city picker: a compact popover anchored to the pill (no layout shift) ── */
   var _cmDoc=null, _cmEsc=null;

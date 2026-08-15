@@ -6487,6 +6487,11 @@ body[data-layout="hub"] .hub-aside {
 }
 body[data-layout="hub"] .hub-aside-cal        { gap: 16px }
 body[data-layout="hub"] .hub-aside-cal .hweather { flex: 0 0 auto }
+/* the calendar must never be the one that yields space: with the weather
+   card now sized to fit (see wxTier() in hub.js), the calendar keeps its
+   full natural height instead of being flex-shrunk and clipped by
+   .hub-card's overflow:hidden when the column is capped on short screens */
+body[data-layout="hub"] .hub-aside-cal .hcal { flex: 0 0 auto }
 body[data-layout="hub"] .hub-aside-tasks .htasks { flex: 1; max-height: none }
 body[data-layout="hub"] .hub-quick {
   flex: 1;
@@ -6549,6 +6554,32 @@ body[data-layout="hub"] .hub-quick {
     max-height: calc(100vh - 64px);
     overflow-y: auto;
   }
+}
+
+/* On short screens the hero clock + quick-access grid are fixed-size and
+   were the actual remaining cause of page scroll even after the weather
+   card became height-aware (they sit in the same row span as the aside
+   columns, so their size sets the floor for the whole row). Shrink them
+   the same way data-layout="data" already does (see the @media(max-height)
+   rules near the top of the file) so more of the row's height goes to
+   content instead of the page needing to scroll past the fold. */
+@media (max-height: 900px) {
+  body[data-layout="hub"] .page-col { padding-top: 20px; padding-bottom: 20px }
+  body[data-layout="hub"] .hero-search-wrap { gap: 14px }
+  body[data-layout="hub"] .sec-hero { gap: 2px }
+  body[data-layout="hub"] .hero-greeting { margin-bottom: 6px }
+  body[data-layout="hub"] .clock { font-size: 50px }
+  body[data-layout="hub"] .hub-quick { margin-top: 14px }
+  body[data-layout="hub"] .hub-quick-head { margin-bottom: 8px }
+  body[data-layout="hub"] .hub-quick-grid { gap: 8px }
+  body[data-layout="hub"] .hqa-tile { padding: 7px 11px }
+  body[data-layout="hub"] .hqa-ic { width: 30px; height: 30px; font-size: 13px }
+}
+@media (max-height: 700px) {
+  body[data-layout="hub"] .hero-date,
+  body[data-layout="hub"] .hero-session { display: none }
+  body[data-layout="hub"] .hero-greeting { margin-bottom: 2px }
+  body[data-layout="hub"] .clock { font-size: 38px }
 }
 
 /* Shared card */
@@ -6822,6 +6853,37 @@ body[data-layout="hub"] .hub-aside-cal { gap: 16px }
 .wx-d.now .wx-d-i { color: var(--wx) }
 .wx-d-t { font-size: 11px; font-weight: 700; color: var(--text); font-variant-numeric: tabular-nums }
 .wx-d-t i { font-style: normal; font-weight: 500; color: var(--soft); margin-inline-start: 3px }
+
+/* ── adaptive density ──
+   `data-density` is set by JS from window.innerHeight (wxTier()), measured
+   conservatively since real browser chrome (tabs/bookmarks/extension rows)
+   can eat well over 100px before the page even starts. "full" — chart +
+   sunrise/sunset — is reserved for genuinely tall screens; "cozy" (no
+   chart) is the common case; "mini" trims it further still. Each tier only
+   needs to override what's smaller than the previous one. */
+.hweather[data-density="cozy"] { padding: 11px 14px 10px }
+.hweather[data-density="cozy"] .wx-ico,
+.hweather[data-density="cozy"] .wx-ico .wx-svg { width: 24px; height: 24px }
+.hweather[data-density="cozy"] .wx-hero { margin-top: 3px }
+.hweather[data-density="cozy"] .wx-temp { font-size: 38px }
+.hweather[data-density="cozy"] .wx-deg { font-size: 17px }
+.hweather[data-density="cozy"] .wx-days { margin-top: 9px; padding-top: 9px }
+.hweather[data-density="cozy"] .wx-d-i,
+.hweather[data-density="cozy"] .wx-d-i .wx-svg { width: 20px; height: 20px }
+
+.hweather[data-density="mini"] { padding: 10px 13px 9px }
+.hweather[data-density="mini"] .wx-ico,
+.hweather[data-density="mini"] .wx-ico .wx-svg { width: 20px; height: 20px }
+.hweather[data-density="mini"] .wx-hero { margin-top: 2px }
+.hweather[data-density="mini"] .wx-temp { font-size: 30px }
+.hweather[data-density="mini"] .wx-deg { font-size: 14px }
+.hweather[data-density="mini"] .wx-stats { gap: 3px }
+.hweather[data-density="mini"] .wx-days { margin-top: 7px; padding-top: 7px; gap: 4px }
+.hweather[data-density="mini"] .wx-d { padding: 3px 2px; gap: 2px }
+.hweather[data-density="mini"] .wx-d-l { font-size: 9px }
+.hweather[data-density="mini"] .wx-d-i,
+.hweather[data-density="mini"] .wx-d-i .wx-svg { width: 16px; height: 16px }
+.hweather[data-density="mini"] .wx-d-t { font-size: 10px }
 
 /* city pill */
 .wx-city {
