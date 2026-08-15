@@ -3,7 +3,7 @@
   "name": "ایران بروکر | تب جدید",
   "short_name": "IranBroker NewTab",
   "version": "2.0.0",
-  "description": "داشبورد تب جدید ایران بروکر — واچ‌لیست، تقویم اقتصادی، نرخ ارز، ابزارهای معامله‌گری و دسترسی سریع.",
+  "description": "داشبورد تب جدید ایران بروکر — قیمت لحظه‌ای کریپتو/فارکس/بورس، ژورنال معاملاتی، تقویم اقتصادی، آب‌وهوا، فوکوس‌مود و چت‌بات آیرو.",
   "chrome_url_overrides": {
     "newtab": "newtab.html"
   },
@@ -20,7 +20,6 @@
     "https://call2.tgju.org/*",
     "https://call3.tgju.org/*",
     "https://cdn.tsetmc.com/*",
-    "https://api.frankfurter.app/*",
     "https://nfs.faireconomy.media/*",
     "https://iranbroker.net/*",
     "https://forum.iranbroker.net/*",
@@ -30,6 +29,6 @@
     "https://api.gapgpt.app/*"
   ],
   "content_security_policy": {
-    "extension_pages": "script-src 'self'; object-src 'self'; connect-src 'self' https://api.coingecko.com https://query1.finance.yahoo.com https://call2.tgju.org https://call3.tgju.org https://cdn.tsetmc.com https://api.frankfurter.app https://nfs.faireconomy.media https://iranbroker.net https://forum.iranbroker.net https://api.open-meteo.com https://geocoding-api.open-meteo.com https://api.anthropic.com https://api.gapgpt.app;"
+    "extension_pages": "script-src 'self'; object-src 'self'; connect-src 'self' https://api.coingecko.com https://query1.finance.yahoo.com https://call2.tgju.org https://call3.tgju.org https://cdn.tsetmc.com https://nfs.faireconomy.media https://iranbroker.net https://forum.iranbroker.net https://api.open-meteo.com https://geocoding-api.open-meteo.com https://api.anthropic.com https://api.gapgpt.app;"
   }
 }

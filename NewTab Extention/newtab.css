@@ -1586,49 +1586,6 @@ body[data-theme="glass"] .sidebar {
   }
 }
 
-/* ===== Footer ===== */
-.sec-footer {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 18px;
-  margin-top: 2px
-}
-
-.quick-links {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 9px;
-  justify-content: center
-}
-
-.quick-links a {
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  padding: 8px 15px;
-  border-radius: 99px;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  color: var(--sub);
-  text-decoration: none;
-  font-size: 12.5px;
-  transition: color .2s, background .2s
-}
-
-.quick-links a:hover {
-  color: var(--text);
-  background: var(--surface2)
-}
-
-.quick-links a .ql-dot {
-  width: 5px;
-  height: 5px;
-  border-radius: 99px;
-  background: var(--primary)
-}
-
-
 /* ===== Settings modal ===== */
 .modal-overlay {
   position: fixed;
@@ -1875,19 +1832,6 @@ body[data-theme="glass"] .tip-next {
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .09), inset 1.8px 3px 0 -2px rgba(255, 255, 255, .80), inset -2px -2px 0 -2px rgba(255, 255, 255, .55), 0 1px 5px 0 rgba(0, 0, 0, .10)
 }
 
-body[data-theme="glass"] .quick-links a {
-  background: rgba(255, 255, 255, .04);
-  -webkit-backdrop-filter: blur(8px) saturate(150%);
-  backdrop-filter: blur(8px) saturate(150%);
-  border: 1px solid rgba(255, 255, 255, .09);
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .07), inset 1.8px 3px 0 -2px rgba(255, 255, 255, .70), inset -2px -2px 0 -2px rgba(255, 255, 255, .40), 0 1px 5px 0 rgba(0, 0, 0, .08)
-}
-
-body[data-theme="glass"] .quick-links a:hover {
-  background: rgba(255, 255, 255, .08);
-  border-color: rgba(255, 255, 255, .15)
-}
-
 body[data-theme="glass"] .modal {
   background: rgba(12, 16, 27, .80);
   -webkit-backdrop-filter: blur(28px) saturate(180%);
@@ -1911,7 +1855,6 @@ body[data-theme="glass"] .set-row select {
 .icon-btn,
 .market-pill,
 .engines button,
-.quick-links a,
 .refresh-btn,
 .tip-next,
 .btn-primary {
@@ -1925,7 +1868,6 @@ body[data-theme="glass"] .set-row select {
 .icon-btn::before,
 .market-pill::before,
 .engines button::before,
-.quick-links a::before,
 .refresh-btn::before,
 .tip-next::before,
 .btn-primary::before {
@@ -1951,7 +1893,6 @@ body[data-theme="glass"] .set-row select {
 .icon-btn:hover::before,
 .market-pill:hover::before,
 .engines button:hover::before,
-.quick-links a:hover::before,
 .refresh-btn:hover::before,
 .tip-next:hover::before,
 .btn-primary:hover::before {
@@ -2013,14 +1954,6 @@ body[data-layout="data"] .sec-bento>div {
 body[data-layout="data"] .ring-svg {
   width: 150px;
   height: 150px
-}
-
-body[data-layout="data"] .sec-footer {
-  gap: 8px
-}
-
-body[data-layout="data"] .quick-links a {
-  padding: 6px 13px
 }
 
 /* On shorter viewports (laptop screens) the hero clock/search block is

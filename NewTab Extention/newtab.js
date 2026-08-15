@@ -54,6 +54,7 @@
     { label: 'هشدار کلاهبرداری', sub: 'آگاهی', url: 'https://iranbroker.net/fraud-alert/', icon: 'shieldCheck', c: '#f6a723' },
     { label: 'آموزش فارکس', sub: 'رایگان', url: 'https://iranbroker.net/forex-education/', icon: 'graduation', c: '#a78bfa' }
   ];
+  /* بدون رندر مستقل (فوتر قدیمی حذف شد) — فقط به‌عنوان نتایج «لینک» در جستجوی نوار بالا استفاده می‌شود، matches() */
   const QUICK = [
     { label: 'صفحه اصلی', url: 'https://iranbroker.net/' },
     { label: 'ورود اعضا', url: 'https://iranbroker.net/login/' },
@@ -414,12 +415,6 @@
         '<span class="t-ic">' + svg(t.icon) + '</span>' +
         '<span class="t-label">' + t.label + '</span>' +
         '</a>';
-    }).join('');
-  }
-  function renderQuick() {
-    if (!els.quickLinks) return;
-    els.quickLinks.innerHTML = QUICK.map(function (q) {
-      return '<a href="' + q.url + '"><span class="ql-dot"></span>' + q.label + '</a>';
     }).join('');
   }
   function renderCommunity(items) {
@@ -1971,7 +1966,7 @@
     var lastTs = 0;
 
     window.addEventListener('click', function (e) {
-      if (e.target.closest('button,a,input,select,textarea,.card,.sidebar,.modal-overlay,.airo-overlay,.topbar,.engines,.sparkle-canvas,.crypto-card,.markets-card,.quick-links,.sb-tab,.sec-hero,.hero-search-wrap')) return;
+      if (e.target.closest('button,a,input,select,textarea,.card,.sidebar,.modal-overlay,.airo-overlay,.topbar,.engines,.sparkle-canvas,.crypto-card,.markets-card,.sb-tab,.sec-hero,.hero-search-wrap')) return;
       click.x = e.clientX / window.innerWidth;
       click.y = 1.0 - e.clientY / window.innerHeight;
       click.age = 0;
@@ -2013,7 +2008,7 @@
 
   /* ----------------------------- Spotlight border ----------------------------- */
   function initSpotlight() {
-    var SEL = '.card, .tip-card, .tools-grid a, .icon-btn, .market-pill, .engines button, .quick-links a, .refresh-btn, .tip-next, .btn-primary';
+    var SEL = '.card, .tip-card, .tools-grid a, .icon-btn, .market-pill, .engines button, .refresh-btn, .tip-next, .btn-primary';
     function bind(el) {
       if (el._sp) return;
       el._sp = 1;
@@ -2115,7 +2110,7 @@
       'px-tabs',
       'markets-wrap', 'markets-utc-badge',
       'bn-chips', 'bento-news-list',
-      'quick-links', 'settings-modal', 'settings-panel', 'settings-close', 'settings-save',
+      'settings-modal', 'settings-panel', 'settings-close', 'settings-save',
       'set-name', 'set-engine', 'set-layout', 'set-accent', 'set-grid', 'set-crypto', 'set-calendar',
       'set-coins-btn', 'set-coins-summary', 'coins-btn', 'coins-modal', 'coins-panel', 'coins-close',
       'coins-save', 'coins-reset', 'coins-count', 'coin-chips', 'coin-results', 'coin-search', 'coin-search-spin',
@@ -2158,7 +2153,6 @@
 
     renderStaticIcons();
     renderTools();
-    renderQuick();
     setEngine(state.activeEngine);
     syncPxTabs();
     renderPrices();

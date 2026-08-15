@@ -952,13 +952,28 @@
   }
 
   // Best-effort read of watchlist/crypto prices already on the page (no new network calls)
+  // Price rows (newtab.js renderPrices) mark each row with data-pxid (e.g. "eurusd", coingecko id,
+  // or an Iran-market id) — not data-symbol — and carry the ticker in .c-sym and the Persian
+  // label in .c-name, so match against all three normalized forms.
   function lookupLivePrice(symbol) {
     if (!symbol) return null;
     try {
-      var key = symbol.toUpperCase();
-      // crypto widget data on window (if exposed) — otherwise scan DOM data attributes
-      var node = document.querySelector('[data-symbol="' + key + '"] [data-price], [data-symbol="' + key + '"][data-price]');
-      if (node) { var p = node.getAttribute('data-price') || node.textContent; if (p) return p.trim(); }
+      var key = symbol.trim();
+      var keyNorm = key.toUpperCase().replace(/[^A-Z0-9]/g, '');
+      var rows = document.querySelectorAll('.c-row[data-pxid]');
+      for (var i = 0; i < rows.length; i++) {
+        var row = rows[i];
+        var pxidNorm = (row.getAttribute('data-pxid') || '').toUpperCase().replace(/[^A-Z0-9]/g, '');
+        var symEl = row.querySelector('.c-sym');
+        var symNorm = symEl ? symEl.textContent.toUpperCase().replace(/[^A-Z0-9]/g, '') : '';
+        var nameEl = row.querySelector('.c-name');
+        var nameTrim = nameEl ? nameEl.textContent.trim() : '';
+        var matches = (keyNorm && (keyNorm === pxidNorm || keyNorm === symNorm)) || (key && key === nameTrim);
+        if (matches) {
+          var priceEl = row.querySelector('.c-price');
+          if (priceEl && priceEl.textContent.trim()) return priceEl.textContent.trim();
+        }
+      }
     } catch (e) {}
     return null;
   }
