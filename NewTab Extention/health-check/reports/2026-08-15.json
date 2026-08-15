@@ -1,0 +1,107 @@
+{
+  "date": "2026-08-15T12:53:42.620Z",
+  "results": [
+    {
+      "name": "CoinGecko (تب کریپتو)",
+      "url": "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=bitcoin,ethereum&order=market_cap_desc&sparkline=false",
+      "status": "UP",
+      "httpStatus": 200,
+      "ms": 1814,
+      "note": ""
+    },
+    {
+      "name": "Yahoo Finance (تب فارکس)",
+      "url": "https://query1.finance.yahoo.com/v8/finance/chart/EURUSD=X?range=1d&interval=30m",
+      "status": "UP",
+      "httpStatus": 200,
+      "ms": 2577,
+      "note": ""
+    },
+    {
+      "name": "https://call2.tgju.org/ajax.json",
+      "url": "https://call2.tgju.org/ajax.json",
+      "status": "UP",
+      "httpStatus": 200,
+      "ms": 2051,
+      "note": ""
+    },
+    {
+      "name": "https://call3.tgju.org/ajax.json",
+      "url": "https://call3.tgju.org/ajax.json",
+      "status": "UP",
+      "httpStatus": 200,
+      "ms": 1832,
+      "note": ""
+    },
+    {
+      "name": "TSETMC (تب بورس)",
+      "url": "https://cdn.tsetmc.com/api/ClosingPrice/GetMarketOverview/1",
+      "status": "DOWN",
+      "httpStatus": null,
+      "ms": 10004,
+      "note": "timeout (>10s)"
+    },
+    {
+      "name": "Forex Factory Calendar (nfs.faireconomy.media)",
+      "url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "status": "DOWN",
+      "httpStatus": 429,
+      "ms": 1512,
+      "note": "JSON نامعتبر"
+    },
+    {
+      "name": "iranbroker.net (WP REST — فید/مقالات)",
+      "url": "https://iranbroker.net/wp-json/wp/v2/posts?per_page=1&_fields=id,title",
+      "status": "UP",
+      "httpStatus": 200,
+      "ms": 2745,
+      "note": ""
+    },
+    {
+      "name": "forum.iranbroker.net (سایدبار جامعه)",
+      "url": "https://forum.iranbroker.net/hot.json",
+      "status": "UP",
+      "httpStatus": 200,
+      "ms": 2957,
+      "note": ""
+    },
+    {
+      "name": "Open-Meteo (آب‌وهوا)",
+      "url": "https://api.open-meteo.com/v1/forecast?latitude=35.7&longitude=51.4&current=temperature_2m",
+      "status": "UP",
+      "httpStatus": 200,
+      "ms": 1792,
+      "note": ""
+    },
+    {
+      "name": "Open-Meteo Geocoding (جست‌وجوی شهر)",
+      "url": "https://geocoding-api.open-meteo.com/v1/search?name=Tehran&count=1",
+      "status": "UP",
+      "httpStatus": 200,
+      "ms": 2159,
+      "note": ""
+    },
+    {
+      "name": "GapGPT (آیرو، فعال)",
+      "url": "https://api.gapgpt.app/v1/chat/completions",
+      "status": "UP",
+      "httpStatus": 401,
+      "ms": 1787,
+      "note": "auth-wall check (no real request sent, no tokens spent)"
+    },
+    {
+      "name": "Anthropic (آیرو، جایگزین غیرفعال)",
+      "url": "https://api.anthropic.com/v1/messages",
+      "status": "UP",
+      "httpStatus": 401,
+      "ms": 1488,
+      "note": "auth-wall check (no real request sent, no tokens spent)"
+    }
+  ],
+  "tgjuRace": {
+    "winner": "https://call2.tgju.org/ajax.json",
+    "ms": 229,
+    "status": "UP",
+    "note": "call2.tgju.org برنده شد"
+  }
+}
