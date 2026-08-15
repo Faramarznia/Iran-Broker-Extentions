@@ -1,0 +1,24 @@
+{
+  "tourVisibleOnFirstLoad": true,
+  "consoleErrorsOnFirstLoad": [
+    {
+      "type": "error",
+      "text": "Access to fetch at 'https://forum.iranbroker.net/hot.json' from origin 'null' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource."
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: net::ERR_FAILED"
+    }
+  ],
+  "pageErrorsOnFirstLoad": [],
+  "widgetHealthOnFirstLoad": {
+    "toolsGridCount": 10,
+    "cryptoListState": "BBTCبیت‌کوین$62,992+0.40٪EETHاتریوم$1,878+0.30٪UUSDTتتر$0.99",
+    "heroGreeting": "صبحت بخیر رفیق",
+    "heroDate": "۲۴ مرداد",
+    "clock": "07:48",
+    "anyNaNOrUndefinedInBody": false
+  },
+  "tourDoneFlagAfterDismiss": "1",
+  "tourVisibleAfterReload": false
+}

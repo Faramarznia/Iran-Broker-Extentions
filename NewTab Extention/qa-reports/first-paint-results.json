@@ -1,0 +1,35 @@
+[
+  {
+    "label": "normal",
+    "networkConditions": null,
+    "paintTimes": {
+      "first-paint": 296,
+      "first-contentful-paint": 296
+    },
+    "widgetTimes": {
+      "toolsGridAt": 305,
+      "cryptoSkeletonAt": null,
+      "cryptoLiveDataAt": 305,
+      "heroAt": 305
+    }
+  },
+  {
+    "label": "throttled-poor-iran",
+    "networkConditions": {
+      "offline": false,
+      "downloadThroughput": 51200,
+      "uploadThroughput": 51200,
+      "latency": 400
+    },
+    "paintTimes": {
+      "first-paint": 192,
+      "first-contentful-paint": 192
+    },
+    "widgetTimes": {
+      "toolsGridAt": 183,
+      "cryptoSkeletonAt": null,
+      "cryptoLiveDataAt": 183,
+      "heroAt": 183
+    }
+  }
+]

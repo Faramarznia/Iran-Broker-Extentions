@@ -1,0 +1,64 @@
+{
+  "samples": [
+    {
+      "atMs": 3000,
+      "tab": "iran (TGJU, 9000ms timeout)",
+      "listText": "در حال دریافت…",
+      "isLoadingPlaceholder": true,
+      "isErrorPlaceholder": false,
+      "refreshSpinning": true
+    },
+    {
+      "atMs": 7000,
+      "tab": "iran (TGJU, 9000ms timeout)",
+      "listText": "در حال دریافت…",
+      "isLoadingPlaceholder": true,
+      "isErrorPlaceholder": false,
+      "refreshSpinning": true
+    },
+    {
+      "atMs": 9500,
+      "tab": "iran (TGJU, 9000ms timeout)",
+      "listText": "در حال دریافت…",
+      "isLoadingPlaceholder": true,
+      "isErrorPlaceholder": false,
+      "refreshSpinning": true
+    },
+    {
+      "atMs": 15000,
+      "tab": "iran (TGJU, 9000ms timeout)",
+      "listText": "در حال دریافت…",
+      "isLoadingPlaceholder": true,
+      "isErrorPlaceholder": false,
+      "refreshSpinning": true
+    },
+    {
+      "atMs": 18500,
+      "tab": "iran (TGJU, 9000ms timeout)",
+      "listText": "دریافت داده ممکن نشد",
+      "isLoadingPlaceholder": false,
+      "isErrorPlaceholder": true,
+      "refreshSpinning": false
+    },
+    {
+      "atMs": 20000,
+      "tab": "iran (TGJU, 9000ms timeout)",
+      "listText": "دریافت داده ممکن نشد",
+      "isLoadingPlaceholder": false,
+      "isErrorPlaceholder": true,
+      "refreshSpinning": false
+    }
+  ],
+  "interceptedLog": [
+    "https://iranbroker.net/wp-json/wp/v2/posts?per_page=20&_embed=wp:featuredmedia,wp:term&_fields=id,title,link,date_gmt,_links,_embedded&categories=1054,2626,2128,2627,2670,1076",
+    "https://forum.iranbroker.net/hot.json",
+    "https://iranbroker.net/wp-json/wp/v2/posts?per_page=12&_embed=wp:featuredmedia,wp:term&_fields=id,title,link,date_gmt,_links,_embedded",
+    "https://www.google.com/s2/favicons?sz=64&domain=iranbroker.net",
+    "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=bitcoin,ethereum,tether,solana,ripple,dogecoin,binancecoin,cardano,tron,avalanche-2,chainlink,polkadot,litecoin,the-open-network,uniswap,stellar,shiba-inu,near&order=market_cap_desc&sparkline=true&price_change_percentage=24h",
+    "https://call2.tgju.org/ajax.json",
+    "https://call3.tgju.org/ajax.json",
+    "https://call2.tgju.org/ajax.json"
+  ],
+  "consoleMessages": [],
+  "pageErrors": []
+}

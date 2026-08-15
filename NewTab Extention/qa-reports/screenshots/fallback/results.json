@@ -1,0 +1,113 @@
+[
+  {
+    "scenario": "coingecko-block",
+    "requestsIntercepted": 1,
+    "interceptedUrls": [
+      "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=bitcoin,ethereum,tether,solana,ripple,dogecoin,binancecoin,cardano,tron,avalanche-2,chainlink,polkadot,litecoin,the-open-network,uniswap,stellar,shiba-inu,near&order=market_cap_desc&sparkline=true&price_change_percentage=24h"
+    ],
+    "pageErrorsThrown": 0,
+    "pageErrors": [],
+    "widgetState": {
+      "found": true,
+      "isEmpty": null,
+      "rowCount": 12,
+      "refreshTitle": "دریافت زنده ممکن نشد — نمایش آخرین داده. برای تلاش دوباره کلیک کنید",
+      "staleClass": true
+    },
+    "screenshot": "/Users/faramarz/Documents/GitHub/Iran-Broker-Extentions/NewTab Extention/qa-reports/screenshots/fallback/coingecko-block.png"
+  },
+  {
+    "scenario": "coingecko-429",
+    "requestsIntercepted": 1,
+    "interceptedUrls": [
+      "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=bitcoin,ethereum,tether,solana,ripple,dogecoin,binancecoin,cardano,tron,avalanche-2,chainlink,polkadot,litecoin,the-open-network,uniswap,stellar,shiba-inu,near&order=market_cap_desc&sparkline=true&price_change_percentage=24h"
+    ],
+    "pageErrorsThrown": 0,
+    "pageErrors": [],
+    "widgetState": {
+      "found": true,
+      "isEmpty": null,
+      "rowCount": 12,
+      "refreshTitle": "دریافت زنده ممکن نشد — نمایش آخرین داده. برای تلاش دوباره کلیک کنید",
+      "staleClass": true
+    },
+    "screenshot": "/Users/faramarz/Documents/GitHub/Iran-Broker-Extentions/NewTab Extention/qa-reports/screenshots/fallback/coingecko-429.png"
+  },
+  {
+    "scenario": "yahoo-forex-block",
+    "requestsIntercepted": 9,
+    "interceptedUrls": [
+      "https://query1.finance.yahoo.com/v8/finance/chart/EURUSD%3DX?range=5d&interval=30m",
+      "https://query1.finance.yahoo.com/v8/finance/chart/GBPUSD%3DX?range=5d&interval=30m",
+      "https://query1.finance.yahoo.com/v8/finance/chart/USDJPY%3DX?range=5d&interval=30m",
+      "https://query1.finance.yahoo.com/v8/finance/chart/USDCHF%3DX?range=5d&interval=30m",
+      "https://query1.finance.yahoo.com/v8/finance/chart/AUDUSD%3DX?range=5d&interval=30m",
+      "https://query1.finance.yahoo.com/v8/finance/chart/USDCAD%3DX?range=5d&interval=30m",
+      "https://query1.finance.yahoo.com/v8/finance/chart/GC%3DF?range=5d&interval=30m",
+      "https://query1.finance.yahoo.com/v8/finance/chart/BZ%3DF?range=5d&interval=30m",
+      "https://query1.finance.yahoo.com/v8/finance/chart/DX-Y.NYB?range=5d&interval=30m"
+    ],
+    "pageErrorsThrown": 0,
+    "pageErrors": [],
+    "widgetState": {
+      "found": true,
+      "isEmpty": "دریافت داده ممکن نشد",
+      "rowCount": 0,
+      "refreshTitle": "دریافت زنده ممکن نشد — نمایش آخرین داده. برای تلاش دوباره کلیک کنید",
+      "staleClass": false
+    },
+    "screenshot": "/Users/faramarz/Documents/GitHub/Iran-Broker-Extentions/NewTab Extention/qa-reports/screenshots/fallback/yahoo-forex-block.png"
+  },
+  {
+    "scenario": "tgju-call2-only-blocked",
+    "requestsIntercepted": 1,
+    "interceptedUrls": [
+      "https://call2.tgju.org/ajax.json"
+    ],
+    "pageErrorsThrown": 0,
+    "pageErrors": [],
+    "widgetState": {
+      "found": true,
+      "isEmpty": null,
+      "rowCount": 11,
+      "refreshTitle": "آخرین بروزرسانی ۰۷:۳۵ · TGJU",
+      "staleClass": false
+    },
+    "screenshot": "/Users/faramarz/Documents/GitHub/Iran-Broker-Extentions/NewTab Extention/qa-reports/screenshots/fallback/tgju-call2-only-blocked.png"
+  },
+  {
+    "scenario": "tgju-both-blocked",
+    "requestsIntercepted": 2,
+    "interceptedUrls": [
+      "https://call2.tgju.org/ajax.json",
+      "https://call3.tgju.org/ajax.json"
+    ],
+    "pageErrorsThrown": 0,
+    "pageErrors": [],
+    "widgetState": {
+      "found": true,
+      "isEmpty": "دریافت داده ممکن نشد",
+      "rowCount": 0,
+      "refreshTitle": "دریافت زنده ممکن نشد — نمایش آخرین داده. برای تلاش دوباره کلیک کنید",
+      "staleClass": false
+    },
+    "screenshot": "/Users/faramarz/Documents/GitHub/Iran-Broker-Extentions/NewTab Extention/qa-reports/screenshots/fallback/tgju-both-blocked.png"
+  },
+  {
+    "scenario": "tsetmc-block",
+    "requestsIntercepted": 1,
+    "interceptedUrls": [
+      "https://cdn.tsetmc.com/api/ClosingPrice/GetMarketOverview/1"
+    ],
+    "pageErrorsThrown": 0,
+    "pageErrors": [],
+    "widgetState": {
+      "found": true,
+      "isEmpty": null,
+      "rowCount": 11,
+      "refreshTitle": "آخرین بروزرسانی ۰۷:۳۶ · TGJU / TSETMC",
+      "staleClass": false
+    },
+    "screenshot": "/Users/faramarz/Documents/GitHub/Iran-Broker-Extentions/NewTab Extention/qa-reports/screenshots/fallback/tsetmc-block.png"
+  }
+]

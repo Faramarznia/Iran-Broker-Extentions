@@ -1,0 +1,53 @@
+[
+  {
+    "width": 1100,
+    "cleanOverflow": {
+      "hasHorizontalScroll": false,
+      "scrollWidth": 1100,
+      "clientWidth": 1100,
+      "overflowingEls": []
+    },
+    "seededOverflow": {
+      "hasHorizontalScroll": false,
+      "scrollWidth": 1100,
+      "clientWidth": 1100,
+      "overflowingEls": []
+    },
+    "cleanErrors": 0,
+    "seededErrors": 0
+  },
+  {
+    "width": 1400,
+    "cleanOverflow": {
+      "hasHorizontalScroll": false,
+      "scrollWidth": 1400,
+      "clientWidth": 1400,
+      "overflowingEls": []
+    },
+    "seededOverflow": {
+      "hasHorizontalScroll": false,
+      "scrollWidth": 1400,
+      "clientWidth": 1400,
+      "overflowingEls": []
+    },
+    "cleanErrors": 0,
+    "seededErrors": 0
+  },
+  {
+    "width": 1920,
+    "cleanOverflow": {
+      "hasHorizontalScroll": false,
+      "scrollWidth": 1920,
+      "clientWidth": 1920,
+      "overflowingEls": []
+    },
+    "seededOverflow": {
+      "hasHorizontalScroll": false,
+      "scrollWidth": 1920,
+      "clientWidth": 1920,
+      "overflowingEls": []
+    },
+    "cleanErrors": 0,
+    "seededErrors": 0
+  }
+]

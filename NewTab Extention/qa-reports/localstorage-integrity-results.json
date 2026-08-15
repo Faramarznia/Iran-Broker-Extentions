@@ -1,0 +1,283 @@
+{
+  "corruption": [
+    {
+      "key": "ib_newtab_v2",
+      "label": "invalid-json",
+      "pageErrorsThrown": 0,
+      "pageErrors": [],
+      "domHealth": {
+        "bodyHasContent": true,
+        "heroVisible": true,
+        "toolsGridChildren": 10,
+        "cryptoListChildren": 18
+      }
+    },
+    {
+      "key": "ib_newtab_v2",
+      "label": "empty-string",
+      "pageErrorsThrown": 0,
+      "pageErrors": [],
+      "domHealth": {
+        "bodyHasContent": true,
+        "heroVisible": true,
+        "toolsGridChildren": 10,
+        "cryptoListChildren": 18
+      }
+    },
+    {
+      "key": "ib_bg_image",
+      "label": "invalid-json",
+      "pageErrorsThrown": 0,
+      "pageErrors": [],
+      "domHealth": {
+        "bodyHasContent": true,
+        "heroVisible": true,
+        "toolsGridChildren": 10,
+        "cryptoListChildren": 12
+      }
+    },
+    {
+      "key": "ib_bg_image",
+      "label": "empty-string",
+      "pageErrorsThrown": 0,
+      "pageErrors": [],
+      "domHealth": {
+        "bodyHasContent": true,
+        "heroVisible": true,
+        "toolsGridChildren": 10,
+        "cryptoListChildren": 12
+      }
+    },
+    {
+      "key": "ib_news_read",
+      "label": "invalid-json",
+      "pageErrorsThrown": 0,
+      "pageErrors": [],
+      "domHealth": {
+        "bodyHasContent": true,
+        "heroVisible": true,
+        "toolsGridChildren": 10,
+        "cryptoListChildren": 12
+      }
+    },
+    {
+      "key": "ib_news_read",
+      "label": "empty-string",
+      "pageErrorsThrown": 0,
+      "pageErrors": [],
+      "domHealth": {
+        "bodyHasContent": true,
+        "heroVisible": true,
+        "toolsGridChildren": 10,
+        "cryptoListChildren": 12
+      }
+    },
+    {
+      "key": "ib_sb_comm",
+      "label": "invalid-json",
+      "pageErrorsThrown": 0,
+      "pageErrors": [],
+      "domHealth": {
+        "bodyHasContent": true,
+        "heroVisible": true,
+        "toolsGridChildren": 10,
+        "cryptoListChildren": 12
+      }
+    },
+    {
+      "key": "ib_sb_comm",
+      "label": "empty-string",
+      "pageErrorsThrown": 0,
+      "pageErrors": [],
+      "domHealth": {
+        "bodyHasContent": true,
+        "heroVisible": true,
+        "toolsGridChildren": 10,
+        "cryptoListChildren": 12
+      }
+    },
+    {
+      "key": "ib_airo_conversations",
+      "label": "invalid-json",
+      "pageErrorsThrown": 0,
+      "pageErrors": [],
+      "domHealth": {
+        "bodyHasContent": true,
+        "heroVisible": true,
+        "toolsGridChildren": 10,
+        "cryptoListChildren": 18
+      }
+    },
+    {
+      "key": "ib_airo_conversations",
+      "label": "empty-string",
+      "pageErrorsThrown": 0,
+      "pageErrors": [],
+      "domHealth": {
+        "bodyHasContent": true,
+        "heroVisible": true,
+        "toolsGridChildren": 10,
+        "cryptoListChildren": 18
+      }
+    },
+    {
+      "key": "ib_hub_v2",
+      "label": "invalid-json",
+      "pageErrorsThrown": 0,
+      "pageErrors": [],
+      "domHealth": {
+        "bodyHasContent": true,
+        "heroVisible": true,
+        "toolsGridChildren": 10,
+        "cryptoListChildren": 18
+      }
+    },
+    {
+      "key": "ib_hub_v2",
+      "label": "empty-string",
+      "pageErrorsThrown": 0,
+      "pageErrors": [],
+      "domHealth": {
+        "bodyHasContent": true,
+        "heroVisible": true,
+        "toolsGridChildren": 10,
+        "cryptoListChildren": 18
+      }
+    },
+    {
+      "key": "ib_journal_v1",
+      "label": "invalid-json",
+      "pageErrorsThrown": 0,
+      "pageErrors": [],
+      "domHealth": {
+        "bodyHasContent": true,
+        "heroVisible": true,
+        "toolsGridChildren": 10,
+        "cryptoListChildren": 12
+      }
+    },
+    {
+      "key": "ib_journal_v1",
+      "label": "empty-string",
+      "pageErrorsThrown": 0,
+      "pageErrors": [],
+      "domHealth": {
+        "bodyHasContent": true,
+        "heroVisible": true,
+        "toolsGridChildren": 10,
+        "cryptoListChildren": 12
+      }
+    },
+    {
+      "key": "ib_focus_v3",
+      "label": "invalid-json",
+      "pageErrorsThrown": 0,
+      "pageErrors": [],
+      "domHealth": {
+        "bodyHasContent": true,
+        "heroVisible": true,
+        "toolsGridChildren": 10,
+        "cryptoListChildren": 12
+      }
+    },
+    {
+      "key": "ib_focus_v3",
+      "label": "empty-string",
+      "pageErrorsThrown": 0,
+      "pageErrors": [],
+      "domHealth": {
+        "bodyHasContent": true,
+        "heroVisible": true,
+        "toolsGridChildren": 10,
+        "cryptoListChildren": 12
+      }
+    },
+    {
+      "key": "ib_articles_v1",
+      "label": "invalid-json",
+      "pageErrorsThrown": 0,
+      "pageErrors": [],
+      "domHealth": {
+        "bodyHasContent": true,
+        "heroVisible": true,
+        "toolsGridChildren": 10,
+        "cryptoListChildren": 12
+      }
+    },
+    {
+      "key": "ib_articles_v1",
+      "label": "empty-string",
+      "pageErrorsThrown": 0,
+      "pageErrors": [],
+      "domHealth": {
+        "bodyHasContent": true,
+        "heroVisible": true,
+        "toolsGridChildren": 10,
+        "cryptoListChildren": 12
+      }
+    },
+    {
+      "key": "ib_sb_art",
+      "label": "invalid-json",
+      "pageErrorsThrown": 0,
+      "pageErrors": [],
+      "domHealth": {
+        "bodyHasContent": true,
+        "heroVisible": true,
+        "toolsGridChildren": 10,
+        "cryptoListChildren": 18
+      }
+    },
+    {
+      "key": "ib_sb_art",
+      "label": "empty-string",
+      "pageErrorsThrown": 0,
+      "pageErrors": [],
+      "domHealth": {
+        "bodyHasContent": true,
+        "heroVisible": true,
+        "toolsGridChildren": 10,
+        "cryptoListChildren": 18
+      }
+    },
+    {
+      "key": "ib_tour_v1_done",
+      "label": "invalid-json",
+      "pageErrorsThrown": 0,
+      "pageErrors": [],
+      "domHealth": {
+        "bodyHasContent": true,
+        "heroVisible": true,
+        "toolsGridChildren": 10,
+        "cryptoListChildren": 12
+      }
+    },
+    {
+      "key": "ib_tour_v1_done",
+      "label": "empty-string",
+      "pageErrorsThrown": 0,
+      "pageErrors": [],
+      "domHealth": {
+        "bodyHasContent": true,
+        "heroVisible": true,
+        "toolsGridChildren": 10,
+        "cryptoListChildren": 12
+      }
+    }
+  ],
+  "quota": {
+    "fillResult": {
+      "mbWritten": 4,
+      "threwOnWrite": {
+        "name": "QuotaExceededError",
+        "message": "Failed to execute 'setItem' on 'Storage': Setting the value of 'qa_filler_4' exceeded the quota."
+      }
+    },
+    "pageErrorsThrown": 0,
+    "pageErrors": [],
+    "domHealth": {
+      "bodyHasContent": true,
+      "toolsGridChildren": 10
+    }
+  }
+}
