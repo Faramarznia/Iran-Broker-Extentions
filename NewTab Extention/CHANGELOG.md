@@ -23,6 +23,8 @@
 
 ### مستندات
 - `store-submission/icons-review.md` به‌روزرسانی و commit شد (وضعیت رفع ۱۶/۳۲، و بعداً ۱۲۸).
+- ایمیل تماس واقعی (`iranbroker.com@gmail.com`) جایگزین placeholder در `privacy-policy.html` شد.
+- هر ۵ اسکرین‌شات فروشگاه (۱۲۸۰×۸۰۰) با اسکریپت جدید `qa-reports/tools/09-generate-store-screenshots.js` تولید و در `store-submission/screenshots/` اضافه شدند — با داده‌ی seed واقع‌گرایانه، نه شبیه‌سازی خالی.
 
 ---
 

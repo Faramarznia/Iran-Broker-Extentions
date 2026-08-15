@@ -12,7 +12,7 @@
 | [mv3-compliance-checklist.md](mv3-compliance-checklist.md) | ✅ آمادهٔ ارسال | همهٔ ۶ مورد PASS شدند، مدرک کد پیوست است |
 | [icons-review.md](icons-review.md) + [icon-preview-dark-light.png](icon-preview-dark-light.png) | ✅ آمادهٔ ارسال | هر ۴ سایز رفع شدند (۲۰۲۶-۰۸-۱۵) — ۱۶/۳۲ با `sips`، ۱۲۸ با وکتورسازی واقعی (`potrace`) از `icons/icon.svg` |
 | [store-listing-fa.md](store-listing-fa.md) | ✅ آمادهٔ ارسال | عنوان و توضیح کوتاه از نظر طول کاراکتر تأیید شدند |
-| [screenshots-plan.md](screenshots-plan.md) | 📋 بریف است، نه تصویر نهایی | عکس‌برداری واقعی کار انسان است — پایین توضیح داده شده |
+| [screenshots-plan.md](screenshots-plan.md) + [screenshots/](screenshots/) | ✅ آمادهٔ ارسال | هر ۵ اسکرین‌شات (۱۲۸۰×۸۰۰) تولید شدند (۲۰۲۶-۰۸-۱۵) با اسکریپت قابل‌اجرای مجدد |
 
 ---
 
@@ -49,7 +49,7 @@
 3. ~~تصمیم دربارهٔ permission `storage`~~ ✅ **رفع شد (۲۰۲۶-۰۸-۱۵)** — حذف شد.
 4. **rotate/revoke کلید API فعلی GapGPT** و صدور کلید تازه قبل از انتشار عمومی — طبق چک‌لیست لانچ موجود در پروژه، این آیتم «بلاک‌کننده» است.
 5. ~~آیکون ۱۲۸×۱۲۸ را با آرت‌ورک منبع واقعی جایگزین کنید~~ ✅ **رفع شد (۲۰۲۶-۰۸-۱۵)** — هر ۴ سایز حالا از `icons/icon.svg` (وکتوره‌شده با `potrace` از شکل واقعی آیکون) رندر می‌شوند. اگر تیم طراحی بعداً فایل وکتور رسمی داد، همان فایل باید جایگزین `icons/icon.svg` شود.
-6. **گرفتن ۵ اسکرین‌شات واقعی** طبق بریف `screenshots-plan.md` از یک نصب واقعی اکستنشن (نه شبیه‌سازی) — با داده‌ی نمونهٔ واقع‌گرایانه، نه خالی.
+6. ~~گرفتن ۵ اسکرین‌شات واقعی~~ ✅ **رفع شد (۲۰۲۶-۰۸-۱۵)** — در `screenshots/` این پوشه، تولیدشده با `qa-reports/tools/09-generate-store-screenshots.js`.
 7. **بازبینی مستقل داده (Data Disclosure)** توسط یک نفر غیر از توسعه‌دهنده — طبق توصیهٔ صریح در `data-disclosure-form.md`.
 8. **آپلود واقعی در Developer Dashboard**: کپی‌کردن متن‌های `permission-justifications.md` و `store-listing-fa.md` در فیلدهای مربوطه، آپلود اسکرین‌شات‌ها و آیکون‌های اصلاح‌شده، تیک‌زدن فرم Data Disclosure طبق `data-disclosure-form.md`.
 9. **پرداخت هزینهٔ ثبت‌نام Developer** در صورتی که حساب Chrome Web Store Developer از قبل فعال نباشد (هزینهٔ یک‌بارهٔ ۵ دلاری گوگل).
