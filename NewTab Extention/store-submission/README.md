@@ -6,7 +6,7 @@
 
 | فایل | وضعیت | توضیح |
 |---|---|---|
-| [privacy-policy.html](privacy-policy.html) | ✅ آمادهٔ ارسال، با ۱ جای‌گذاری لازم | ایمیل تماس (`privacy@iranbroker.net`) باید با آدرس واقعی جایگزین شود |
+| [privacy-policy.html](privacy-policy.html) | ✅ آمادهٔ ارسال | ایمیل تماس روی `iranbroker.com@gmail.com` تنظیم شد (۲۰۲۶-۰۸-۱۵) — فقط میزبانی روی URL عمومی باقی مانده (پایین) |
 | [permission-justifications.md](permission-justifications.md) | ✅ آمادهٔ ارسال | permission `storage` بی‌مصرف بود، از `manifest.json` حذف شد (۲۰۲۶-۰۸-۱۵) — دیگر تصمیمی باز نمانده |
 | [data-disclosure-form.md](data-disclosure-form.md) | ⚠️ نیاز به بازبینی انسانی | خودِ فایل صریحاً توصیه می‌کند یک نفر غیر از توسعه‌دهنده مرور کند — به‌خصوص بخش‌های ۳، ۵، ۶ |
 | [mv3-compliance-checklist.md](mv3-compliance-checklist.md) | ✅ آمادهٔ ارسال | همهٔ ۶ مورد PASS شدند، مدرک کد پیوست است |
@@ -44,7 +44,7 @@
 
 ## کارهای باقی‌مانده که فقط انسان می‌تواند انجام دهد
 
-1. **ایمیل واقعی حریم خصوصی** جایگزین `privacy@iranbroker.net` در `privacy-policy.html` شود.
+1. ~~ایمیل واقعی حریم خصوصی جایگزین placeholder شود~~ ✅ **رفع شد (۲۰۲۶-۰۸-۱۵)** — `iranbroker.com@gmail.com` در `privacy-policy.html` تنظیم شد.
 2. **میزبانی `privacy-policy.html`** روی یک URL عمومی (پیشنهاد: زیرمسیری از `iranbroker.net` یا GitHub Pages) و افزودن همان لینک به فیلد Privacy Policy در Developer Dashboard.
 3. ~~تصمیم دربارهٔ permission `storage`~~ ✅ **رفع شد (۲۰۲۶-۰۸-۱۵)** — حذف شد.
 4. **rotate/revoke کلید API فعلی GapGPT** و صدور کلید تازه قبل از انتشار عمومی — طبق چک‌لیست لانچ موجود در پروژه، این آیتم «بلاک‌کننده» است.
