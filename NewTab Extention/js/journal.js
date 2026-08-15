@@ -206,14 +206,27 @@
   function qsa(sel, root) { return Array.prototype.slice.call((root || document).querySelectorAll(sel)); }
   function el(html) { var d = document.createElement('div'); d.innerHTML = html.trim(); return d.firstChild; }
 
+  /* «پیپ» فقط برای جفت‌ارزهای فارکس/فلزات معنا دارد (شکل استاندارد ۶ حرفی مثل EURUSD/XAUUSD).
+     برای هر چیز دیگری که کاربر تایپ کند — کریپتو (BTC، ETHUSD…)، شاخص‌ها (US30، GER40)،
+     نفت (USOIL)، یا نمادهای فارسی (دلار آزاد) — مفهوم پیپ اصلاً وجود ندارد؛ قبلاً این موارد
+     به‌صورت خاموش روی اندازهٔ پیپ پیش‌فرض فارکس (۰.۰۰۰۱) می‌افتادند که برای BTC یک تفاوت
+     قیمت ۱۸۰۰ دلاری را به ۱۸,۰۰۰,۰۰۰ «پیپ» و P&L را به میلیاردها دلار تبدیل می‌کرد. */
+  var NON_PIP_TICKERS = ['BTC', 'ETH', 'BNB', 'SOL', 'XRP', 'USDT', 'ADA', 'DOGE', 'TRX', 'LTC', 'XLM', 'LINK', 'DOT', 'MATIC', 'AVAX'];
+  function isPipBased(symbol) {
+    var s = (symbol || '').toUpperCase().replace(/[^A-Z]/g, '');
+    if (!/^[A-Z]{6}$/.test(s)) return false; // جفت‌ارز واقعی همیشه ۶ حرف خالص است
+    return !NON_PIP_TICKERS.some(function (t) { return s.indexOf(t) === 0; }); // رد کردن BTCUSD/ETHUSD و مشابه
+  }
   function pipSizeFor(symbol) {
     var s = (symbol || '').toUpperCase();
+    if (!isPipBased(symbol)) return 1; // بدون پیپ: تفاوت قیمت مستقیم استفاده می‌شود
     if (s.indexOf('JPY') >= 0) return 0.01;
     if (s.indexOf('XAU') >= 0) return 0.1;
     if (s.indexOf('XAG') >= 0) return 0.01;
     return 0.0001;
   }
   function pipValueFor(symbol) {
+    if (!isPipBased(symbol)) return 1; // بدون پیپ: حجم معامله همان ضریب P&L است
     var map = DB.settings.pipsPerLot || {};
     return map[(symbol || '').toUpperCase()] || map[symbol] || map.default || 10;
   }
@@ -1376,6 +1389,7 @@
     canvas.style.width = w + 'px'; canvas.style.height = h + 'px';
     canvas.width = w * dpr; canvas.height = h * dpr;
     var ctx = canvas.getContext('2d');
+    ctx.direction = 'ltr';
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     return { ctx: ctx, w: w, h: h };
   }
@@ -1528,7 +1542,7 @@
   function drawMonthGrid(cont, cursor, dayMap, onNav, onDay) {
     var monthsFa = ['ژانویه','فوریه','مارس','آوریل','مه','ژوئن','ژوئیه','اوت','سپتامبر','اکتبر','نوامبر','دسامبر'];
     var first = new Date(cursor.y, cursor.m, 1);
-    var startDay = first.getDay();
+    var startDay = (first.getDay() + 1) % 7;
     var daysInMonth = new Date(cursor.y, cursor.m + 1, 0).getDate();
     var maxAbs = 1;
     for (var k in dayMap) maxAbs = Math.max(maxAbs, Math.abs(dayMap[k]));
@@ -1550,7 +1564,7 @@
       '<div class="jr-heat-head"><button class="jr-hbtn jr-heat-nav" data-nav="-1">‹</button>' +
       '<b>' + monthsFa[cursor.m] + ' ' + cursor.y + '</b>' +
       '<button class="jr-hbtn jr-heat-nav" data-nav="1">›</button></div>' +
-      '<div class="jr-heat-grid">' + ['ی','د','س','چ','پ','ج','ش'].map(function (w) { return '<div class="jr-heat-wd">' + w + '</div>'; }).join('') + cells + '</div>';
+      '<div class="jr-heat-grid">' + ['ش','ی','د','س','چ','پ','ج'].map(function (w) { return '<div class="jr-heat-wd">' + w + '</div>'; }).join('') + cells + '</div>';
     qsa('.jr-heat-nav', cont).forEach(function (b) { b.addEventListener('click', function () { onNav(+b.getAttribute('data-nav')); }); });
     qsa('.jr-heat-cell[data-date]', cont).forEach(function (c) { c.addEventListener('click', function () { onDay(c.getAttribute('data-date')); }); });
   }
@@ -1613,7 +1627,7 @@
 
     var monthsFa = ['ژانویه','فوریه','مارس','آوریل','مه','ژوئن','ژوئیه','اوت','سپتامبر','اکتبر','نوامبر','دسامبر'];
     var first = new Date(calCursor.y, calCursor.m, 1);
-    var startDay = first.getDay();
+    var startDay = (first.getDay() + 1) % 7;
     var daysInMonth = new Date(calCursor.y, calCursor.m + 1, 0).getDate();
     var cells = '';
     for (var i = 0; i < startDay; i++) cells += '<div class="jr-heat-cell jr-heat-empty"></div>';
@@ -1626,7 +1640,7 @@
     }
     cont.innerHTML =
       '<div class="jr-heat-head"><button class="jr-hbtn jr-heat-nav" data-nav="-1">‹</button><b>' + monthsFa[calCursor.m] + ' ' + calCursor.y + '</b><button class="jr-hbtn jr-heat-nav" data-nav="1">›</button></div>' +
-      '<div class="jr-heat-grid">' + ['ی','د','س','چ','پ','ج','ش'].map(function (w) { return '<div class="jr-heat-wd">' + w + '</div>'; }).join('') + cells + '</div>';
+      '<div class="jr-heat-grid">' + ['ش','ی','د','س','چ','پ','ج'].map(function (w) { return '<div class="jr-heat-wd">' + w + '</div>'; }).join('') + cells + '</div>';
     qsa('.jr-heat-nav', cont).forEach(function (b) {
       b.addEventListener('click', function () {
         var m = calCursor.m + (+b.getAttribute('data-nav'));

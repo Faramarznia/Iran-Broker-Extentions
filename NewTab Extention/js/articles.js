@@ -43,12 +43,21 @@
     return Math.floor(diff / (30 * 86400)) + ' ماه پیش';
   }
   function isFresh(ts) { return !!(ts && Date.now() - ts < 24 * 3600 * 1000); }
+  /* fetch با timeout پیش‌فرض ۸ث — بدون این، یک سرور hang‌شده ویجت را برای همیشه در حالت لودینگ نگه می‌دارد */
+  function fetchTimeout(url, ms) {
+    var ctl = new AbortController();
+    var to = setTimeout(function () { ctl.abort(); }, ms || 8000);
+    return fetch(url, { signal: ctl.signal }).then(
+      function (r) { clearTimeout(to); return r; },
+      function (e) { clearTimeout(to); throw e; }
+    );
+  }
 
   /* ─────────── data ─────────── */
   function loadFromRest() {
     var url = 'https://iranbroker.net/wp-json/wp/v2/posts?per_page=12' +
       '&_embed=wp:featuredmedia,wp:term&_fields=id,title,link,date_gmt,_links,_embedded';
-    return fetch(url)
+    return fetchTimeout(url)
       .then(function (r) { if (!r.ok) throw new Error('http'); return r.json(); })
       .then(function (data) {
         if (!Array.isArray(data) || !data.length) throw new Error('empty');
@@ -79,7 +88,7 @@
   }
 
   function loadFromRss() {
-    return fetch('https://iranbroker.net/feed/')
+    return fetchTimeout('https://iranbroker.net/feed/')
       .then(function (r) { return r.text(); })
       .then(function (text) {
         var doc = new DOMParser().parseFromString(text, 'text/xml');

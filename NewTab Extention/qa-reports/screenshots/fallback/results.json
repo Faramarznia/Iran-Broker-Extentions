@@ -51,10 +51,10 @@
     "pageErrors": [],
     "widgetState": {
       "found": true,
-      "isEmpty": "دریافت داده ممکن نشد",
-      "rowCount": 0,
+      "isEmpty": null,
+      "rowCount": 9,
       "refreshTitle": "دریافت زنده ممکن نشد — نمایش آخرین داده. برای تلاش دوباره کلیک کنید",
-      "staleClass": false
+      "staleClass": true
     },
     "screenshot": "/Users/faramarz/Documents/GitHub/Iran-Broker-Extentions/NewTab Extention/qa-reports/screenshots/fallback/yahoo-forex-block.png"
   },
@@ -70,7 +70,7 @@
       "found": true,
       "isEmpty": null,
       "rowCount": 11,
-      "refreshTitle": "آخرین بروزرسانی ۰۷:۳۵ · TGJU",
+      "refreshTitle": "آخرین بروزرسانی ۰۸:۳۱ · TGJU",
       "staleClass": false
     },
     "screenshot": "/Users/faramarz/Documents/GitHub/Iran-Broker-Extentions/NewTab Extention/qa-reports/screenshots/fallback/tgju-call2-only-blocked.png"
@@ -86,10 +86,10 @@
     "pageErrors": [],
     "widgetState": {
       "found": true,
-      "isEmpty": "دریافت داده ممکن نشد",
-      "rowCount": 0,
+      "isEmpty": null,
+      "rowCount": 11,
       "refreshTitle": "دریافت زنده ممکن نشد — نمایش آخرین داده. برای تلاش دوباره کلیک کنید",
-      "staleClass": false
+      "staleClass": true
     },
     "screenshot": "/Users/faramarz/Documents/GitHub/Iran-Broker-Extentions/NewTab Extention/qa-reports/screenshots/fallback/tgju-both-blocked.png"
   },
@@ -105,7 +105,7 @@
       "found": true,
       "isEmpty": null,
       "rowCount": 11,
-      "refreshTitle": "آخرین بروزرسانی ۰۷:۳۶ · TGJU / TSETMC",
+      "refreshTitle": "آخرین بروزرسانی ۰۸:۳۱ · TGJU / TSETMC",
       "staleClass": false
     },
     "screenshot": "/Users/faramarz/Documents/GitHub/Iran-Broker-Extentions/NewTab Extention/qa-reports/screenshots/fallback/tsetmc-block.png"

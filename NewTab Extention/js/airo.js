@@ -120,6 +120,7 @@
 
   var HIST_KEY = 'ib_airo_conversations';
   var HIST_MAX = 40;
+  var NO_HISTORY_KEY = 'ib_airo_no_history'; // user opt-out: this flag itself is not chat content, safe to persist
 
   /* ----------------------------- State ----------------------------- */
   var els = {};
@@ -129,6 +130,7 @@
   var busy = false;
   var ctrl = null;         // AbortController
   var session = 0;         // bumped on "new chat" / loading history so stale streams can't touch it
+  var noHistory = false;   // true = "private mode": current session still has in-chat context, nothing is written to localStorage
 
   function keyReady() {
     var cfg = PROVIDERS[ACTIVE];
@@ -226,7 +228,28 @@
     catch (e) {}
   }
 
+  function loadNoHistoryPref() {
+    try { return localStorage.getItem(NO_HISTORY_KEY) === '1'; } catch (e) { return false; }
+  }
+  function setNoHistory(on) {
+    noHistory = on;
+    try {
+      if (on) localStorage.setItem(NO_HISTORY_KEY, '1');
+      else localStorage.removeItem(NO_HISTORY_KEY);
+    } catch (e) {}
+    updatePrivacyBtn();
+  }
+  function updatePrivacyBtn() {
+    if (!els.privacyBtn) return;
+    els.privacyBtn.classList.toggle('active', noHistory);
+    els.privacyBtn.setAttribute('aria-pressed', noHistory ? 'true' : 'false');
+    els.privacyBtn.title = noHistory
+      ? 'حالت خصوصی فعال — این گفتگو و گفتگوهای بعدی ذخیره نمی‌شوند (کلیک برای فعال‌کردن دوبارهٔ ذخیره)'
+      : 'گفتگوهای جدید ذخیره می‌شوند — برای غیرفعال‌کردن ذخیره کلیک کنید';
+  }
+
   function persistCurrentConversation() {
+    if (noHistory) return; // کاربر عمداً ذخیرهٔ گفتگو را غیرفعال کرده — چیزی در localStorage نوشته نمی‌شود
     if (!history.length) return;
     var list = loadConversations();
     if (currentConvId) {
@@ -759,14 +782,19 @@
     els.hist = $('airo-hist');
     els.histList = $('airo-hist-list');
     els.histBtn = $('airo-hist-btn');
+    els.privacyBtn = $('airo-privacy-btn');
 
     // head orb + buttons
     $('airo-head-orb').innerHTML = orbHTML('airo-orb-sm');
     setSendMode('send');
 
+    noHistory = loadNoHistoryPref();
+    updatePrivacyBtn();
+
     $('airo-close').addEventListener('click', close);
     $('airo-new').addEventListener('click', newChat);
     if (els.histBtn) els.histBtn.addEventListener('click', toggleHistory);
+    if (els.privacyBtn) els.privacyBtn.addEventListener('click', function () { setNoHistory(!noHistory); });
 
     els.send.addEventListener('click', function () {
       if (busy) { if (ctrl) ctrl.abort(); return; }

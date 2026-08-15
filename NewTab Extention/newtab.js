@@ -265,6 +265,17 @@
     try { localStorage.setItem(PERSIST_KEY, JSON.stringify(o)); } catch (e) {}
   }
 
+  /* ----------------------------- Network helpers ----------------------------- */
+  /* fetch با timeout پیش‌فرض ۸ث — بدون این، یک سرور hang‌شده ویجت را برای همیشه در حالت لودینگ نگه می‌دارد */
+  function fetchTimeout(url, ms) {
+    const ctl = new AbortController();
+    const to = setTimeout(function () { ctl.abort(); }, ms || 8000);
+    return fetch(url, { signal: ctl.signal }).then(
+      function (r) { clearTimeout(to); return r; },
+      function (e) { clearTimeout(to); throw e; }
+    );
+  }
+
   /* ----------------------------- Color helpers ----------------------------- */
   function hexA(hex, a) { const n = parseInt(hex.slice(1), 16); return 'rgba(' + ((n >> 16) & 255) + ',' + ((n >> 8) & 255) + ',' + (n & 255) + ',' + a + ')'; }
   function lighten(hex, amt) {
@@ -455,7 +466,7 @@
     const el = document.getElementById('sb-comm-list');
     if (el) el.innerHTML = '<div class="ct-loading">در حال بارگذاری…</div>';
     const endpoint = 'https://forum.iranbroker.net/' + (tab === 'latest' ? 'latest' : 'hot') + '.json';
-    fetch(endpoint)
+    fetchTimeout(endpoint)
       .then(function (r) { return r.json(); })
       .then(function (data) {
         const topics = ((data.topic_list || {}).topics || []).slice(0, 8).map(function (t) {
@@ -577,7 +588,7 @@
       '&_fields=id,title,link,date_gmt,_links,_embedded';
     if (ids.length) url += '&categories=' + ids.join(',');
 
-    return fetch(url)
+    return fetchTimeout(url)
       .then(function (r) { if (!r.ok) throw new Error('http'); return r.json(); })
       .then(function (data) {
         if (!Array.isArray(data) || !data.length) throw new Error('empty');
@@ -608,7 +619,7 @@
 
   /* --- پشتیبان: فید عمومی سایت (وقتی REST به هر دلیلی در دسترس نیست) --- */
   function loadNewsRss() {
-    return fetch('https://iranbroker.net/feed/')
+    return fetchTimeout('https://iranbroker.net/feed/')
       .then(function (res) { return res.text(); })
       .then(function (text) {
         const parser = new DOMParser();
@@ -813,6 +824,36 @@
     { id: 'alton', sym: 'آلتون', name: 'صندوق آلتون', key: 'ime_fund_alton', flag: '🏦', div: 10, unit: 'تومان' },
     { id: 'silverfund', sym: 'سیمین', name: 'صندوق نقره سیمین', key: 'ime_fund_silver', flag: '🏦', div: 10, unit: 'تومان' }
   ];
+
+  /* دادهٔ استاتیک اولیه برای فارکس/بازار ایران/بورس — تا وقتی fetch زنده هنوز موفق نشده
+     (یا کامل شکست خورده)، کاربر لیست خالی نبیند؛ همان الگویی که SEED برای کریپتو دارد. */
+  const FX_SEED = [
+    { id: 'eurusd', price: 1.085, chg: 0.12 }, { id: 'gbpusd', price: 1.27, chg: -0.08 },
+    { id: 'usdjpy', price: 151.8, chg: 0.31 }, { id: 'usdchf', price: 0.881, chg: -0.05 },
+    { id: 'audusd', price: 0.658, chg: 0.22 }, { id: 'usdcad', price: 1.359, chg: -0.14 },
+    { id: 'xauusd', price: 2620, chg: 0.45 }, { id: 'brent', price: 78.4, chg: -0.62 },
+    { id: 'dxy', price: 103.9, chg: 0.09 }
+  ];
+  const IRAN_SEED = [
+    { id: 'usd', price: 68500, chg: 0.3 }, { id: 'eur', price: 74200, chg: -0.2 },
+    { id: 'gbp', price: 86900, chg: 0.4 }, { id: 'gold18', price: 6850000, chg: 0.5 },
+    { id: 'mesghal', price: 29650000, chg: 0.5 }, { id: 'sekee', price: 68500000, chg: 0.6 },
+    { id: 'sekeb', price: 66200000, chg: 0.55 }, { id: 'nim', price: 34500000, chg: 0.5 },
+    { id: 'rob', price: 19200000, chg: 0.45 }, { id: 'ons', price: 2620, chg: 0.45 },
+    { id: 'silver', price: 30.6, chg: 0.3 }
+  ];
+  const BOURSE_SEED = [
+    { id: 'index', price: 2450000, chg: 0.4 }, { id: 'goldfund', price: 118000, chg: 0.5 }
+  ];
+  function seedRows(seed, items) {
+    return seed.map(function (s) {
+      const m = items.filter(function (it) { return it.id === s.id; })[0] || {};
+      return { id: s.id, sym: m.sym || s.id.toUpperCase(), name: m.name || s.id, flag: m.flag, unit: m.unit, dec: m.dec || 0, price: s.price, chg: s.chg };
+    });
+  }
+  state.pxData.forex.rows = seedRows(FX_SEED, FX_PAIRS);
+  state.pxData.iran.rows = seedRows(IRAN_SEED, IRAN_ITEMS);
+  state.pxData.bourse.rows = seedRows(BOURSE_SEED, BOURSE_ITEMS);
   const PX_TTL = { crypto: 90000, forex: 120000, iran: 180000, bourse: 300000 };
   const PX_SRC = { crypto: 'CoinGecko', forex: 'Yahoo Finance', iran: 'TGJU', bourse: 'TGJU / TSETMC' };
   const pxPrev = {};
@@ -930,7 +971,7 @@
     const ids = state.coins.split(',').map(function (s) { return s.trim(); }).filter(Boolean).slice(0, COINS_MAX);
     if (!ids.length) { pxDone('crypto', []); return; }
     const url = 'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=' + ids.join(',') + '&order=market_cap_desc&sparkline=true&price_change_percentage=24h';
-    fetch(url).then(function (res) {
+    fetchTimeout(url).then(function (res) {
       if (!res.ok) throw new Error('http');
       return res.json();
     }).then(function (data) {
@@ -972,7 +1013,7 @@
   function yahooChart(sym) {
     const url = 'https://query1.finance.yahoo.com/v8/finance/chart/' + encodeURIComponent(sym) +
       '?range=5d&interval=30m';
-    return fetch(url)
+    return fetchTimeout(url)
       .then(function (r) { if (!r.ok) throw new Error('http'); return r.json(); })
       .then(function (j) {
         const res = j && j.chart && j.chart.result && j.chart.result[0];
@@ -1027,21 +1068,21 @@
 
   function fetchTgju() {
     if (tgjuCache && Date.now() - tgjuCacheTs < 60000) return Promise.resolve(tgjuCache);
-    let chain = Promise.reject();
-    TGJU_HOSTS.forEach(function (host) {
-      chain = chain.catch(function () {
-        const ctl = new AbortController();
-        const to = setTimeout(function () { ctl.abort(); }, 9000);
-        return fetch(host, { signal: ctl.signal })
-          .then(function (r) { clearTimeout(to); if (!r.ok) throw new Error('http'); return r.json(); });
-      });
+    /* هر دو میزبان هم‌زمان با یک AbortController/بودجهٔ زمانی مشترک امتحان می‌شوند —
+       قبلاً متوالی بود (call2 سپس call3) و بدترین حالت را به ۹۰۰۰+۹۰۰۰=۱۸۰۰۰ms می‌رساند */
+    const ctl = new AbortController();
+    const to = setTimeout(function () { ctl.abort(); }, 9000);
+    const attempts = TGJU_HOSTS.map(function (host) {
+      return fetch(host, { signal: ctl.signal })
+        .then(function (r) { if (!r.ok) throw new Error('http'); return r.json(); });
     });
-    return chain.then(function (data) {
+    return Promise.any(attempts).then(function (data) {
+      clearTimeout(to);
       const cur = data.current || data;
       if (!cur || typeof cur !== 'object') throw new Error('empty');
       tgjuCache = cur; tgjuCacheTs = Date.now();
       return cur;
-    });
+    }, function (e) { clearTimeout(to); throw e; });
   }
 
   /* یک آیتم TGJU را به ردیف قیمت تبدیل می‌کند. شکل داده: {p,h,l,d,dp,dt} */
@@ -1244,7 +1285,7 @@
     const seq = ++coinSearchSeq;
     if (els.coinSearchSpin) els.coinSearchSpin.hidden = false;
     if (els.coinSearchIc) els.coinSearchIc.hidden = true;
-    fetch('https://api.coingecko.com/api/v3/search?query=' + encodeURIComponent(q))
+    fetchTimeout('https://api.coingecko.com/api/v3/search?query=' + encodeURIComponent(q))
       .then(function (r) { if (!r.ok) throw new Error('http'); return r.json(); })
       .then(function (data) {
         if (seq !== coinSearchSeq) return;   /* پاسخ کهنه */
@@ -1430,7 +1471,7 @@
   function fetchNewsCatDirectory() {
     if (newsCatDirectory) return Promise.resolve(newsCatDirectory);
     if (newsCatDirPromise) return newsCatDirPromise;
-    newsCatDirPromise = fetch('https://iranbroker.net/wp-json/wp/v2/categories?per_page=100&orderby=count&order=desc&_fields=id,name,slug,count')
+    newsCatDirPromise = fetchTimeout('https://iranbroker.net/wp-json/wp/v2/categories?per_page=100&orderby=count&order=desc&_fields=id,name,slug,count')
       .then(function (r) { if (!r.ok) throw new Error('http'); return r.json(); })
       .then(function (data) {
         const list = (data || []).filter(function (c) { return c.count > 0; });

@@ -169,6 +169,15 @@
   function catById(id){ for(var i=0;i<CATS.length;i++) if(CATS[i].id===id) return CATS[i]; return CATS[0]; }
   function gKey(g){ return g[0]+'-'+p2(g[1])+'-'+p2(g[2]); }      // gregorian array → key
   function todayKey(){ var n=new Date(); return n.getFullYear()+'-'+p2(n.getMonth()+1)+'-'+p2(n.getDate()); }
+  /* fetch با timeout پیش‌فرض ۸ث — بدون این، یک سرور hang‌شده ویجت را برای همیشه در حالت لودینگ نگه می‌دارد */
+  function fetchTimeout(url, ms){
+    var ctl=new AbortController();
+    var to=setTimeout(function(){ ctl.abort(); }, ms||8000);
+    return fetch(url,{signal:ctl.signal}).then(
+      function(r){ clearTimeout(to); return r; },
+      function(e){ clearTimeout(to); throw e; }
+    );
+  }
 
   /* ═══════════════════════════════════════
      BUILD — Calendar + Weather (left box)
@@ -330,7 +339,7 @@
      ECONOMIC CALENDAR (Forex Factory weekly feed)
   ═══════════════════════════════════════ */
   function loadEcon(){
-    fetch('https://nfs.faireconomy.media/ff_calendar_thisweek.json')
+    fetchTimeout('https://nfs.faireconomy.media/ff_calendar_thisweek.json')
       .then(function(r){ return r.ok?r.json():null; })
       .then(function(data){
         econLoaded=true;
@@ -396,7 +405,7 @@
             '&daily=weather_code,temperature_2m_max,temperature_2m_min,sunrise,sunset'+
             '&timezone=auto&forecast_days=4';
 
-    fetch(url)
+    fetchTimeout(url)
       .then(function(r){ return r.ok?r.json():null; })
       .then(function(d){ if(d&&d.current) renderWeather(d,city); else weatherError(); })
       .catch(weatherError);
@@ -700,7 +709,7 @@
   function searchCity(q){
     var box=$('hub-city-results'); if(!box) return;
     box.innerHTML='<div class="hw-cm-loading">در حال جستجو…</div>';
-    fetch('https://geocoding-api.open-meteo.com/v1/search?name='+encodeURIComponent(q)+'&count=6&language=fa')
+    fetchTimeout('https://geocoding-api.open-meteo.com/v1/search?name='+encodeURIComponent(q)+'&count=6&language=fa')
       .then(function(r){ return r.ok?r.json():null; })
       .then(function(d){
         var box2=$('hub-city-results'); if(!box2) return;
