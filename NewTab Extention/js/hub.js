@@ -300,7 +300,7 @@
     if(occ){
       body+='<div class="hdm-occ '+(occ.h?'hdm-occ-hol':'')+'">'+
               '<span class="hdm-occ-ic">'+(occ.h?'🎌':'✦')+'</span>'+
-              '<span>'+esc(occ.n)+(occ.h?' — تعطیل رسمی':'')+'</span>'+
+              '<span>'+esc(occ.n)+(occ.h?' (تعطیل رسمی)':'')+'</span>'+
             '</div>';
     }
 
@@ -1064,7 +1064,7 @@
         '<div class="htask-empty">'+
           '<span class="htask-empty-ic">🗓️</span>'+
           '<span class="htask-empty-t">برنامهٔ امروزت خالی است</span>'+
-          '<span class="htask-empty-s">کار را با زمانش بنویس تا خودش روی تایم‌لاین بنشیند —<br>«مرور واچ‌لیست ساعت ۹» یا یک روتین آماده را بزن.</span>'+
+          '<span class="htask-empty-s">کار را با زمانش بنویس تا خودش روی تایم‌لاین بنشیند.<br>«مرور واچ‌لیست ساعت ۹» یا یک روتین آماده را بزن.</span>'+
         '</div>';
       return;
     }
@@ -1115,7 +1115,7 @@
     if(tasks.length && done.length===tasks.length){
       html+='<div class="htask-allgood">'+
               '<span class="htask-allgood-ic">🎉</span>'+
-              '<span>همهٔ کارهای امروز انجام شد'+(DB.streak.n>1?' — '+fa(DB.streak.n)+' روز پیاپی':'')+'</span>'+
+              '<span>همهٔ کارهای امروز انجام شد'+(DB.streak.n>1?'، '+fa(DB.streak.n)+' روز پیاپی':'')+'</span>'+
             '</div>';
     }
 

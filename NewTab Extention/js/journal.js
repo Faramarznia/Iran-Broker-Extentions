@@ -103,7 +103,7 @@
       // Quota exceeded — try trimming screenshots from oldest trades, keep trade data
       if (trimScreenshots()) {
         try { localStorage.setItem(SK, JSON.stringify(DB));
-          toast('فضای ذخیره‌سازی پر شد — تصاویر قدیمی حذف شدند', 'warn');
+          toast('فضای ذخیره‌سازی پر شد؛ تصاویر قدیمی حذف شدند', 'warn');
           return true;
         } catch (e2) {}
       }
@@ -676,7 +676,7 @@
     document.body.style.overflow = 'hidden';
     switchTab(current);
     var pct = storageUsagePercent();
-    if (pct > 80) toast('فضای ذخیره‌سازی ' + Math.round(pct) + '٪ پر شده — توصیه می‌شود backup بگیرید.', 'warn');
+    if (pct > 80) toast('فضای ذخیره‌سازی ' + Math.round(pct) + '٪ پر شده؛ توصیه می‌شود backup بگیرید.', 'warn');
   }
 
   function close() {
@@ -730,7 +730,7 @@
           '<button class="jr-ms' + (logMode === 'quick' ? ' active' : '') + '" data-mode="quick">سریع</button>' +
           '<button class="jr-ms' + (logMode === 'full' ? ' active' : '') + '" data-mode="full">کامل</button>' +
         '</div>' +
-        (editingId ? '<div class="jr-editing">در حال ویرایش معامله — <button class="jr-link" id="jr-cancel-edit">لغو</button></div>' : '') +
+        (editingId ? '<div class="jr-editing">در حال ویرایش معامله <button class="jr-link" id="jr-cancel-edit">لغو</button></div>' : '') +
       '</div>' +
       '<form class="jr-form" id="jr-form" autocomplete="off"></form>';
 

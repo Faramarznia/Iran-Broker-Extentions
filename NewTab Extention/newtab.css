@@ -157,15 +157,6 @@ a {
   }
 }
 
-@keyframes sheen {
-  from {
-    background-position: left center
-  }
-
-  to {
-    background-position: right center
-  }
-}
 
 /* ===== Stage / page ===== */
 .page-entering:not(.page-ready) .topbar,
@@ -403,12 +394,12 @@ a {
   font-weight: 800;
   line-height: 1;
   /* letter-spacing: -5px; */
-  background: linear-gradient(to right, var(--primary) 0%, var(--text) 50%, var(--primary) 100%);
+  /* static two-tone gradient; the perpetual sheen animation was removed as
+     unmotivated motion (nothing about the time is changing every 5s) */
+  background: linear-gradient(115deg, var(--primary) 0%, var(--text) 55%, var(--primary) 100%);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
-  background-size: 200% 100%;
-  animation: sheen 5s ease-in-out infinite alternate
 }
 
 .hero-greeting {
@@ -1742,9 +1733,11 @@ body[data-theme="glass"] .sidebar {
   left: 32px;
   right: 32px;
   height: 5px;
-  background: linear-gradient(to right, transparent, var(--teal), transparent);
+  /* single-accent glow: was --teal, which clashed with the blue brand accent.
+     Locked to --primary and dimmed so it reads as a soft brand halo, not neon. */
+  background: linear-gradient(to right, transparent, var(--primary), transparent);
   filter: blur(3px);
-  opacity: .9
+  opacity: .55
 }
 
 #sp-canvas {
@@ -7791,29 +7784,16 @@ body[data-layout="hub"] .hub-aside-cal { gap: 16px }
 /* در حالت اسپات‌لایت، تیرگی را خودِ spot می‌سازد تا «سوراخ» شفاف بماند */
 .ibt-root:not(.ibt-hero-mode) .ibt-backdrop { background: transparent; backdrop-filter: none; -webkit-backdrop-filter: none; }
 
-/* اسپات‌لایت: حفرهٔ شفاف دور عنصر + هالهٔ بزرگ تیره */
+/* اسپات‌لایت: حفرهٔ شفاف دور عنصر + هالهٔ بزرگ تیره.
+   یک حلقهٔ تمیز به‌جای سه حلقهٔ هم‌مرکز؛ پالسِ بی‌نهایت حذف شد — حرکتِ
+   جابه‌جایی اسپات بین استپ‌ها خودش چشم را هدایت می‌کند. */
 .ibt-spot {
   position: absolute;
   border-radius: 14px;
-  box-shadow: 0 0 0 9999px rgba(3, 5, 12, .60), 0 0 0 2px var(--primary) inset;
-  outline: 2px solid color-mix(in srgb, var(--primary) 70%, transparent);
-  outline-offset: 3px;
+  box-shadow: 0 0 0 9999px rgba(3, 5, 12, .62), 0 0 0 2px var(--primary) inset;
   pointer-events: none;
   transition: left .32s cubic-bezier(.4, 0, .2, 1), top .32s cubic-bezier(.4, 0, .2, 1),
               width .32s cubic-bezier(.4, 0, .2, 1), height .32s cubic-bezier(.4, 0, .2, 1);
-}
-.ibt-root.ibt-in:not(.ibt-hero-mode) .ibt-spot::after {
-  content: '';
-  position: absolute;
-  inset: -3px;
-  border-radius: 16px;
-  box-shadow: 0 0 0 0 color-mix(in srgb, var(--primary) 55%, transparent);
-  animation: ibt-pulse 2s ease-out infinite;
-}
-@keyframes ibt-pulse {
-  0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--primary) 50%, transparent); }
-  70% { box-shadow: 0 0 0 12px transparent; }
-  100% { box-shadow: 0 0 0 12px transparent; }
 }
 
 /* کارت راهنما */
@@ -7881,16 +7861,6 @@ body[data-layout="hub"] .hub-aside-cal { gap: 16px }
 }
 .ibt-title { font-size: 17.5px; font-weight: 800; line-height: 1.4; margin: 0; color: var(--text); }
 .ibt-pop-hero .ibt-title { font-size: 21px; }
-.ibt-count {
-  flex-shrink: 0;
-  font-size: 11.5px; font-weight: 700;
-  color: var(--soft);
-  background: var(--surface2);
-  border: 1px solid var(--border);
-  border-radius: 99px;
-  padding: 3px 9px;
-  white-space: nowrap;
-}
 .ibt-body { font-size: 13.5px; line-height: 1.85; color: var(--sub); margin: 0 0 14px; }
 .ibt-body b { color: var(--text); font-weight: 700; }
 .ibt-pop-hero .ibt-body { font-size: 14px; }
@@ -7991,7 +7961,6 @@ body[data-layout="hub"] .hub-aside-cal { gap: 16px }
 .ibt-root.ibt-no-motion .ibt-spot,
 .ibt-root.ibt-no-motion .ibt-pop,
 .ibt-root.ibt-no-motion .ibt-backdrop { transition: opacity .12s ease; }
-.ibt-root.ibt-no-motion .ibt-spot::after { animation: none; }
 
 /* دکمهٔ اجرای دوباره در تنظیمات */
 .ibt-replay-btn {

@@ -112,10 +112,10 @@
   ].join('\n');
 
   var CHIPS = [
-    'بهترین بروکر برای ایرانی‌ها کدومه؟ 🏦',
+    'بهترین بروکر برای ایرانی‌ها کدومه؟',
     'اسپرد و کمیسیون یعنی چی؟',
-    'پراپ‌فرم چطور کار می‌کنه؟ 🏆',
-    'چطور کلاهبرداری فارکسی رو تشخیص بدم؟ 🚨'
+    'پراپ‌فرم چطور کار می‌کنه؟',
+    'چطور کلاهبرداری فارکسی رو تشخیص بدم؟'
   ];
 
   var HIST_KEY = 'ib_airo_conversations';
@@ -244,8 +244,8 @@
     els.privacyBtn.classList.toggle('active', noHistory);
     els.privacyBtn.setAttribute('aria-pressed', noHistory ? 'true' : 'false');
     els.privacyBtn.title = noHistory
-      ? 'حالت خصوصی فعال — این گفتگو و گفتگوهای بعدی ذخیره نمی‌شوند (کلیک برای فعال‌کردن دوبارهٔ ذخیره)'
-      : 'گفتگوهای جدید ذخیره می‌شوند — برای غیرفعال‌کردن ذخیره کلیک کنید';
+      ? 'حالت خصوصی فعال است؛ این گفتگو و گفتگوهای بعدی ذخیره نمی‌شوند (کلیک برای فعال‌کردن دوبارهٔ ذخیره)'
+      : 'گفتگوهای جدید ذخیره می‌شوند؛ برای غیرفعال‌کردن ذخیره کلیک کنید';
   }
 
   function persistCurrentConversation() {
@@ -374,8 +374,8 @@
       '<div class="airo-welcome">' +
         /* the orb sits on a faded chart line, like the live-price point */
         '<div class="airo-w-line"><span class="airo-w-ping"></span>' + orbHTML('airo-orb-lg') + '</div>' +
-        '<div class="airo-w-title">سلام! من آیروام <span class="airo-wave">👋</span></div>' +
-        '<div class="airo-w-sub">هوش مصنوعی ایران بروکر — دربارهٔ ترید، بروکرها و بازارهای مالی هرچی می‌خوای بپرس.</div>' +
+        '<div class="airo-w-title">سلام، من آیرو هستم</div>' +
+        '<div class="airo-w-sub">هوش مصنوعی ایران بروکر. دربارهٔ ترید، بروکرها و بازارهای مالی هرچی می‌خوای بپرس.</div>' +
       '</div>';
     renderChips(true);
   }
@@ -613,12 +613,12 @@
 
   function errText(err) {
     var s = err && err.status;
-    if (s === 'stall') return 'سرویس هوش مصنوعی به‌موقع جواب نداد ⏱ — دوباره امتحان کن.';
-    if (s === 401 || s === 403) return 'سرویس آیرو موقتاً در دسترس نیست 🔑 — به‌زودی درست می‌شه.';
-    if (s === 429) return 'سقف درخواست‌ها پر شده ⏳ — چند لحظه صبر کن و دوباره امتحان کن.';
-    if (s === 529 || s >= 500) return 'سرور هوش مصنوعی شلوغه 🌩 — کمی بعد دوباره بپرس.';
-    if (s === 400 && /credit|billing|balance|موجودی|اعتبار/i.test(err.message || '')) return 'اعتبار حساب سرویس آیرو تموم شده — لطفاً حساب رو شارژ کن.';
-    if (err instanceof TypeError) return 'ارتباط با سرویس هوش مصنوعی برقرار نشد 🌐 — اینترنت، فیلترشکن یا محدودیت سرویس رو چک کن.';
+    if (s === 'stall') return 'سرویس هوش مصنوعی به‌موقع جواب نداد. دوباره امتحان کن.';
+    if (s === 401 || s === 403) return 'سرویس آیرو موقتاً در دسترس نیست. به‌زودی درست می‌شه.';
+    if (s === 429) return 'سقف درخواست‌ها پر شده. چند لحظه صبر کن و دوباره امتحان کن.';
+    if (s === 529 || s >= 500) return 'سرور هوش مصنوعی شلوغه. کمی بعد دوباره بپرس.';
+    if (s === 400 && /credit|billing|balance|موجودی|اعتبار/i.test(err.message || '')) return 'اعتبار حساب سرویس آیرو تموم شده. لطفاً حساب رو شارژ کن.';
+    if (err instanceof TypeError) return 'ارتباط با سرویس هوش مصنوعی برقرار نشد. اینترنت، فیلترشکن یا محدودیت سرویس رو چک کن.';
     return 'یه مشکلی پیش اومد: ' + esc((err && err.message) || 'خطای ناشناخته');
   }
 
@@ -695,11 +695,11 @@
           history.pop(); // nothing came back — don't poison history
         }
         if (stopReason === 'refusal' && !textSoFar) {
-          answerEl.innerHTML = md('این یکی رو نمی‌تونم جواب بدم 🙏 — یه سوال دیگه دربارهٔ بازارهای مالی بپرس.');
+          answerEl.innerHTML = md('این یکی رو نمی‌تونم جواب بدم. یه سوال دیگه دربارهٔ بازارهای مالی بپرس.');
           textSoFar = ' ';
         }
         if (stopReason === 'aborted' && textSoFar) {
-          answerEl.innerHTML = md(textSoFar) + ' <i class="airo-stopped">— متوقف شد</i>';
+          answerEl.innerHTML = md(textSoFar) + ' <i class="airo-stopped">متوقف شد</i>';
         }
         finish(true);
         scrollDown();

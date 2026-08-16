@@ -939,7 +939,7 @@
     /* وضعیت داده روی خود دکمهٔ بروزرسانی می‌نشیند — بدون پاورقی */
     els.cryptoRefresh.classList.toggle('is-stale', !!(d.err && rows.length));
     els.cryptoRefresh.title = d.err
-      ? 'دریافت زنده ممکن نشد — نمایش آخرین داده. برای تلاش دوباره کلیک کنید'
+      ? 'دریافت زنده ممکن نشد؛ نمایش آخرین داده. برای تلاش دوباره کلیک کنید'
       : (d.time ? 'آخرین بروزرسانی ' + d.time + ' · ' + PX_SRC[tab] : 'بروزرسانی');
   }
 
@@ -1730,7 +1730,7 @@
     if (allClosed) {
       const nextOpen = Math.min.apply(null, states.map(function (st) { return st.minsLeft; }));
       if (nextOpen > 180) {
-        banner = '<div class="mkt-weekend">بازار فارکس تعطیل است — بازگشایی ' + fmtDur(nextOpen) + ' دیگر</div>';
+        banner = '<div class="mkt-weekend">بازار فارکس تعطیل است؛ بازگشایی ' + fmtDur(nextOpen) + ' دیگر</div>';
       }
     }
 

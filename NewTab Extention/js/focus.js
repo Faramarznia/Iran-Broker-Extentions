@@ -30,10 +30,10 @@
 
   var BREAK_TIPS = [
     'از صفحه دور شو و چند لحظه چشم‌هایت را ببند.',
-    'یک لیوان آب بنوش — هیدراتاسیون روی تصمیم‌گیری تأثیر مستقیم دارد.',
-    'در استراحت معامله‌ای باز نگذار — ذهنت باید واقعاً استراحت کند.',
-    'پنج نفس عمیق بکش — اکسیژن، ذهن را روشن می‌کند.',
-    'کمی کشش و حرکت بده — نشستن طولانی خستگی می‌آورد.'
+    'یک لیوان آب بنوش. هیدراتاسیون روی تصمیم‌گیری تأثیر مستقیم دارد.',
+    'در استراحت معامله‌ای باز نگذار. ذهنت باید واقعاً استراحت کند.',
+    'پنج نفس عمیق بکش. اکسیژن ذهن را روشن می‌کند.',
+    'کمی کشش و حرکت بده. نشستن طولانی خستگی می‌آورد.'
   ];
 
   // [label, duration(ms), orb-scale-target]
@@ -218,7 +218,7 @@
     } else if (name === 'focus-quote-screen') {
       var q = randomItem(QUOTES);
       var qt = $('fq-text');   if (qt) qt.textContent = q.text;
-      var qa = $('fq-author'); if (qa) qa.textContent = '— ' + q.author;
+      var qa = $('fq-author'); if (qa) qa.textContent = '‏- ' + q.author;
       showScreen('focus-quote-screen');   // static preview — no auto-advance
 
     } else if (name === 'focus-timer-screen') {
@@ -401,7 +401,7 @@
     showScreen('focus-quote-screen');
     var q  = randomItem(QUOTES);
     var qt = $('fq-text');   if (qt) qt.textContent = q.text;
-    var qa = $('fq-author'); if (qa) qa.textContent = '— ' + q.author;
+    var qa = $('fq-author'); if (qa) qa.textContent = '‏- ' + q.author;
     clearTimeout(quoteTimeout);
     quoteTimeout = setTimeout(goTimer, 4600);
   }
@@ -609,7 +609,7 @@
   }
 
   function breakSubText(isLong) {
-    if (isLong) return 'خستگی رو کامل در کن — نزدیک پایان جلسه‌ای';
+    if (isLong) return 'خستگی رو کامل در کن، نزدیک پایان جلسه‌ای';
     var next = Math.min(s.pomRound + 1, s.pomTotalRounds);
     return 'بعد از این، دور ' + toFa(next) + ' از ' + toFa(s.pomTotalRounds) + ' شروع می‌شود';
   }

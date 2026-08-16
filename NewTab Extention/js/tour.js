@@ -11,9 +11,6 @@
   var MAIN_KEY = 'ib_newtab_v2';   // مالکیت با newtab.js — فقط layout را به‌روز می‌کنیم
 
   /* ───────────────── کمک‌تابع‌ها ───────────────── */
-  function faNum(n) {
-    return String(n).replace(/[0-9]/g, function (d) { return '۰۱۲۳۴۵۶۷۸۹'[d]; });
-  }
   function q(sel) { return document.querySelector(sel); }
   function reduceMotion() {
     return window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -47,17 +44,24 @@
     chat: '<svg viewBox="0 0 24 24" fill="none"><path d="M4 5h16v11H9l-4 4V5z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>',
     palette: '<svg viewBox="0 0 24 24" fill="none"><path d="M12 3a9 9 0 1 0 0 18c1.2 0 1.8-1 1.3-2-.5-1 .1-2 1.2-2H17a4 4 0 0 0 4-4c0-5-4-8-9-8z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><circle cx="7.5" cy="11" r="1.2" fill="currentColor"/><circle cx="12" cy="8" r="1.2" fill="currentColor"/><circle cx="16" cy="11" r="1.2" fill="currentColor"/></svg>',
     layout: '<svg viewBox="0 0 24 24" fill="none"><rect x="3" y="4" width="18" height="16" rx="2" stroke="currentColor" stroke-width="2"/><path d="M3 9h18M9 9v11" stroke="currentColor" stroke-width="2"/></svg>',
-    spark: '<svg viewBox="0 0 24 24" fill="none"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8L12 3z" fill="currentColor"/></svg>'
+    spark: '<svg viewBox="0 0 24 24" fill="none"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8L12 3z" fill="currentColor"/></svg>',
+    market: '<svg viewBox="0 0 24 24" fill="none"><path d="M4 15l4-5 4 3 6-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 20h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>',
+    calendar: '<svg viewBox="0 0 24 24" fill="none"><rect x="3.5" y="5" width="17" height="16" rx="2.5" stroke="currentColor" stroke-width="2"/><path d="M3.5 9.5h17M8 3v4M16 3v4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>',
+    tasks: '<svg viewBox="0 0 24 24" fill="none"><path d="M4 7l2 2 3-3M4 17l2 2 3-3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M13 7h7M13 17h7" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>'
   };
 
   /* ───────────────── محتوای تور ───────────────── */
   // anchor: سلکتور عنصر مرجع، یا null برای کارت وسط صفحه
+  // layouts: تور بر اساس حالت نمایشِ فعلیِ کاربر برگزار می‌شود. استپی که
+  //   layouts دارد فقط در همان حالت‌ها نشان داده می‌شود؛ بدون layouts = همهٔ حالت‌ها.
+  //   استپ‌های مخصوصِ هر حالت بعد از انتخاب‌گرِ نمایش می‌آیند تا اگر کاربر همان‌جا
+  //   حالت را عوض کرد، دقیقاً امکاناتِ همان حالت را ببیند.
   var STEPS = [
     {
       id: 'welcome', anchor: null, hero: true,
       eyebrow: 'به ایران بروکر خوش اومدی',
-      title: 'تب جدیدت، حالا یه میز کار معامله‌گریه 👋',
-      body: 'این صفحه فقط یه نقطهٔ شروع نیست؛ سرچ، ابزارهای بازار، تایمر تمرکز، ژورنال معامله و گفتگوهای جامعه — همه یک‌جا. ' +
+      title: 'تب جدیدت، حالا یه میز کار معامله‌گریه',
+      body: 'این صفحه فقط یه نقطهٔ شروع نیست؛ سرچ، ابزارهای بازار، تایمر تمرکز، ژورنال معامله و گفتگوهای جامعه، همه یک‌جا. ' +
             'یه دور یک‌دقیقه‌ای بزنیم تا همه‌چیز رو نشونت بدم؟',
       primary: 'بزن بریم', secondary: 'بعداً'
     },
@@ -65,13 +69,7 @@
       id: 'search', anchor: '#search-box', place: 'bottom', icon: IC.search, pad: 10,
       title: 'از همین‌جا همه‌چی رو پیدا کن',
       body: 'یه کادر، سه مقصد: <b>گوگل</b> برای وب، <b>ایران بروکر</b> برای مقاله و ابزارها، و <b>تریدینگ‌ویو</b> برای نماد. ' +
-            'با کلید <span class="ibt-kbd">Tab</span> بین موتورها سوییچ کن — اسم ابزارها رو هم همین‌جا تایپ کنی، مستقیم پیشنهاد می‌شن.'
-    },
-    {
-      id: 'tools', anchor: '.sec-tools', place: 'top', icon: IC.grid, pad: 12,
-      title: 'ابزارهای ایران بروکر، یک‌کلیک دور',
-      body: 'لیست بروکرها، مقایسهٔ اسپرد لحظه‌ای، تقویم اقتصادی، پراپ‌فرم‌ها، هشدار کلاهبرداری و آموزش رایگان — ' +
-            'میان‌برهای پرکاربردِ بازار، بدون این‌که دنبالشون بگردی.'
+            'با کلید <span class="ibt-kbd">Tab</span> بین موتورها سوییچ کن. اسم ابزارها رو هم همین‌جا تایپ کنی، مستقیم پیشنهاد می‌شن.'
     },
     {
       id: 'focus', anchor: '#focus-btn', place: 'bottom', icon: IC.focus, pad: 8,
@@ -80,16 +78,16 @@
             'صدای محیط (باران، دریا، جنگل)، تنفس هدایت‌شده در استراحت و رکورد روزهای پیاپی هم داری.'
     },
     {
-      id: 'journal', anchor: '#jr-fab', place: 'top', icon: IC.journal, pad: 10,
+      id: 'journal', anchor: '#journal-btn', place: 'bottom', icon: IC.journal, pad: 8,
       title: 'ژورنال معاملاتی همیشه دمِ دست',
-      body: 'این دکمه گوشهٔ پایین، دفتر معامله‌هاته: ثبت ترید با حس‌وحال و تایم‌فریم، ساخت <b>پلی‌بوک</b> ستاپ‌ها، ' +
+      body: 'این دکمهٔ بالای صفحه، دفتر معامله‌هاته: ثبت ترید با حس‌وحال و تایم‌فریم، ساخت <b>پلی‌بوک</b> ستاپ‌ها، ' +
             'و تحلیل کارنامه با نمودار و خروجی CSV/JSON. همه‌چیز روی همین مرورگر می‌مونه.'
     },
     {
       id: 'community', anchor: '#sb-community', place: 'auto', icon: IC.chat, pad: 8,
       title: 'تنها معامله نکن',
       body: 'پنل جامعه، داغ‌ترین و آخرین تاپیک‌های فروم ایران بروکر رو زنده می‌آره. ' +
-            'هر وقت خواستی جمعش کن تا حواست پرت نشه — با همون دستگیره برمی‌گرده.'
+            'هر وقت خواستی جمعش کن تا حواست پرت نشه. با همون دستگیره برمی‌گرده.'
     },
     {
       id: 'theme', anchor: '#theme-btn', place: 'bottom', icon: IC.palette, pad: 8,
@@ -100,14 +98,49 @@
     {
       id: 'layout', anchor: null, hero: true, layoutPicker: true, icon: IC.layout,
       eyebrow: 'و مهم‌ترین قسمت',
-      title: 'سه حالت نمایش — همین حالا امتحان کن',
-      body: 'این صفحه با سبکِ کارِ تو شکل عوض می‌کنه. یکی رو بزن تا <b>زنده</b> روی صفحه ببینی؛ هر زمان از تنظیمات قابل تغییره.',
+      title: 'سه حالت نمایش، همین حالا امتحان کن',
+      body: 'این صفحه با سبکِ کارِ تو شکل عوض می‌کنه. یکی رو بزن تا <b>زنده</b> روی صفحه ببینی؛ ' +
+            'بعدش دقیقاً امکاناتِ همون حالت رو نشونت می‌دم. هر زمان از تنظیمات قابل تغییره.',
       primary: 'عالیه، ادامه'
     },
+
+    /* ── مخصوصِ حالت «دیتا محور» ── */
+    {
+      id: 'tools', anchor: '.sec-tools', place: 'top', icon: IC.grid, pad: 12, layouts: ['data'],
+      title: 'ابزارهای ایران بروکر، یک‌کلیک دور',
+      body: 'لیست بروکرها، مقایسهٔ اسپرد لحظه‌ای، تقویم اقتصادی، پراپ‌فرم‌ها، هشدار کلاهبرداری و آموزش رایگان؛ ' +
+            'میان‌برهای پرکاربردِ بازار، بدون این‌که دنبالشون بگردی.'
+    },
+    {
+      id: 'prices', anchor: '#crypto-card', place: 'auto', icon: IC.market, pad: 10, layouts: ['data'],
+      title: 'بازار، یک‌نگاه',
+      body: 'قیمت لحظه‌ایِ <b>کریپتو</b>، <b>فارکس</b> و <b>بازار ایران</b>، ساعتِ باز و بستهٔ بازارهای جهانی، ' +
+            'و آخرین اخبار؛ همه توی یک ردیف، بدون باز کردن ده‌تا تب.'
+    },
+
+    /* ── مخصوصِ حالت «هاب» ── */
+    {
+      id: 'quick', anchor: '#hub-quick', place: 'auto', icon: IC.grid, pad: 12, layouts: ['hub'],
+      title: 'میان‌برهای دلخواهت',
+      body: 'پرکاربردترین سایت‌ها و ابزارهات رو این‌جا سنجاق کن تا همیشه یک‌کلیک فاصله داشته باشن.'
+    },
+    {
+      id: 'calendar', anchor: '#hub-cal-box', place: 'auto', icon: IC.calendar, pad: 12, layouts: ['hub'],
+      title: 'تقویم و آب‌وهوا',
+      body: 'تقویم شمسی و میلادی با <b>رویدادهای اقتصادی</b> و مناسبت‌ها، کنارِ آب‌وهوای شهرت؛ ' +
+            'برنامهٔ روزت رو با یک نگاه به بازار بچین.'
+    },
+    {
+      id: 'tasks', anchor: '#hub-tasks-box', place: 'auto', icon: IC.tasks, pad: 12, layouts: ['hub'],
+      title: 'برنامهٔ امروز',
+      body: 'کارهای امروزت رو با ساعت بنویس تا خودشون روی تایم‌لاین بشینن؛ ' +
+            'روتین‌های آماده هم برای شروعِ سریع دمِ دستته.'
+    },
+
     {
       id: 'done', anchor: null, hero: true, icon: IC.spark,
       eyebrow: 'آماده‌ای',
-      title: 'تمومه — حالا نوبت توئه 🚀',
+      title: 'تمومه، حالا نوبت توئه',
       body: 'هر وقت خواستی این راهنما رو دوباره ببینی، از <b>تنظیمات ← نمایش ← نمایش دوبارهٔ راهنما</b> اجراش کن. ' +
             'موفق باشی توی بازار.',
       primary: 'شروع کن'
@@ -129,6 +162,16 @@
 
   /* ───────────────── موتور تور ───────────────── */
   var root, backdrop, spot, pop, idx = 0, active = false, keyHandler, reHandler;
+
+  // plan = استپ‌هایی که برای حالتِ نمایشِ فعلی نشان داده می‌شوند (ناوبری روی همین است).
+  var plan = [];
+  function curLayout() { return document.body.getAttribute('data-layout') || 'simple'; }
+  function buildPlan() {
+    var lay = curLayout();
+    plan = STEPS.filter(function (s) {
+      return !s.layouts || s.layouts.indexOf(lay) !== -1;
+    });
+  }
 
   function buildShell() {
     root = document.createElement('div');
@@ -167,13 +210,13 @@
 
   function go(n) {
     if (n < 0) n = 0;
-    if (n >= STEPS.length) { finish(true); return; }
+    if (n >= plan.length) { finish(true); return; }
     idx = n;
     render();
   }
 
   function render() {
-    var step = STEPS[idx];
+    var step = plan[idx];
     var anchorEl = step.anchor ? q(step.anchor) : null;
     // اگر عنصر مرجع در چیدمان فعلی مخفی باشد (مثلاً ابزارها/جامعه در حالت «ساده»)،
     // به‌جای اسپات‌لایت، کارت را وسط صفحه نشان می‌دهیم تا توضیح از دست نرود.
@@ -194,21 +237,15 @@
       placeSpot(anchorEl, step.pad || 8);
     }
 
-    /* محتوای کارت */
-    var counter = '';
-    if (!step.hero) {
-      // شماره فقط روی استپ‌های لنگردار
-      var contentSteps = STEPS.filter(function (s) { return !s.hero; }).length;
-      var pos = STEPS.slice(0, idx + 1).filter(function (s) { return !s.hero; }).length;
-      counter = '<span class="ibt-count">' + faNum(pos) + ' از ' + faNum(contentSteps) + '</span>';
-    }
-
+    /* محتوای کارت
+       نکته: شمارندهٔ «X از Y» حذف شد؛ نوار نقطه‌ها تنها نشانگر پیشرفت است
+       (دو نشانگر هم‌زمان، آن‌هم با مجموع‌های متفاوت، گیج‌کننده بود). */
     var icon = step.icon ? '<span class="ibt-pop-ic">' + step.icon + '</span>' : '';
     var eyebrow = step.eyebrow ? '<div class="ibt-eyebrow">' + step.eyebrow + '</div>' : '';
     var picker = step.layoutPicker ? layoutPickerHTML() : '';
 
     var primaryLbl = step.primary || 'بعدی';
-    var isLast = idx === STEPS.length - 1;
+    var isLast = idx === plan.length - 1;
 
     var nav =
       '<div class="ibt-nav">' +
@@ -232,7 +269,6 @@
         '<div class="ibt-pop-heads">' + eyebrow +
           '<h2 class="ibt-title">' + step.title + '</h2>' +
         '</div>' +
-        counter +
       '</div>' +
       '<p class="ibt-body">' + step.body + '</p>' +
       picker +
@@ -257,7 +293,7 @@
   }
 
   function dotsHTML() {
-    return STEPS.map(function (s, i) {
+    return plan.map(function (s, i) {
       return '<span class="ibt-dot' + (i === idx ? ' on' : '') + (i < idx ? ' past' : '') + '"></span>';
     }).join('');
   }
@@ -284,6 +320,11 @@
         Array.prototype.forEach.call(pop.querySelectorAll('.ibt-lay'), function (x) {
           x.classList.toggle('on', x === b);
         });
+        // تور را برای حالتِ تازه‌انتخاب‌شده بازبرنامه‌ریزی کن؛ استپِ انتخاب‌گر در همهٔ
+        // حالت‌ها هم‌جایگاه است، پس idx معتبر می‌ماند و فقط استپ‌های بعدی عوض می‌شوند.
+        buildPlan();
+        var dotsBox = pop.querySelector('.ibt-dots');
+        if (dotsBox) dotsBox.innerHTML = dotsHTML();
       });
     });
   }
@@ -304,7 +345,9 @@
   /* جای‌گذاری کارت نسبت به عنصر، با کلمپ به ویوپورت */
   function placePop(el, step) {
     if (!el || step.hero) {
-      // وسطِ صفحه
+      // وسطِ صفحه — data-place را پاک کن تا پیکانِ باقی‌مانده از استپِ لنگردارِ قبلی
+      // روی کارتِ وسط‌چین به هیچ‌جا اشاره نکند
+      pop.removeAttribute('data-place');
       pop.style.left = '50%';
       pop.style.top = '50%';
       pop.style.transform = 'translate(-50%, -50%)';
@@ -356,6 +399,7 @@
     if (active) return;
     active = true;
     idx = 0;
+    buildPlan();   // تور را بر اساس حالتِ نمایشِ فعلیِ کاربر بچین
     buildShell();
 
     keyHandler = function (e) {
@@ -373,7 +417,8 @@
 
     reHandler = function () {
       if (!active) return;
-      var step = STEPS[idx];
+      var step = plan[idx];
+      if (!step) return;
       var el = step.anchor ? q(step.anchor) : null;
       if (el && !step.hero && isVisible(el)) { placeSpot(el, step.pad || 8); placePop(el, step); }
     };
