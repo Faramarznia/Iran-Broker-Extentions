@@ -1,5 +1,5 @@
 /* ===================================================================
-   آیرو — هوش مصنوعی ایران بروکر
+   آیرا — هوش مصنوعی ایران بروکر
    Centered chat modal launched from the search box. Streams answers
    from a configurable backend (GapGPT by default, Claude as a drop-in
    alternative) with a living-orb avatar, quick-prompt chips, saved
@@ -13,7 +13,7 @@
      پیکربندی بک‌اند — همهٔ کاربران اکستنشن از همین تنظیمات استفاده می‌کنند
      =================================================================== */
 
-  // کدام سرویس موتور آیرو باشد؟ 'gapgpt' یا 'claude'
+  // کدام سرویس موتور آیرا باشد؟ 'gapgpt' یا 'claude'
   var ACTIVE = 'gapgpt';
 
   var PROVIDERS = {
@@ -42,10 +42,10 @@
   /* ===================================================================
      دکمه‌های دعوت‌به‌اقدام (CTA) — دو سطح:
 
-     ۱) CTA کلی دسته‌بندی — وقتی آیرو کلی دربارهٔ یک دسته حرف می‌زند
+     ۱) CTA کلی دسته‌بندی — وقتی آیرا کلی دربارهٔ یک دسته حرف می‌زند
         (بدون اسم بردن یک مورد خاص). یک دکمهٔ نرم به صفحهٔ لیست آن دسته.
 
-     ۲) CTA اختصاصی موجودیت — وقتی آیرو اسم یک بروکر/صرافی/پراپ‌فرم/
+     ۲) CTA اختصاصی موجودیت — وقتی آیرا اسم یک بروکر/صرافی/پراپ‌فرم/
         کارگزاری/صندوق خاص را می‌برد. دو دکمه نشان داده می‌شود:
         «بررسی» (همیشه به صفحهٔ واقعی آن مورد در ایران بروکر می‌رود) و
         «ثبت‌نام» (اگر لینک ریفرال اختصاصی در REFERRAL_LINKS تنظیم شده
@@ -92,7 +92,7 @@
   }
 
   var SYSTEM = [
-    'تو «آیرو» هستی — هوش مصنوعی ایران بروکر (iranbroker.net)، مرجع فارسی‌زبان بازارهای مالی.',
+    'تو «آیرا» هستی — هوش مصنوعی ایران بروکر (iranbroker.net)، مرجع فارسی‌زبان بازارهای مالی.',
     'تخصص تو: فارکس، ارز دیجیتال، بورس، طلا، بروکرها، پراپ‌فرم‌ها، مدیریت ریسک و آموزش ترید.',
     'لحن: صمیمی، روان و دقیق. کاملاً فارسی جواب بده مگر کاربر زبان دیگری بخواهد.',
     'این یک ویجت چت کوچک است؛ پاسخ‌ها را کوتاه و مفید نگه دار (معمولاً زیر ۱۵۰ کلمه) مگر کاربر توضیح مفصل بخواهد.',
@@ -350,7 +350,7 @@
         a.innerHTML =
           orbHTML('airo-orb-xs') +
           '<div class="airo-ai-col">' +
-            '<div class="airo-meta"><span class="airo-meta-name">آیرو</span><span class="airo-meta-t">' + esc(m.t || '') + '</span></div>' +
+            '<div class="airo-meta"><span class="airo-meta-name">آیرا</span><span class="airo-meta-t">' + esc(m.t || '') + '</span></div>' +
             '<div class="airo-ai-text">' + md(m.content) + '</div>' +
           '</div>';
         els.body.appendChild(a);
@@ -374,7 +374,7 @@
       '<div class="airo-welcome">' +
         /* the orb sits on a faded chart line, like the live-price point */
         '<div class="airo-w-line"><span class="airo-w-ping"></span>' + orbHTML('airo-orb-lg') + '</div>' +
-        '<div class="airo-w-title">سلام، من آیرو هستم</div>' +
+        '<div class="airo-w-title">سلام، من آیرا هستم</div>' +
         '<div class="airo-w-sub">هوش مصنوعی ایران بروکر. دربارهٔ ترید، بروکرها و بازارهای مالی هرچی می‌خوای بپرس.</div>' +
       '</div>';
     renderChips(true);
@@ -409,7 +409,7 @@
     wrap.innerHTML =
       orbHTML('airo-orb-xs') +
       '<div class="airo-ai-col">' +
-        '<div class="airo-meta"><span class="airo-meta-name">آیرو</span><span class="airo-meta-t">' + esc(t || '') + '</span>' +
+        '<div class="airo-meta"><span class="airo-meta-name">آیرا</span><span class="airo-meta-t">' + esc(t || '') + '</span>' +
           '<button class="airo-copy" title="کپی پاسخ">' +
             '<svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>' +
           '</button>' +
@@ -614,10 +614,10 @@
   function errText(err) {
     var s = err && err.status;
     if (s === 'stall') return 'سرویس هوش مصنوعی به‌موقع جواب نداد. دوباره امتحان کن.';
-    if (s === 401 || s === 403) return 'سرویس آیرو موقتاً در دسترس نیست. به‌زودی درست می‌شه.';
+    if (s === 401 || s === 403) return 'سرویس آیرا موقتاً در دسترس نیست. به‌زودی درست می‌شه.';
     if (s === 429) return 'سقف درخواست‌ها پر شده. چند لحظه صبر کن و دوباره امتحان کن.';
     if (s === 529 || s >= 500) return 'سرور هوش مصنوعی شلوغه. کمی بعد دوباره بپرس.';
-    if (s === 400 && /credit|billing|balance|موجودی|اعتبار/i.test(err.message || '')) return 'اعتبار حساب سرویس آیرو تموم شده. لطفاً حساب رو شارژ کن.';
+    if (s === 400 && /credit|billing|balance|موجودی|اعتبار/i.test(err.message || '')) return 'اعتبار حساب سرویس آیرا تموم شده. لطفاً حساب رو شارژ کن.';
     if (err instanceof TypeError) return 'ارتباط با سرویس هوش مصنوعی برقرار نشد. اینترنت، فیلترشکن یا محدودیت سرویس رو چک کن.';
     return 'یه مشکلی پیش اومد: ' + esc((err && err.message) || 'خطای ناشناخته');
   }
@@ -632,7 +632,7 @@
     if (!keyReady()) {
       setStatus('پیکربندی نشده', 'warn');
       if (!els.body.querySelector('.airo-note')) {
-        addNote('<span>آیرو هنوز پیکربندی نشده — کلید API پیش‌فرض در <code>js/airo.js</code> تنظیم نشده است.</span>', 'err');
+        addNote('<span>آیرا هنوز پیکربندی نشده — کلید API پیش‌فرض در <code>js/airo.js</code> تنظیم نشده است.</span>', 'err');
       }
       return;
     }

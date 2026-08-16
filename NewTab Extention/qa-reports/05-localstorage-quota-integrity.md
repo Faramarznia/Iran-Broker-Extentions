@@ -18,7 +18,7 @@ node qa-reports/tools/05-localstorage-integrity.js
 | `ib_bg_image` | `newtab.js` | تصویر پس‌زمینهٔ سفارشی (base64) |
 | `ib_news_read` | `newtab.js` | آی‌دی خبرهای خوانده‌شده |
 | `ib_sb_comm` | `newtab.js` (inline) | وضعیت جمع‌شدن سایدبار جامعه |
-| `ib_airo_conversations` | `js/airo.js` | تاریخچهٔ گفتگوهای آیرو |
+| `ib_airo_conversations` | `js/airo.js` | تاریخچهٔ گفتگوهای آیرا |
 | `ib_hub_v2` | `js/hub.js` | کارهای روزانه، تقویم، آب‌وهوا، گرید دسترسی سریع |
 | `ib_journal_v1` | `js/journal.js` | معاملات ژورنال (شامل اسکرین‌شات base64) |
 | `ib_focus_v3` | `js/focus.js` | تنظیمات/وضعیت فوکوس‌مود |

@@ -182,8 +182,8 @@ async function checkTgju() {
       return { ok: true, note: '' }; // empty results[] is a legitimate answer, not a failure
     }));
 
-  results.push(await checkAuthWall('GapGPT (آیرو، فعال)', 'https://api.gapgpt.app/v1/chat/completions', { model: 'gpt-4o', messages: [] }));
-  results.push(await checkAuthWall('Anthropic (آیرو، جایگزین غیرفعال)', 'https://api.anthropic.com/v1/messages', {}));
+  results.push(await checkAuthWall('GapGPT (آیرا، فعال)', 'https://api.gapgpt.app/v1/chat/completions', { model: 'gpt-4o', messages: [] }));
+  results.push(await checkAuthWall('Anthropic (آیرا، جایگزین غیرفعال)', 'https://api.anthropic.com/v1/messages', {}));
 
   // ---- render report ----
   const allChecks = [...results, tgju.race];

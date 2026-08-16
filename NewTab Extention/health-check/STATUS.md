@@ -14,8 +14,8 @@
 | forum.iranbroker.net (سایدبار جامعه) | 🟢 UP | 200 | 2957ms | — |
 | Open-Meteo (آب‌وهوا) | 🟢 UP | 200 | 1792ms | — |
 | Open-Meteo Geocoding (جست‌وجوی شهر) | 🟢 UP | 200 | 2159ms | — |
-| GapGPT (آیرو، فعال) | 🟢 UP | 401 | 1787ms | auth-wall check (no real request sent, no tokens spent) |
-| Anthropic (آیرو، جایگزین غیرفعال) | 🟢 UP | 401 | 1488ms | auth-wall check (no real request sent, no tokens spent) |
+| GapGPT (آیرا، فعال) | 🟢 UP | 401 | 1787ms | auth-wall check (no real request sent, no tokens spent) |
+| Anthropic (آیرا، جایگزین غیرفعال) | 🟢 UP | 401 | 1488ms | auth-wall check (no real request sent, no tokens spent) |
 
 ## ⭐ Failover TGJU زیر ترافیک واقعی
 

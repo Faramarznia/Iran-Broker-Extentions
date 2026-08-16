@@ -23,8 +23,8 @@ grep -n "AbortController\|\.abort(" همان فایل‌ها
 | `newtab.js:1111` | `cdn.tsetmc.com` | ✅ دارد | **۶۰۰۰ms** | ✅ | پایین |
 | `newtab.js:1247` | `api.coingecko.com` (جست‌وجوی کوین) | ❌ ندارد | — | ❌ | پایین (تعاملی، نه خودکار) |
 | `newtab.js:1433` | `iranbroker.net/wp-json/categories` | ❌ ندارد | — | ❌ | پایین |
-| `js/airo.js:437` | `api.gapgpt.app` (چت آیرو، فعال) | ✅ دارد | **۲۵۰۰۰ms** (`STALL_TIMEOUT_MS`) | ⚠️ عمداً بیشتر (پاسخ streaming AI، منطقی است) | پایین |
-| `js/airo.js:518` | `api.anthropic.com` (چت آیرو، غیرفعال) | ✅ دارد | **۲۵۰۰۰ms** | ⚠️ همان بالا | — (کد غیرفعال) |
+| `js/airo.js:437` | `api.gapgpt.app` (چت آیرا، فعال) | ✅ دارد | **۲۵۰۰۰ms** (`STALL_TIMEOUT_MS`) | ⚠️ عمداً بیشتر (پاسخ streaming AI، منطقی است) | پایین |
+| `js/airo.js:518` | `api.anthropic.com` (چت آیرا، غیرفعال) | ✅ دارد | **۲۵۰۰۰ms** | ⚠️ همان بالا | — (کد غیرفعال) |
 | `js/articles.js:51` | `iranbroker.net/wp-json` | ❌ ندارد | — | ❌ | متوسط |
 | `js/articles.js:82` | `iranbroker.net/feed` | ❌ ندارد | — | ❌ | متوسط |
 | `js/hub.js:333` | `nfs.faireconomy.media` (تقویم اقتصادی) | ❌ ندارد | — | ❌ | متوسط |

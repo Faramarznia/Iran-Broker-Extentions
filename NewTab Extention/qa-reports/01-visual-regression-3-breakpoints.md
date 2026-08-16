@@ -9,7 +9,7 @@ cd "NewTab Extention/qa-reports/tools"
 node 01-visual-regression.js
 ```
 
-اسکریپت `tools/01-visual-regression.js` (قابل اجرای مجدد، یک‌بارمصرف نیست) با Puppeteer + Chrome واقعی سیستم، `newtab.html` را در هر ۳ عرض دوبار باز می‌کند — یک‌بار «تمیز» (بدون localStorage قبلی) و یک‌بار «با داده نمونه» (بعد از seed کردن کلیدهای localStorage با یک وضعیت واقع‌گرایانه: تم تیره، ۵ کوین در واچ‌لیست، ۳ معامله در ژورنال، یک تسک در Hub، یک گفتگوی نمونهٔ آیرو) — سپس اسکرین‌شات تمام‌صفحه می‌گیرد و overflow را با `document.documentElement.scrollWidth` چک می‌کند.
+اسکریپت `tools/01-visual-regression.js` (قابل اجرای مجدد، یک‌بارمصرف نیست) با Puppeteer + Chrome واقعی سیستم، `newtab.html` را در هر ۳ عرض دوبار باز می‌کند — یک‌بار «تمیز» (بدون localStorage قبلی) و یک‌بار «با داده نمونه» (بعد از seed کردن کلیدهای localStorage با یک وضعیت واقع‌گرایانه: تم تیره، ۵ کوین در واچ‌لیست، ۳ معامله در ژورنال، یک تسک در Hub، یک گفتگوی نمونهٔ آیرا) — سپس اسکرین‌شات تمام‌صفحه می‌گیرد و overflow را با `document.documentElement.scrollWidth` چک می‌کند.
 
 ## ⚠️ محدودیت زیرساخت (برای همهٔ ۷ گزارش صدق می‌کند)
 

@@ -82,7 +82,7 @@
       "note": ""
     },
     {
-      "name": "GapGPT (آیرو، فعال)",
+      "name": "GapGPT (آیرا، فعال)",
       "url": "https://api.gapgpt.app/v1/chat/completions",
       "status": "UP",
       "httpStatus": 401,
@@ -90,7 +90,7 @@
       "note": "auth-wall check (no real request sent, no tokens spent)"
     },
     {
-      "name": "Anthropic (آیرو، جایگزین غیرفعال)",
+      "name": "Anthropic (آیرا، جایگزین غیرفعال)",
       "url": "https://api.anthropic.com/v1/messages",
       "status": "UP",
       "httpStatus": 401,
