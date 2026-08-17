@@ -671,8 +671,9 @@
     if (!sb) return;
     var collapseBtn = document.getElementById('sb-comm-toggle');
     var expandTab = document.getElementById('sb-comm-tab');
-    /* پیش‌فرض: بسته — تب جدید تمیز باز می‌شود و تیرگیِ پس‌زمینه فقط با کلیک کاربر می‌آید */
-    try { if (localStorage.getItem('ib_sb_comm') !== '0') sb.classList.add('collapsed'); } catch (e) { sb.classList.add('collapsed'); }
+    /* پیش‌فرض: بسته (کلاس collapsed در HTML هست تا موقع لود فلش «باز→بسته» ندهد)؛
+       فقط اگر کاربر عمداً بازش گذاشته بود، باز می‌کنیم. */
+    try { if (localStorage.getItem('ib_sb_comm') === '0') sb.classList.remove('collapsed'); } catch (e) {}
     function toggle() {
       sb.classList.toggle('collapsed');
       try { localStorage.setItem('ib_sb_comm', sb.classList.contains('collapsed') ? '1' : '0'); } catch (e) {}

@@ -7,10 +7,22 @@
   <title>Newtab</title>
   <link rel="icon" type="image/svg+xml" href="icons/favicon.png" />
   <link rel="alternate icon" type="image/png" sizes="32x32" href="icons/icon32.png" />
+  <!-- پیش‌بارگذاریِ فونت: قبل از استایل‌شیت، تا دانلود/دیکد فونت‌ها موازیِ پارسِ CSS
+       شروع شود و تا حدِ امکان فونت تا اولین رسم آماده باشد (نه بعدش) -->
+  <link rel="preload" href="assets/fonts/Estedad-Light.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="assets/fonts/Estedad-Regular.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="assets/fonts/Estedad-SemiBold.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="assets/fonts/Estedad-Bold.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="assets/fonts/Estedad-ExtraBold.woff2" as="font" type="font/woff2" crossorigin />
   <link rel="stylesheet" href="newtab.css" />
 </head>
 
 <body class="page-entering" data-theme="dark" data-layout="simple">
+  <!-- سینک قبل از رسم: باید همین‌جا، همین‌طور بلوکه (بدون defer/async) بماند -->
+  <script src="js/init-state.js"></script>
+  <!-- ===== Load veil: a plain fade-out over everything ===== -->
+  <div id="ib-splash" aria-hidden="true"></div>
+
   <div class="stage-root">
     <canvas id="shader-bg-canvas"></canvas>
     <div class="bg-overlay" id="bg-overlay"></div>
@@ -193,7 +205,7 @@
     <div class="sb-scrim" id="sb-scrim" aria-hidden="true"></div>
 
     <!-- Community sidebar: fixed overlay panel -->
-    <aside class="sidebar sidebar-community" id="sb-community">
+    <aside class="sidebar sidebar-community collapsed" id="sb-community">
       <button class="sb-tab sb-tab-comm" id="sb-comm-tab" aria-label="باز کردن جامعه" title="کامیونیتی ایران بروکر">
         <span class="sb-tab-ic" aria-hidden="true">
           <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8"
@@ -322,7 +334,20 @@
         <!-- Head -->
         <div class="modal-head">
           <div class="mh-brand">
-            <div class="mh-logo">IB</div>
+            <div class="mh-logo" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                  <line x1="4" y1="7" x2="20" y2="7" />
+                  <line x1="4" y1="12" x2="20" y2="12" />
+                  <line x1="4" y1="17" x2="20" y2="17" />
+                </g>
+                <g fill="currentColor">
+                  <circle cx="9" cy="7" r="2.4" />
+                  <circle cx="15" cy="12" r="2.4" />
+                  <circle cx="10" cy="17" r="2.4" />
+                </g>
+              </svg>
+            </div>
             <div class="mh-titles">
               <div class="mh-title">تنظیمات</div>
               <div class="mh-sub">ایران بروکر · تب جدید</div>
@@ -353,11 +378,9 @@
           </button>
           <button class="m-tab" data-tab="data">
             <svg viewBox="0 0 20 20" fill="none">
-              <path d="M2.5 5.5h15M2.5 10h15M2.5 14.5h15" stroke="currentColor" stroke-width="1.5"
-                stroke-linecap="round" />
-              <circle cx="7" cy="5.5" r="2" fill="currentColor" />
-              <circle cx="13" cy="10" r="2" fill="currentColor" />
-              <circle cx="6" cy="14.5" r="2" fill="currentColor" />
+              <ellipse cx="10" cy="5" rx="6.3" ry="2.4" stroke="currentColor" stroke-width="1.6" />
+              <path d="M3.7 5v10c0 1.33 2.82 2.4 6.3 2.4s6.3-1.07 6.3-2.4V5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
+              <path d="M16.3 10c0 1.33-2.82 2.4-6.3 2.4S3.7 11.33 3.7 10" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
             </svg>
             داده
           </button>
@@ -373,19 +396,35 @@
               <div class="s-section-label">حالت رنگی</div>
               <div class="theme-cards" id="set-theme-mode">
                 <button class="tc" data-theme="dark">
-                  <div class="tc-preview tc-dark"></div>
+                  <span class="tc-preview tcp-dark">
+                    <span class="tcp-dot"></span>
+                    <span class="tcp-line l1"></span>
+                    <span class="tcp-line l2"></span>
+                  </span>
                   <span>تاریک</span>
                 </button>
                 <button class="tc" data-theme="light">
-                  <div class="tc-preview tc-light"></div>
+                  <span class="tc-preview tcp-light">
+                    <span class="tcp-dot"></span>
+                    <span class="tcp-line l1"></span>
+                    <span class="tcp-line l2"></span>
+                  </span>
                   <span>روشن</span>
                 </button>
                 <button class="tc" data-theme="auto">
-                  <div class="tc-preview tc-auto"></div>
+                  <span class="tc-preview tcp-auto">
+                    <span class="tcp-dot"></span>
+                    <span class="tcp-line l1"></span>
+                    <span class="tcp-line l2"></span>
+                  </span>
                   <span>خودکار</span>
                 </button>
                 <button class="tc" data-theme="glass">
-                  <div class="tc-preview tc-glass"></div>
+                  <span class="tc-preview tcp-glass">
+                    <span class="tcp-dot"></span>
+                    <span class="tcp-line l1"></span>
+                    <span class="tcp-line l2"></span>
+                  </span>
                   <span>شیشه‌ای</span>
                 </button>
               </div>
@@ -425,40 +464,38 @@
               <div class="s-section-label">چیدمان صفحه</div>
               <div class="layout-cards" id="set-layout">
                 <button class="lc" data-layout="simple">
-                  <div class="lc-preview lcp-fit">
-                    <div class="lcp-bar" style="width:70%;margin:auto"></div>
-                    <div class="lcp-bar" style="width:90%;margin:auto"></div>
-                  </div>
+                  <span class="lc-preview">
+                    <svg class="lp" viewBox="0 0 48 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <rect class="lp-a" x="15" y="14" width="18" height="4.5" rx="1.4" />
+                      <rect class="lp-m" x="11" y="21.5" width="26" height="4.5" rx="2.25" />
+                    </svg>
+                  </span>
                   <span>ساده</span>
                 </button>
                 <button class="lc" data-layout="data">
-                  <div class="lc-preview">
-                    <div class="lcp-bar" style="width:80%"></div>
-                    <div class="lcp-bar" style="width:60%"></div>
-                    <div class="lcp-bar" style="width:90%"></div>
-                    <div class="lcp-bar" style="width:50%"></div>
-                  </div>
+                  <span class="lc-preview">
+                    <svg class="lp" viewBox="0 0 48 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <rect class="lp-a" x="18" y="5.5" width="12" height="3.2" rx="1" />
+                      <rect class="lp-m" x="13" y="11" width="22" height="3.6" rx="1.8" />
+                      <rect class="lp-c" x="6" y="19.5" width="10.5" height="11" rx="1.6" />
+                      <rect class="lp-c" x="18.75" y="19.5" width="10.5" height="11" rx="1.6" />
+                      <rect class="lp-c" x="31.5" y="19.5" width="10.5" height="11" rx="1.6" />
+                    </svg>
+                  </span>
                   <span>دیتا محور</span>
                 </button>
                 <button class="lc" data-layout="hub">
-                  <div class="lc-preview lcp-hub">
-                    <div class="lcp-hub-col">
-                      <div class="lcp-hub-cell" style="height:18px;opacity:.5"></div>
-                      <div class="lcp-hub-cell" style="height:5px"></div>
-                      <div class="lcp-hub-cell" style="height:5px"></div>
-                      <div class="lcp-hub-cell" style="height:5px"></div>
-                    </div>
-                    <div class="lcp-hub-col">
-                      <div class="lcp-hub-cell" style="height:5px;opacity:.6"></div>
-                      <div class="lcp-hub-cell" style="height:5px"></div>
-                      <div class="lcp-hub-cell" style="height:5px"></div>
-                      <div class="lcp-hub-cell" style="height:5px"></div>
-                    </div>
-                    <div class="lcp-hub-col">
-                      <div class="lcp-hub-cell" style="height:10px;opacity:.5"></div>
-                      <div class="lcp-hub-cell" style="height:10px"></div>
-                    </div>
-                  </div>
+                  <span class="lc-preview">
+                    <svg class="lp" viewBox="0 0 48 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <rect class="lp-c" x="5" y="6" width="9" height="24" rx="1.6" />
+                      <rect class="lp-a" x="17.5" y="6" width="13" height="3.6" rx="1.1" />
+                      <rect class="lp-c" x="17.5" y="13" width="6" height="6" rx="1.1" />
+                      <rect class="lp-c" x="24.5" y="13" width="6" height="6" rx="1.1" />
+                      <rect class="lp-c" x="17.5" y="20.5" width="6" height="6" rx="1.1" />
+                      <rect class="lp-c" x="24.5" y="20.5" width="6" height="6" rx="1.1" />
+                      <rect class="lp-c" x="34" y="6" width="9" height="24" rx="1.6" />
+                    </svg>
+                  </span>
                   <span>هاب</span>
                 </button>
               </div>
@@ -541,8 +578,11 @@
         </div><!-- /modal-body -->
 
         <div class="modal-foot">
-          <span class="mf-ver">v2.1.0</span>
-          <button class="btn-primary" id="settings-save">ذخیره تغییرات</button>
+          <span class="mf-hint">
+            <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M13.5 4.5L6 12L2.5 8.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            تغییرات همان لحظه ذخیره می‌شوند
+          </span>
+          <button class="btn-primary" id="settings-save">تمام</button>
         </div>
 
       </div>

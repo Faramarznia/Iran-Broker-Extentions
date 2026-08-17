@@ -3,39 +3,44 @@
    3-column dashboard layout
    =================================================================== */
 
+/* optional نه swap: فایل‌ها محلی و باندل‌شده‌اند، پس تقریباً همیشه در همون
+   پنجرهٔ کوتاهِ اول آماده‌اند؛ swap باعث می‌شد فونتِ جایگزین یک لحظه رسم شود
+   و بعد با آمدنِ Estedad (که متریکِ خیلی متفاوتی برای فارسی دارد) کل صفحه
+   ری‌فلو شود — همان اسکرول‌بارِ لحظه‌ای که می‌آمد و می‌رفت. optional یعنی
+   تصمیم فقط یک‌بار گرفته می‌شود، هیچ سوییچِ دیرهنگامی نیست. */
 @font-face {
   font-family: 'Estedad';
   src: url('assets/fonts/Estedad-Light.woff2') format('woff2');
   font-weight: 300;
-  font-display: swap
+  font-display: optional
 }
 
 @font-face {
   font-family: 'Estedad';
   src: url('assets/fonts/Estedad-Regular.woff2') format('woff2');
   font-weight: 400;
-  font-display: swap
+  font-display: optional
 }
 
 @font-face {
   font-family: 'Estedad';
   src: url('assets/fonts/Estedad-SemiBold.woff2') format('woff2');
   font-weight: 600;
-  font-display: swap
+  font-display: optional
 }
 
 @font-face {
   font-family: 'Estedad';
   src: url('assets/fonts/Estedad-Bold.woff2') format('woff2');
   font-weight: 700;
-  font-display: swap
+  font-display: optional
 }
 
 @font-face {
   font-family: 'Estedad';
   src: url('assets/fonts/Estedad-ExtraBold.woff2') format('woff2');
   font-weight: 800;
-  font-display: swap
+  font-display: optional
 }
 
 :root {
@@ -159,63 +164,26 @@ a {
 
 
 /* ===== Stage / page ===== */
-.page-entering:not(.page-ready) .topbar,
-.page-entering:not(.page-ready) .sec-hero > *,
-.page-entering:not(.page-ready) .sec-search,
-.page-entering:not(.page-ready) .content-block,
-.page-entering:not(.page-ready) .hub-panels {
-  opacity: 0;
-  transform: translateY(14px);
+/* Load: one plain fade over everything.
+   A full-screen veil (#ib-splash), coloured like the page, fades out on load.
+   The page underneath is already at its final position (no staggered slide),
+   so the whole thing simply fades in together. Pure CSS, pointer-events:none. */
+#ib-splash {
+  position: fixed;
+  inset: 0;
+  z-index: 100000;
+  background: var(--bg);
+  pointer-events: none;
+  transition: background-color .3s ease;
+  animation: ib-fade-out .5s ease .04s forwards;
 }
 
-.page-ready .topbar,
-.page-ready .sec-hero > *,
-.page-ready .sec-search,
-.page-ready .content-block,
-.page-ready .hub-panels {
-  animation: market-arrival .7s cubic-bezier(.16, 1, .3, 1) both;
-}
-
-.page-ready .topbar { animation-delay: .03s }
-.page-ready .sec-hero > :nth-child(1) { animation-delay: .10s }
-.page-ready .sec-hero > :nth-child(2) { animation-delay: .16s }
-.page-ready .sec-hero > :nth-child(3) { animation-delay: .22s }
-.page-ready .sec-hero > :nth-child(4) { animation-delay: .28s }
-.page-ready .sec-search { animation-delay: .36s }
-.page-ready .content-block,
-.page-ready .hub-panels { animation-delay: .46s }
-
-.page-ready .search-box {
-  animation: search-settle .9s .42s cubic-bezier(.16, 1, .3, 1) both;
-}
-
-@keyframes market-arrival {
-  from { opacity: 0; transform: translateY(14px) }
-  to { opacity: 1; transform: translateY(0) }
-}
-
-@keyframes search-settle {
-  0% { box-shadow: 0 0 0 0 var(--primarySoft), var(--shadow); }
-  45% { box-shadow: 0 0 0 8px transparent, var(--shadow); }
-  100% { box-shadow: var(--shadow); }
+@keyframes ib-fade-out {
+  to { opacity: 0; visibility: hidden }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .page-entering:not(.page-ready) .topbar,
-  .page-entering:not(.page-ready) .sec-hero > *,
-  .page-entering:not(.page-ready) .sec-search,
-  .page-entering:not(.page-ready) .content-block,
-  .page-entering:not(.page-ready) .hub-panels {
-    opacity: 1;
-    transform: none;
-  }
-
-  .page-ready .topbar,
-  .page-ready .sec-hero > *,
-  .page-ready .sec-search,
-  .page-ready .content-block,
-  .page-ready .hub-panels,
-  .page-ready .search-box { animation: none }
+  #ib-splash { animation-duration: .25s; animation-delay: 0s }
 }
 
 .stage-root {
@@ -2133,22 +2101,24 @@ body.has-bg-image[data-theme="glass"] .bg-overlay {
 .bg-opt-default {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 11px;
   width: 100%;
-  padding: 10px 14px;
-  border-radius: 11px;
+  padding: 8px 10px;
+  border-radius: 12px;
   border: 2px solid var(--border);
-  background: linear-gradient(135deg, #090b18, #161050, #0d2055);
-  color: #8fbbff;
-  font-size: 12.5px;
+  background: var(--surface);
+  color: var(--sub);
+  font-size: 13px;
   font-weight: 600;
   cursor: pointer;
   text-align: right;
-  transition: border-color .2s
+  transition: border-color .2s, background .2s, color .2s
 }
 
 .bg-opt-default.active {
-  border-color: var(--primary)
+  border-color: var(--primary);
+  background: var(--primarySoft);
+  color: var(--text)
 }
 
 .bg-opt-default:hover {
@@ -2157,13 +2127,14 @@ body.has-bg-image[data-theme="glass"] .bg-overlay {
 
 .bg-default-swatch {
   display: block;
-  width: 46px;
-  height: 30px;
-  border-radius: 6px;
+  width: 58px;
+  height: 34px;
+  border-radius: 8px;
   background: linear-gradient(135deg, #1a2c6e, #4a1c90, #0a4060, #1b5e20);
   background-size: 200% 200%;
-  animation: bgShift 4s ease infinite;
-  flex-shrink: 0
+  animation: bgShift 6s ease infinite;
+  flex-shrink: 0;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .08)
 }
 
 @keyframes bgShift {
@@ -2215,18 +2186,27 @@ body.has-bg-image[data-theme="glass"] .bg-overlay {
 }
 
 .bg-thumb-label {
+  /* برچسبِ روی عکس فقط هنگام هاور/انتخاب دیده می‌شود؛ گالری تمیزتر می‌ماند */
   position: absolute;
   bottom: 0;
   left: 0;
   right: 0;
-  font-size: 9px;
-  padding: 3px 5px;
-  background: rgba(0, 0, 0, .65);
+  font-size: 9.5px;
+  padding: 12px 5px 4px;
+  background: linear-gradient(to top, rgba(0, 0, 0, .78), transparent);
   color: #fff;
   text-align: center;
   white-space: nowrap;
   overflow: hidden;
-  text-overflow: ellipsis
+  text-overflow: ellipsis;
+  opacity: 0;
+  transition: opacity .18s
+}
+
+.bg-thumb:hover .bg-thumb-label,
+.bg-thumb:focus-visible .bg-thumb-label,
+.bg-thumb.active .bg-thumb-label {
+  opacity: 1
 }
 
 .bg-upload-btn {
@@ -2396,9 +2376,16 @@ body[data-theme="glass"] .modal-body select {
 ════════════════════════════════════════ */
 
 /* ── Modal shell ── */
+/* تراز از بالا: با سوییچِ تب‌ها فقط لبهٔ پایینِ مدال حرکت می‌کند، هدر و تب‌ها
+   سرِ جای‌شان می‌مانند (به‌جای این‌که کلِ مدالِ وسط‌چین بالا و پایین بپرد). */
+#settings-modal {
+  place-items: start center;
+  padding: 7vh 0
+}
+
 .modal {
   width: min(440px, 94vw);
-  max-height: 90vh;
+  max-height: 86vh;
   overflow: hidden;
   background: var(--surfaceSolid);
   border: 1px solid var(--border);
@@ -2442,19 +2429,21 @@ body[data-theme="glass"] .modal-body select {
 }
 
 .mh-logo {
-  width: 34px;
-  height: 34px;
-  border-radius: 10px;
+  width: 36px;
+  height: 36px;
+  border-radius: 11px;
   background: linear-gradient(135deg, var(--primaryStrong) 0%, #0d35a0 100%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 11px;
-  font-weight: 800;
+  display: grid;
+  place-items: center;
   color: #fff;
-  letter-spacing: -.5px;
   flex-shrink: 0;
   box-shadow: 0 2px 8px rgba(24, 90, 219, .35)
+}
+
+.mh-logo svg {
+  width: 20px;
+  height: 20px;
+  display: block
 }
 
 .mh-titles {
@@ -2508,33 +2497,34 @@ body[data-theme="glass"] .modal-body select {
   place-items: center
 }
 
-/* ── Tabs with icons ── */
+/* ── Tabs: recessed segmented control (icon + label inline, elevated active chip) ── */
 .modal-tabs {
   display: flex;
-  border-bottom: 1px solid var(--border);
-  padding: 0 6px;
-  flex-shrink: 0;
-  gap: 2px
+  gap: 4px;
+  margin: 14px 16px 2px;
+  padding: 4px;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  flex-shrink: 0
 }
 
 .m-tab {
   flex: 1;
   display: flex;
-  flex-direction: column;
   align-items: center;
-  gap: 4px;
-  padding: 9px 6px 8px;
+  justify-content: center;
+  gap: 7px;
+  padding: 9px 8px;
   border: none;
   background: transparent;
   color: var(--soft);
-  font-size: 11px;
+  font-size: 12.5px;
   font-weight: 700;
   cursor: pointer;
-  border-bottom: 2px solid transparent;
-  margin-bottom: -1px;
-  transition: color .2s, border-color .2s;
-  font-family: inherit;
-  border-radius: 8px 8px 0 0
+  border-radius: 10px;
+  transition: color .18s, background .18s, box-shadow .18s;
+  font-family: inherit
 }
 
 .m-tab svg {
@@ -2543,13 +2533,16 @@ body[data-theme="glass"] .modal-body select {
   flex-shrink: 0
 }
 
-.m-tab:hover {
-  color: var(--sub);
+.m-tab:hover:not(.active) {
+  color: var(--sub)
 }
 
 .m-tab.active {
+  /* --surface پاپ می‌کند چون در هر دو تم روشن‌تر از ترکِ --bg2 است
+     (در تم روشن، surface2 با bg2 یکی است و چیپ محو می‌شد) */
   color: var(--primary);
-  border-bottom-color: var(--primary)
+  background: var(--surface);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, .22), inset 0 0 0 1px var(--border)
 }
 
 /* ── Body scroll area ── */
@@ -2587,11 +2580,10 @@ body[data-theme="glass"] .modal-body select {
 }
 
 .s-section-label {
-  font-size: 10.5px;
-  font-weight: 800;
-  color: var(--soft);
-  text-transform: uppercase;
-  letter-spacing: .6px
+  /* uppercase/letter-spacing برای فارسی بی‌اثر و «قالبی» بود؛ حذف شد */
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--sub)
 }
 
 /* ── Theme mode cards ── */
@@ -2626,33 +2618,82 @@ body[data-theme="glass"] .modal-body select {
   box-shadow: 0 0 0 3px var(--primarySoft)
 }
 
+/* هر تم به‌صورت یک مینی‌اسکرینِ هم‌شکل نمایش داده می‌شود:
+   پس‌زمینهٔ تم + یک نقطهٔ اکسنت + دو خط متنِ نمونه. همه با یک زبانِ تصویریِ واحد. */
 .tc-preview {
   width: 100%;
-  height: 42px;
+  height: 54px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+  padding: 0 11px;
+  overflow: hidden;
   flex-shrink: 0
 }
 
-.tc-dark {
-  background: linear-gradient(150deg, #090b12 40%, #18206a 100%)
+.tcp-dot {
+  position: absolute;
+  top: 9px;
+  inset-inline-start: 10px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--primary);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--primary) 22%, transparent)
 }
 
-.tc-light {
-  background: linear-gradient(150deg, #eef2ff 30%, #c8d9ff 100%)
+.tcp-line {
+  height: 3px;
+  border-radius: 2px
 }
 
-.tc-auto {
-  background: linear-gradient(135deg, #090b12 50%, #eef2ff 50%)
+.tcp-line.l1 {
+  width: 60%
 }
 
-.tc-glass {
-  background: linear-gradient(150deg, #060921 20%, rgba(90, 130, 255, .35) 60%, rgba(30, 200, 120, .18) 100%)
+.tcp-line.l2 {
+  width: 40%
+}
+
+.tcp-dark {
+  background: #0e121b
+}
+
+.tcp-dark .tcp-line {
+  background: #3d4a66
+}
+
+.tcp-light {
+  background: #eef2ff
+}
+
+.tcp-light .tcp-line {
+  background: #aeb9d6
+}
+
+.tcp-auto {
+  background: linear-gradient(90deg, #0e121b 0 50%, #eef2ff 50% 100%)
+}
+
+.tcp-auto .tcp-line {
+  background: #8b93ab
+}
+
+.tcp-glass {
+  background: linear-gradient(135deg, #0a1030, rgba(70, 110, 230, .42) 55%, rgba(40, 190, 150, .22))
+}
+
+.tcp-glass .tcp-line {
+  background: rgba(255, 255, 255, .6)
 }
 
 .tc>span {
-  font-size: 10.5px;
+  font-size: 12px;
   font-weight: 700;
-  color: var(--soft);
-  padding: 6px 4px 7px;
+  color: var(--sub);
+  padding: 7px 4px 8px;
   text-align: center;
   line-height: 1
 }
@@ -2670,25 +2711,37 @@ body[data-theme="glass"] .modal-body select {
 }
 
 .ac-btn {
-  width: 30px;
-  height: 30px;
+  position: relative;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
-  border: 3px solid transparent;
+  border: none;
   cursor: pointer;
   padding: 0;
   flex-shrink: 0;
-  transition: transform .15s, outline-color .2s;
-  outline: 2px solid transparent;
-  outline-offset: 3px
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .14);
+  transition: transform .15s, box-shadow .2s
 }
 
 .ac-btn:hover {
-  transform: scale(1.14)
+  transform: scale(1.12)
 }
 
 .ac-btn.active {
-  transform: scale(1.1);
-  outline-color: var(--text)
+  transform: scale(1.06);
+  box-shadow: 0 0 0 2px var(--surfaceSolid), 0 0 0 4px var(--text)
+}
+
+.ac-btn.active::after {
+  content: '✓';
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: #fff;
+  font-size: 15px;
+  font-weight: 800;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, .45)
 }
 
 /* ── Layout cards ── */
@@ -2723,37 +2776,41 @@ body[data-theme="glass"] .modal-body select {
 }
 
 .lc-preview {
-  width: 56px;
-  height: 40px;
-  border-radius: 7px;
-  border: 1.5px solid var(--border2);
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  border-radius: 8px;
+  border: 1px solid var(--border2);
   background: var(--bg2);
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  padding: 6px 6px 5px;
   overflow: hidden;
-  position: relative
+  display: block;
+  transition: border-color .2s
 }
 
-.lcp-bar {
-  height: 3.5px;
-  border-radius: 2px;
-  background: var(--border2);
-  flex-shrink: 0
+.lc-preview .lp {
+  display: block;
+  width: 100%;
+  height: 100%
 }
 
-.lcp-arrow {
-  position: absolute;
-  bottom: 4px;
-  right: 50%;
-  transform: translateX(50%);
-  font-size: 10px;
-  color: var(--soft)
+/* عناصرِ شماتیکِ مینی‌ماکاپ — یک زبانِ تصویریِ واحد برای هر سه چیدمان:
+   lp-a = عنصرِ کلیدی (ساعت) با رنگِ اکسنت، lp-m = سرچ، lp-c = کارت/ستون */
+.lp .lp-a {
+  fill: var(--primary)
 }
 
-.lcp-fit {
-  justify-content: center
+.lp .lp-m {
+  fill: var(--soft);
+  opacity: .85
+}
+
+.lp .lp-c {
+  fill: var(--surface2);
+  stroke: var(--border2);
+  stroke-width: .7
+}
+
+.lc.active .lc-preview {
+  border-color: color-mix(in srgb, var(--primary) 45%, var(--border2))
 }
 
 .lc>span {
@@ -2939,11 +2996,20 @@ body[data-theme="glass"] .s-select:focus {
   justify-content: space-between
 }
 
-.mf-ver {
-  font-size: 11px;
+.mf-hint {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11.5px;
   color: var(--soft);
-  font-weight: 600;
-  opacity: .7
+  font-weight: 500
+}
+
+.mf-hint svg {
+  width: 14px;
+  height: 14px;
+  color: var(--green);
+  flex-shrink: 0
 }
 
 /* =====================================================================
@@ -6338,18 +6404,6 @@ body[data-layout="simple"] .hero-search-wrap {
    HUB MODE — حالت هاب  (layout = "hub")
    Two boxes flanking centered hero-search + quick-access below
 ═══════════════════════════════════════════════════════════════ */
-
-/* ── Settings layout-card preview ── */
-.lcp-hub {
-  display: grid;
-  grid-template-columns: 1fr 1.2fr 1fr;
-  gap: 3px;
-  padding: 5px;
-  align-items: center
-}
-.lcp-hub-col { display: flex; flex-direction: column; gap: 2px }
-.lcp-hub-cell { border-radius: 2px; background: currentColor; opacity: .32 }
-.lcp-hub-col:nth-child(2) .lcp-hub-cell { opacity: .6 }
 
 /* ─────────────────────────────────────────────
    Mode visibility plumbing
