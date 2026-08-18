@@ -19,7 +19,7 @@
 | جست‌وجوی شهر برای آب‌وهوا | [hub.js](js/hub.js) | `geocoding-api.open-meteo.com` | API عمومی (بدون کلید) | هنگام تایپ کاربر |
 | فید محتوای اصلی + سایدبار مقالات | [newtab.js](newtab.js)، [articles.js](js/articles.js) | `iranbroker.net` (REST وردپرس `wp-json`) با fallback به فید RSS (`iranbroker.net/feed/`) | REST/RSS عمومی سایت خودمان | هر ۳۰ دقیقه (کش در `localStorage`) |
 | سایدبار «مباحث داغ جامعه» | [newtab.js](newtab.js) | `forum.iranbroker.net` (`/latest.json`, `/hot.json`) | API عمومی Discourse | هنگام باز شدن سایدبار |
-| چت‌بات هوش‌مصنوعی «آیرا» | [airo.js](js/airo.js) | `api.gapgpt.app` (پیش‌فرض فعال) یا `api.anthropic.com` (جایگزین، عمداً غیرفعال) | API با کلید — کلید فعلاً در کلاینت افشا است، ⚠️ [SECURITY.md](SECURITY.md) | هنگام هر پیام کاربر |
+| چت‌بات هوش‌مصنوعی «آیرا» | [airo.js](js/airo.js) | `api.gapgpt.app` (پیش‌فرض فعال) یا `api.anthropic.com` (جایگزین، عمداً غیرفعال) | API با کلید — کلید فعلاً در کلاینت افشا است، ⚠️ [SECURITY.md](../SECURITY.md) | هنگام هر پیام کاربر |
 | — | [init-state.js](js/init-state.js) | ندارد | فقط `localStorage`، بدون فراخوانی شبکه | — |
 | — | [journal.js](js/journal.js)، [focus.js](js/focus.js)، [sidebars.js](js/sidebars.js)، [tour.js](js/tour.js) | ندارد | کاملاً محلی، فقط `localStorage` | — |
 
@@ -55,7 +55,7 @@
 
 ## نکتهٔ امنیتی
 
-جزئیات مربوط به افشای کلید API آیرا در [SECURITY.md](SECURITY.md) مستند شده است.
+جزئیات مربوط به افشای کلید API آیرا در [SECURITY.md](../SECURITY.md) مستند شده است.
 
 ---
 
