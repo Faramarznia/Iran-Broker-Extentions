@@ -78,15 +78,16 @@
     { key: 'london', name: 'لندن', flag: '🇬🇧', tz: 'Europe/London', open: 8, close: 17, c: '#6f9bf3' },
     { key: 'newyork', name: 'نیویورک', flag: '🇺🇸', tz: 'America/New_York', open: 8, close: 17, c: '#f6a723' }
   ];
-  const GALLERY = [
-    { label: 'ارزهای جهانی',    file: 'assets/gallery/bg1.jpg', gradient: 'linear-gradient(135deg,#8B6914,#C4901A,#7B4F12)' },
-    { label: 'دلار آمریکا',     file: 'assets/gallery/bg2.jpg', gradient: 'linear-gradient(135deg,#1a4d20,#2d7a38,#1a3d22)' },
-    { label: 'بیت‌کوین و اتر', file: 'assets/gallery/bg3.jpg', gradient: 'linear-gradient(135deg,#1a0a00,#4a2800,#1a0d00)' },
-    { label: 'کانتینرها',       file: 'assets/gallery/bg4.jpg', gradient: 'linear-gradient(135deg,#0a1a2e,#1a3a5c,#0d2040)' },
-    { label: 'صفحه معاملات',   file: 'assets/gallery/bg5.jpg', gradient: 'linear-gradient(135deg,#0a0a1e,#0d0d2e,#050514)' },
-    { label: 'هولد بیت‌کوین',  file: 'assets/gallery/bg6.jpg', gradient: 'linear-gradient(135deg,#1a0020,#3a0040,#200028)' },
-    { label: 'نمودار صعودی',   file: 'assets/gallery/bg7.jpg', gradient: 'linear-gradient(135deg,#001a0a,#003a14,#00200a)' },
-    { label: 'نمودار نزولی',   file: 'assets/gallery/bg8.jpg', gradient: 'linear-gradient(135deg,#1a0000,#3a0010,#200008)' }
+  /* گالری قدیمی از ۸ عکس محلی (~۵ مگابایت داخل ریپو) حذف شد؛ حالا پس‌زمینه‌ها به‌صورت زنده
+     از Pexels (با کلید شخصی هر کاربر) بر اساس این دسته‌ها جست‌وجو می‌شوند. گرادیان هر دسته
+     به‌عنوان پس‌زمینهٔ موقت (تا لود عکس) و حالت بدون‌کلید استفاده می‌شود. */
+  const BG_CATEGORIES = [
+    { key: 'forex',   label: 'فارکس و ارز',     query: 'forex currency trading', gradient: 'linear-gradient(135deg,#1a4d20,#2d7a38,#1a3d22)' },
+    { key: 'crypto',  label: 'ارز دیجیتال',      query: 'cryptocurrency bitcoin', gradient: 'linear-gradient(135deg,#1a0a00,#4a2800,#1a0d00)' },
+    { key: 'stocks',  label: 'بورس و سهام',      query: 'stock market trading floor', gradient: 'linear-gradient(135deg,#0a1a2e,#1a3a5c,#0d2040)' },
+    { key: 'charts',  label: 'نمودار معاملاتی', query: 'trading chart candlestick screen', gradient: 'linear-gradient(135deg,#0a0a1e,#0d0d2e,#050514)' },
+    { key: 'gold',    label: 'طلا و کالا',       query: 'gold bars finance', gradient: 'linear-gradient(135deg,#8B6914,#C4901A,#7B4F12)' },
+    { key: 'skyline', label: 'مرکز مالی',        query: 'financial district skyline night', gradient: 'linear-gradient(135deg,#1a0020,#3a0040,#200028)' }
   ];
   const THEME_CYCLE = ['dark', 'light', 'auto', 'glass'];
   const THEME_ICONS = { dark: 'moon', light: 'sun', auto: 'autoTheme', glass: 'glassTheme' };
@@ -232,14 +233,19 @@
     mktAxis: 'utc', newsCat: 'همه', news: null,
     /* دسته‌بندی‌های انتخابی برای واکشیِ اخبار — شخصی‌سازی سطح منبع، جدا از فیلتر نمایشیِ newsCat بالا */
     newsCatIds: NEWS_CAT_DEFAULTS.map(function (c) { return c.id; }),
-    bgMode: 'default', bgIndex: 0, bgImage: null
+    bgMode: 'default', bgCategory: BG_CATEGORIES[0].key, bgImage: null, bgMeta: null
   };
   const BG_IMAGE_KEY = 'ib_bg_image';
+  const PEXELS_KEY_STORAGE = 'ib_pexels_key';
+  /* کلید رایگان پیش‌فرض پروژه — سهمیهٔ Pexels (۲۰۰ درخواست/ساعت، ۲۰هزار/ماه) بین همهٔ کاربران این
+     اکستنشن مشترک است. کاربرانی که در تنظیمات کلید شخصی خودشان را وارد کنند، آن کلید جایگزین این
+     پیش‌فرض می‌شود و دیگر به سهمیهٔ مشترک وابسته نیستند. */
+  const DEFAULT_PEXELS_KEY = 'oN7oICKsNOwPGv5WtJS716gnNgEzSO0gVLSgZRksIoiDHFe4TjXMEqcc';
 
   function load() {
     var saved = {};
     try { saved = JSON.parse(localStorage.getItem(PERSIST_KEY) || '{}'); } catch (e) {}
-    ['theme', 'layout', 'accent', 'showGrid', 'jalaliCalendar', 'name', 'engine', 'coins', 'showCrypto', 'tipIndex', 'bgMode', 'bgIndex', 'pxTab', 'mktAxis', 'newsCatIds'].forEach(function (k) {
+    ['theme', 'layout', 'accent', 'showGrid', 'jalaliCalendar', 'name', 'engine', 'coins', 'showCrypto', 'tipIndex', 'bgMode', 'bgCategory', 'pxTab', 'mktAxis', 'newsCatIds'].forEach(function (k) {
       if (saved[k] !== undefined) state[k] = saved[k];
     });
     /* کسانی که هرگز لیست را دستکاری نکرده‌اند، پیش‌فرض بلندِ جدید را بگیرند */
@@ -248,9 +254,17 @@
     if (!state.pxData[state.pxTab]) state.pxTab = 'crypto';
     if (state.mktAxis !== 'local') state.mktAxis = 'utc';
     if (!Array.isArray(state.newsCatIds)) state.newsCatIds = NEWS_CAT_DEFAULTS.map(function (c) { return c.id; });
+    if (!BG_CATEGORIES.some(function (c) { return c.key === state.bgCategory; })) state.bgCategory = BG_CATEGORIES[0].key;
     if (state.bgMode === 'custom') {
       try { state.bgImage = localStorage.getItem(BG_IMAGE_KEY) || null; } catch (e) {}
       if (!state.bgImage) state.bgMode = 'default';
+    } else if (state.bgMode === 'pexels') {
+      state.bgImage = saved.bgImage || null;
+      state.bgMeta = saved.bgMeta || null;
+      if (!state.bgImage) state.bgMode = 'default';
+    } else if (state.bgMode === 'gallery') {
+      /* گالریِ محلیِ قدیمی (۸ عکس داخل ریپو) حذف شد؛ این کاربران به پیش‌فرض برمی‌گردند */
+      state.bgMode = 'default';
     }
   }
   function persist() {
@@ -259,18 +273,35 @@
       jalaliCalendar: state.jalaliCalendar,
       name: state.name, engine: state.engine, coins: state.coins,
       showCrypto: state.showCrypto, tipIndex: state.tipIndex,
-      bgMode: state.bgMode, bgIndex: state.bgIndex,
+      bgMode: state.bgMode, bgCategory: state.bgCategory,
       pxTab: state.pxTab, mktAxis: state.mktAxis, newsCatIds: state.newsCatIds
     };
+    if (state.bgMode === 'pexels') { o.bgImage = state.bgImage; o.bgMeta = state.bgMeta; }
     try { localStorage.setItem(PERSIST_KEY, JSON.stringify(o)); } catch (e) {}
+  }
+  function getPexelsKey() {
+    var own = '';
+    try { own = localStorage.getItem(PEXELS_KEY_STORAGE) || ''; } catch (e) {}
+    return own || DEFAULT_PEXELS_KEY;
+  }
+  /* کلید شخصیِ واردشده توسط کاربر را برمی‌گرداند (نه پیش‌فرض) — فقط برای تشخیص «آیا کاربر خودش کلید دارد؟» در UI */
+  function getOwnPexelsKey() {
+    try { return localStorage.getItem(PEXELS_KEY_STORAGE) || ''; } catch (e) { return ''; }
+  }
+  function setPexelsKey(key) {
+    try {
+      if (key) localStorage.setItem(PEXELS_KEY_STORAGE, key);
+      else localStorage.removeItem(PEXELS_KEY_STORAGE);
+    } catch (e) {}
   }
 
   /* ----------------------------- Network helpers ----------------------------- */
   /* fetch با timeout پیش‌فرض ۸ث — بدون این، یک سرور hang‌شده ویجت را برای همیشه در حالت لودینگ نگه می‌دارد */
-  function fetchTimeout(url, ms) {
+  function fetchTimeout(url, ms, opts) {
     const ctl = new AbortController();
     const to = setTimeout(function () { ctl.abort(); }, ms || 8000);
-    return fetch(url, { signal: ctl.signal }).then(
+    const init = Object.assign({}, opts, { signal: ctl.signal });
+    return fetch(url, init).then(
       function (r) { clearTimeout(to); return r; },
       function (e) { clearTimeout(to); throw e; }
     );
@@ -1841,11 +1872,49 @@
     persist();
   }
 
-  /* ----------------------------- Background ----------------------------- */
+  /* ----------------------------- Background (Pexels) ----------------------------- */
+  const PEXELS_CACHE_KEY = 'ib_pexels_cache';
+  /* ۲۴ ساعت — چون کلید پیش‌فرض بین همهٔ نصب‌های اکستنشن مشترک است، کش طولانی‌تر فشار روی سهمیهٔ مشترک را کم می‌کند */
+  const PEXELS_CACHE_TTL = 24 * 60 * 60 * 1000;
+
+  function readPexelsCache(catKey) {
+    try {
+      var all = JSON.parse(localStorage.getItem(PEXELS_CACHE_KEY) || '{}');
+      var entry = all[catKey];
+      if (entry && Array.isArray(entry.items) && (Date.now() - entry.ts) < PEXELS_CACHE_TTL) return entry.items;
+    } catch (e) {}
+    return null;
+  }
+  function writePexelsCache(catKey, items) {
+    try {
+      var all = JSON.parse(localStorage.getItem(PEXELS_CACHE_KEY) || '{}');
+      all[catKey] = { ts: Date.now(), items: items };
+      localStorage.setItem(PEXELS_CACHE_KEY, JSON.stringify(all));
+    } catch (e) {}
+  }
+
+  function pexelsSearch(query, cb) {
+    fetchTimeout('https://api.pexels.com/v1/search?query=' + encodeURIComponent(query) + '&per_page=9&orientation=landscape', 8000, { headers: { Authorization: getPexelsKey() } })
+      .then(function (r) {
+        if (r.status === 401) throw new Error('unauthorized');
+        if (!r.ok) throw new Error('http-' + r.status);
+        return r.json();
+      })
+      .then(function (data) {
+        var items = (data.photos || []).map(function (p) {
+          return {
+            thumb: p.src.medium, preview: p.src.large, full: p.src.large2x || p.src.large,
+            photographer: p.photographer, photographerUrl: p.photographer_url
+          };
+        });
+        cb(items, null);
+      })
+      .catch(function (err) { cb(null, err); });
+  }
+
   function applyBackground() {
     var canvas = document.getElementById('shader-bg-canvas');
     var stageRoot = document.querySelector('.stage-root');
-    var overlay = document.getElementById('bg-overlay');
     if (state.bgMode === 'default') {
       document.body.classList.remove('has-bg-image');
       if (canvas) canvas.style.display = '';
@@ -1853,42 +1922,101 @@
     } else {
       document.body.classList.add('has-bg-image');
       if (canvas) canvas.style.display = 'none';
-      var url = state.bgMode === 'gallery' ? GALLERY[state.bgIndex].file : state.bgImage;
-      if (url && stageRoot) stageRoot.style.backgroundImage = 'url("' + url + '")';
+      if (state.bgImage && stageRoot) stageRoot.style.backgroundImage = 'url("' + state.bgImage + '")';
     }
   }
 
   function updateBgPicker() {
     var defBtn = document.getElementById('bg-opt-default');
     if (defBtn) defBtn.classList.toggle('active', state.bgMode === 'default');
-    var thumbs = document.querySelectorAll('.bg-thumb');
-    thumbs.forEach(function(t) {
-      var i = parseInt(t.getAttribute('data-idx'));
-      t.classList.toggle('active', state.bgMode === 'gallery' && state.bgIndex === i);
+    document.querySelectorAll('#bg-gallery .bg-thumb').forEach(function (t) {
+      t.classList.toggle('active', state.bgMode === 'pexels' && t.getAttribute('data-full') === state.bgImage);
     });
   }
 
-  function renderBgGallery() {
+  function updateBgPreview(item) {
+    var box = document.getElementById('bg-preview');
+    if (!box) return;
+    if (!item || !(item.preview || item.full)) { box.hidden = true; box.innerHTML = ''; return; }
+    box.hidden = false;
+    var credit = item.photographer
+      ? '<a href="' + item.photographerUrl + '" target="_blank" rel="noopener">' + item.photographer + '</a> · Pexels'
+      : '';
+    box.innerHTML = '<img src="' + (item.preview || item.full) + '" alt="" />' +
+      (credit ? '<div class="bg-preview-credit">' + credit + '</div>' : '');
+  }
+
+  function renderBgState(html) {
+    var el = document.getElementById('bg-gallery');
+    if (el) el.innerHTML = '<div class="bg-gallery-empty">' + html + '</div>';
+  }
+
+  function renderBgThumbs(items) {
     var el = document.getElementById('bg-gallery');
     if (!el) return;
-    el.innerHTML = GALLERY.map(function(item, i) {
-      var active = (state.bgMode === 'gallery' && state.bgIndex === i) ? ' active' : '';
-      return '<button class="bg-thumb' + active + '" data-idx="' + i + '" title="' + item.label + '" style="background:' + item.gradient + '">' +
-        '<img src="' + item.file + '" alt="' + item.label + '" loading="lazy" />' +
-        '<span class="bg-thumb-label">' + item.label + '</span>' +
+    el.innerHTML = items.map(function (item, i) {
+      return '<button class="bg-thumb" data-i="' + i + '" data-full="' + item.full + '">' +
+        '<img src="' + item.thumb + '" alt="' + (item.photographer || '').replace(/"/g, '') + '" loading="lazy" />' +
       '</button>';
     }).join('');
-    el.querySelectorAll('.bg-thumb').forEach(function(btn) {
+    el.querySelectorAll('.bg-thumb').forEach(function (btn) {
+      var item = items[parseInt(btn.getAttribute('data-i'))];
       var img = btn.querySelector('img');
-      if (img) img.addEventListener('error', function() { img.style.display = 'none'; });
-      btn.addEventListener('click', function() {
-        state.bgMode = 'gallery';
-        state.bgIndex = parseInt(btn.getAttribute('data-idx'));
+      if (img) img.addEventListener('error', function () { img.style.display = 'none'; });
+      btn.addEventListener('mouseenter', function () { updateBgPreview(item); });
+      btn.addEventListener('focus', function () { updateBgPreview(item); });
+      btn.addEventListener('click', function () {
+        state.bgMode = 'pexels';
+        state.bgImage = item.full;
+        state.bgMeta = { photographer: item.photographer, url: item.photographerUrl };
         applyBackground();
         updateBgPicker();
+        updateBgPreview(item);
         persist();
       });
     });
+    updateBgPicker();
+  }
+
+  function loadBgResults(catKey) {
+    var cat = BG_CATEGORIES.filter(function (c) { return c.key === catKey; })[0];
+    if (!cat) return;
+    var cached = readPexelsCache(catKey);
+    if (cached && cached.length) { renderBgThumbs(cached); return; }
+    renderBgState('در حال دریافت عکس‌ها…');
+    pexelsSearch(cat.query, function (items, err) {
+      if (state.bgCategory !== catKey) return; /* کاربر قبل از رسیدن پاسخ، دستهٔ دیگری انتخاب کرده */
+      if (err || !items || !items.length) {
+        var msg = (err && err.message === 'unauthorized') ? 'کلید Pexels نامعتبر است.' : 'خطا در دریافت عکس‌ها. دوباره تلاش کن.';
+        renderBgState(msg);
+        return;
+      }
+      writePexelsCache(catKey, items);
+      renderBgThumbs(items);
+    });
+  }
+
+  function syncBgCategoryChips() {
+    document.querySelectorAll('.bg-cat-chip').forEach(function (b) {
+      b.classList.toggle('active', b.getAttribute('data-cat') === state.bgCategory);
+    });
+  }
+
+  function renderBgCategoryChips() {
+    var el = document.getElementById('bg-categories');
+    if (!el) return;
+    el.innerHTML = BG_CATEGORIES.map(function (c) {
+      return '<button class="bg-cat-chip" data-cat="' + c.key + '">' + c.label + '</button>';
+    }).join('');
+    el.querySelectorAll('.bg-cat-chip').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        state.bgCategory = btn.getAttribute('data-cat');
+        syncBgCategoryChips();
+        loadBgResults(state.bgCategory);
+        persist();
+      });
+    });
+    syncBgCategoryChips();
   }
 
   function initAutoTheme() {
@@ -1919,10 +2047,15 @@
     syncSeg(els.setLayout, 'layout', state.layout);
     syncSwatches();
     syncSeg(els.setThemeMode, 'theme', state.theme);
-    renderBgGallery();
+    if (els.bgPexelsKey) els.bgPexelsKey.value = getOwnPexelsKey();
+    renderBgCategoryChips();
+    loadBgResults(state.bgCategory);
     updateBgPicker();
-    var defBtn = document.getElementById('bg-opt-default');
-    if (defBtn) defBtn.classList.toggle('active', state.bgMode === 'default');
+    if (state.bgMode === 'pexels' && state.bgImage) {
+      updateBgPreview({ preview: state.bgImage, photographer: state.bgMeta && state.bgMeta.photographer, photographerUrl: state.bgMeta && state.bgMeta.url });
+    } else {
+      updateBgPreview(null);
+    }
     hideImportConfirm(); setBackupMsg(BACKUP_HINT, '');
     switchTab('appearance');
     els.settingsModal.hidden = false;
@@ -2251,7 +2384,7 @@
       'ncat-btn', 'ncat-modal', 'ncat-panel', 'ncat-close', 'ncat-save', 'ncat-reset', 'ncat-cancel',
       'ncat-count', 'ncat-chips', 'ncat-clear-all', 'ncat-results', 'ncat-results-label',
       'ncat-search', 'ncat-search-ic', 'ncat-search-clear', 'ncat-search-spin',
-      'set-theme-mode', 'bg-picker', 'bg-opt-default', 'bg-gallery', 'bg-upload'
+      'set-theme-mode', 'bg-picker', 'bg-opt-default', 'bg-pexels-key', 'bg-categories', 'bg-gallery', 'bg-preview', 'bg-upload'
     ].forEach(function (id) {
       const camel = id.replace(/-([a-z])/g, function (_, c) { return c.toUpperCase(); });
       els[camel] = $(id);
@@ -2417,7 +2550,16 @@
         state.bgMode = 'default';
         applyBackground();
         updateBgPicker();
+        updateBgPreview(null);
         persist();
+      });
+    }
+
+    // background picker — Pexels API key (fetch فقط روی commit، نه روی هر keystroke)
+    if (els.bgPexelsKey) {
+      els.bgPexelsKey.addEventListener('change', function (e) {
+        setPexelsKey(e.target.value.trim());
+        loadBgResults(state.bgCategory);
       });
     }
 

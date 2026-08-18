@@ -2159,10 +2159,46 @@ body.has-bg-image[data-theme="glass"] .bg-overlay {
   }
 }
 
+.bg-categories {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px
+}
+
+.bg-cat-chip {
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1.5px solid var(--border);
+  background: var(--surface);
+  color: var(--sub);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color .2s, background .2s, color .2s
+}
+
+.bg-cat-chip:hover {
+  border-color: var(--border2)
+}
+
+.bg-cat-chip.active {
+  border-color: var(--primary);
+  background: var(--primarySoft);
+  color: var(--text)
+}
+
 .bg-gallery {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: 8px
+}
+
+.bg-gallery-empty {
+  grid-column: 1 / -1;
+  padding: 22px 10px;
+  text-align: center;
+  font-size: 12.5px;
+  color: var(--sub)
 }
 
 .bg-thumb {
@@ -2195,28 +2231,38 @@ body.has-bg-image[data-theme="glass"] .bg-overlay {
   object-fit: cover
 }
 
-.bg-thumb-label {
-  /* برچسبِ روی عکس فقط هنگام هاور/انتخاب دیده می‌شود؛ گالری تمیزتر می‌ماند */
+.bg-preview {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16/8;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid var(--border)
+}
+
+.bg-preview img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover
+}
+
+.bg-preview-credit {
   position: absolute;
   bottom: 0;
   left: 0;
   right: 0;
-  font-size: 9.5px;
-  padding: 12px 5px 4px;
-  background: linear-gradient(to top, rgba(0, 0, 0, .78), transparent);
+  font-size: 10.5px;
+  padding: 16px 10px 6px;
+  background: linear-gradient(to top, rgba(0, 0, 0, .75), transparent);
   color: #fff;
-  text-align: center;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  opacity: 0;
-  transition: opacity .18s
+  text-align: left
 }
 
-.bg-thumb:hover .bg-thumb-label,
-.bg-thumb:focus-visible .bg-thumb-label,
-.bg-thumb.active .bg-thumb-label {
-  opacity: 1
+.bg-preview-credit a {
+  color: #fff;
+  text-decoration: underline
 }
 
 .bg-upload-btn {
@@ -2943,6 +2989,10 @@ body[data-theme="glass"] .modal-body select {
   color: var(--soft);
   margin-top: -4px;
   padding-right: 2px
+}
+
+.s-hint a {
+  color: var(--primary)
 }
 
 /* ── Select wrapper ── */

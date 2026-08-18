@@ -22,12 +22,13 @@
 | Main content feed + articles sidebar | [newtab.js](NewTab%20Extention/newtab.js), [articles.js](NewTab%20Extention/js/articles.js) | `iranbroker.net` (WordPress REST `wp-json`) with fallback to RSS (`iranbroker.net/feed/`) | Our own site's public REST/RSS | every 30 min (cached) |
 | "Community hot topics" sidebar | [newtab.js](NewTab%20Extention/newtab.js) | `forum.iranbroker.net` (`/latest.json`, `/hot.json`) | Public Discourse API | on sidebar open |
 | "Aira" AI chat assistant | [airo.js](NewTab%20Extention/js/airo.js) | `api.gapgpt.app` (active default) or `api.anthropic.com` (alternate, intentionally disabled) | Key-based API — the key is currently exposed client-side, ⚠️ see [SECURITY.md](SECURITY.md) | on every user message |
+| Background picker (finance/crypto/trading themed photos) | [newtab.js](NewTab%20Extention/newtab.js) | `api.pexels.com` | Key-based API — a shared default key is hardcoded in `newtab.js` (`DEFAULT_PEXELS_KEY`, intentional per project owner, free tier, no billing exposure — unlike the Aira key above which is a metered/paid key). Users can optionally enter their own key in Settings (stored in their own `localStorage` as `ib_pexels_key`), which overrides the shared default for that browser | on-demand, when Settings → Background is open; results cached 24h per category |
 | — | [init-state.js](NewTab%20Extention/js/init-state.js) | none | `localStorage` only, no network calls | — |
 | — | [journal.js](NewTab%20Extention/js/journal.js), [focus.js](NewTab%20Extention/js/focus.js), [sidebars.js](NewTab%20Extention/js/sidebars.js), [tour.js](NewTab%20Extention/js/tour.js) | none | fully local, `localStorage` only | — |
 
 ## Domains Allowed in the Manifest
 
-`host_permissions`/CSP `connect-src` in `NewTab Extention/manifest.json` contains exactly the 12
+`host_permissions`/CSP `connect-src` in `NewTab Extention/manifest.json` contains exactly the 13
 domains in the table above — no more, no fewer. The domains below **used to be in the manifest and
 were fully removed** (not merely unused-but-present) because no live file called them:
 
@@ -62,4 +63,5 @@ Details on the exposed Aira API key are documented in [SECURITY.md](SECURITY.md)
 ---
 
 Last verified against live code: 2026-08-18 (every row above was confirmed with `grep`/direct
-inspection of `newtab.html` and `manifest.json` on that date).
+inspection of `newtab.html` and `manifest.json` on that date; `api.pexels.com` added same day when
+the local 8-image background gallery was replaced with a live Pexels-backed picker).
