@@ -22,6 +22,22 @@ is also maintained there: [`NewTab Extention/README.md`](NewTab%20Extention/READ
 - "Aira" AI assistant for market questions and broker recommendations — responses are streamed
 - Articles sidebar and a "community hot topics" sidebar
 
+## Installation
+
+This extension is not yet published on the Chrome Web Store (see [SECURITY.md](SECURITY.md) for the
+current blocker). Until then, install it manually as an unpacked extension in any Chromium-based
+browser (Chrome, Edge, Brave, etc.):
+
+1. Download or clone this repository.
+2. Open `chrome://extensions`.
+3. Enable **Developer mode** (toggle, top-right corner).
+4. Click **Load unpacked** and select the [`NewTab Extention/`](NewTab%20Extention/) folder —
+   **not** the repo root.
+5. Open a new tab — the dashboard replaces Chrome's default New Tab page.
+
+To pick up new changes later (e.g. after `git pull`), click the Reload (↻) button on the extension's
+card in `chrome://extensions`.
+
 ## Repository Layout
 
 ```
@@ -64,19 +80,17 @@ permission was already removed from `manifest.json` for that reason (the current
 just `notifications`). There is no cross-device sync. No user data is sent to any server except chat
 messages sent to the Aira AI service — see [SECURITY.md](SECURITY.md) for details.
 
-## Local Development
+## Contributing
 
 ```bash
 git clone https://github.com/Faramarznia/Iran-Broker-Extentions.git
 cd "Iran-Broker-Extentions/NewTab Extention"
 ```
 
-1. Enable Developer mode in `chrome://extensions`.
-2. Click "Load unpacked" and select the `NewTab Extention` folder (**not** the repo root).
-3. Open a new tab to see the dashboard.
-4. After every code change, click the Reload button for the extension in `chrome://extensions`.
-
-See [CONTRIBUTING.md](CONTRIBUTING.md) for architecture rules and the pull request checklist.
+Follow the [Installation](#installation) steps above to load the extension, then edit the files in
+`NewTab Extention/` and click Reload in `chrome://extensions` after each change to see it take
+effect — there is no build step. See [CONTRIBUTING.md](CONTRIBUTING.md) for the full architecture
+rules and the pull request checklist before opening a PR.
 
 ## Data Sources & Permissions
 
@@ -90,4 +104,5 @@ vulnerability: see [SECURITY.md](SECURITY.md).
 
 ## License
 
-Proprietary — Iran Broker. Copying or redistribution without permission is prohibited.
+Proprietary — Iran Broker. Copying or redistribution without permission is prohibited. See
+[LICENSE](LICENSE).

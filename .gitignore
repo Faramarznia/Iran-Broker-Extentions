@@ -5,3 +5,8 @@ node_modules/
 .auto-commit.log
 .auto-commit.pid
 _metadata/
+
+# Claude Code local tooling — not part of the shipped product, kept local-only
+.agents/
+skills-lock.json
+auto-commit.sh
