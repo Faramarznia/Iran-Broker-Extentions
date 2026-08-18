@@ -9332,6 +9332,66 @@ body[data-layout="data"] .content-block {
   color: var(--primary)
 }
 
+/* ── Backup / Restore ── */
+.s-backup-row {
+  display: flex;
+  gap: 8px
+}
+
+.s-backup-btn {
+  flex: 1
+}
+
+.s-backup-confirm {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 11px 14px;
+  border-radius: 12px;
+  border: 1.5px solid var(--red);
+  background: var(--surface);
+  color: var(--text);
+  font-size: 12.5px;
+  line-height: 1.7
+}
+
+.s-backup-confirm-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end
+}
+
+.s-backup-cancel,
+.s-backup-apply {
+  padding: 7px 14px;
+  border-radius: 9px;
+  border: 1.5px solid var(--border);
+  font-family: inherit;
+  font-size: 12.5px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: filter .18s, border-color .18s
+}
+
+.s-backup-cancel {
+  background: var(--surface);
+  color: var(--text)
+}
+
+.s-backup-cancel:hover {
+  border-color: var(--border2)
+}
+
+.s-backup-apply {
+  background: var(--red);
+  border-color: var(--red);
+  color: #fff
+}
+
+.s-backup-apply:hover {
+  filter: brightness(1.06)
+}
+
 /* ── shell ── */
 .cm {
   display: flex;

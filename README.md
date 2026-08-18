@@ -75,10 +75,13 @@ numbers in [`NewTab Extention/README.md`](NewTab%20Extention/README.md).
 only after clicking Reload on the extension in `chrome://extensions` (a page refresh is not enough).
 
 Each widget owns an independent `localStorage` key (e.g. `ib_newtab_v2`, `ib_focus_v3`,
-`ib_journal_v1`). There are **zero `chrome.storage.*` calls** anywhere in the code — the `storage`
-permission was already removed from `manifest.json` for that reason (the current permission list is
-just `notifications`). There is no cross-device sync. No user data is sent to any server except chat
-messages sent to the Aira AI service — see [SECURITY.md](SECURITY.md) for details.
+`ib_journal_v1`), all sharing the `ib_` prefix. There are **zero `chrome.storage.*` calls** anywhere
+in the code — the `storage` permission was already removed from `manifest.json` for that reason (the
+current permission list is just `notifications`). There is no automatic cross-device sync, but
+**Settings → Data tab → Backup & Restore** exports every `ib_*` key to a local JSON file and restores
+from one (no network, no server; restore accepts only `ib_*` keys, asks for confirmation before
+overwriting, then reloads the page). No user data is sent to any server except chat messages sent to
+the Aira AI service — see [SECURITY.md](SECURITY.md) for details.
 
 ## Contributing
 

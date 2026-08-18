@@ -1921,6 +1921,7 @@
     updateBgPicker();
     var defBtn = document.getElementById('bg-opt-default');
     if (defBtn) defBtn.classList.toggle('active', state.bgMode === 'default');
+    hideImportConfirm(); setBackupMsg(BACKUP_HINT, '');
     switchTab('appearance');
     els.settingsModal.hidden = false;
   }
@@ -1934,6 +1935,90 @@
     Array.prototype.forEach.call(els.setAccent.querySelectorAll('button'), function (b) {
       b.classList.toggle('active', b.getAttribute('data-accent').toLowerCase() === state.accent.toLowerCase());
     });
+  }
+
+  /* ----------------------------- Backup / Restore -----------------------------
+     همهٔ ویجت‌ها کلید localStorage مستقل خودشان را با پیشوند مشترک ib_ دارند
+     (ib_newtab_v2, ib_journal_v1, ib_hub_v2, ib_focus_v3…). پشتیبان‌گیری همهٔ
+     این کلیدها را با همین پیشوند در یک فایل JSON محلی جمع می‌کند — بدون شبکه،
+     بدون chrome.storage، بدون افزودن permission. بازیابی هم فقط کلیدهای ib_* را
+     می‌پذیرد. کلید ثابت پیشوند تنها نقطهٔ مشترک بین ویجت‌هاست. */
+  var BACKUP_PREFIX = 'ib_';
+  var BACKUP_HINT = 'همهٔ داده‌های افزونه (تنظیمات، ژورنال، هاب، فوکوس…) در یک فایل JSON روی همین دستگاه ذخیره می‌شود؛ چیزی به سرور ارسال نمی‌شود.';
+  var pendingBackup = null;   /* داده‌های فایل انتخاب‌شده، تا لحظهٔ تأیید کاربر */
+
+  function collectBackup() {
+    var data = {};
+    for (var i = 0; i < localStorage.length; i++) {
+      var k = localStorage.key(i);
+      if (k && k.indexOf(BACKUP_PREFIX) === 0) data[k] = localStorage.getItem(k);
+    }
+    return data;
+  }
+  function setBackupMsg(text, kind) {
+    var el = els.setBackupMsg; if (!el) return;
+    el.textContent = text;
+    el.style.color = kind === 'ok' ? 'var(--green)' : kind === 'err' ? 'var(--red)' : '';
+  }
+  function downloadJSON(name, content) {
+    var blob = new Blob([content], { type: 'application/json' });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url; a.download = name;
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
+  }
+  function exportData() {
+    var data = collectBackup();
+    var n = Object.keys(data).length;
+    if (!n) { setBackupMsg('داده‌ای برای پشتیبان‌گیری وجود ندارد.', 'err'); return; }
+    var payload = {
+      app: 'iranbroker-newtab', type: 'backup', schema: 1,
+      exportedAt: new Date().toISOString(), keys: n, data: data
+    };
+    downloadJSON('iranbroker-newtab-backup-' + new Date().toISOString().slice(0, 10) + '.json',
+      JSON.stringify(payload, null, 2));
+    setBackupMsg(faNum(n) + ' مورد در فایل پشتیبان ذخیره شد.', 'ok');
+  }
+  function hideImportConfirm() {
+    pendingBackup = null;
+    if (els.setImportConfirm) els.setImportConfirm.hidden = true;
+  }
+  function onImportFile(e) {
+    var file = e.target.files && e.target.files[0];
+    e.target.value = '';   /* تا انتخاب دوبارهٔ همان فایل هم change بدهد */
+    if (!file) return;
+    var reader = new FileReader();
+    reader.onload = function () {
+      var parsed = null;
+      try { parsed = JSON.parse(reader.result); } catch (err) { parsed = null; }
+      var data = parsed && parsed.data && typeof parsed.data === 'object' ? parsed.data : null;
+      if (!data || (parsed.app && parsed.app !== 'iranbroker-newtab')) {
+        hideImportConfirm(); setBackupMsg('فایل پشتیبان معتبر نیست.', 'err'); return;
+      }
+      var clean = {};
+      Object.keys(data).forEach(function (k) {
+        if (k.indexOf(BACKUP_PREFIX) === 0 && typeof data[k] === 'string') clean[k] = data[k];
+      });
+      var n = Object.keys(clean).length;
+      if (!n) { hideImportConfirm(); setBackupMsg('این فایل هیچ داده‌ای برای بازیابی ندارد.', 'err'); return; }
+      pendingBackup = clean;
+      if (els.setImportConfirmMsg) els.setImportConfirmMsg.textContent =
+        'این فایل شامل ' + faNum(n) + ' مورد است. با تأیید، روی داده‌های فعلی بازنویسی و صفحه دوباره بارگذاری می‌شود.';
+      if (els.setImportConfirm) els.setImportConfirm.hidden = false;
+      setBackupMsg(BACKUP_HINT, '');
+    };
+    reader.onerror = function () { setBackupMsg('خواندن فایل ناموفق بود.', 'err'); };
+    reader.readAsText(file);
+  }
+  function applyImport() {
+    if (!pendingBackup) return;
+    try {
+      Object.keys(pendingBackup).forEach(function (k) { localStorage.setItem(k, pendingBackup[k]); });
+    } catch (err) {
+      setBackupMsg('بازیابی ناموفق بود (فضای ذخیره‌سازی پر است؟).', 'err'); return;
+    }
+    location.reload();
   }
 
   /* ----------------------------- Shader background ----------------------------- */
@@ -2155,7 +2240,10 @@
       'bn-chips', 'bento-news-list',
       'settings-modal', 'settings-panel', 'settings-close', 'settings-save',
       'set-name', 'set-engine', 'set-layout', 'set-accent', 'set-grid', 'set-crypto', 'set-calendar',
-      'set-coins-btn', 'set-coins-summary', 'coins-btn', 'coins-modal', 'coins-panel', 'coins-close',
+      'set-coins-btn', 'set-coins-summary',
+      'set-export-btn', 'set-import-btn', 'set-import-file', 'set-backup-msg',
+      'set-import-confirm', 'set-import-confirm-msg', 'set-import-cancel', 'set-import-apply',
+      'coins-btn', 'coins-modal', 'coins-panel', 'coins-close',
       'coins-save', 'coins-reset', 'coins-count', 'coin-chips', 'coin-results', 'coin-search', 'coin-search-spin',
       'coin-search-ic', 'coin-search-clear', 'coin-results-label', 'coins-cancel', 'coins-clear-all',
       'ncat-btn', 'ncat-modal', 'ncat-panel', 'ncat-close', 'ncat-save', 'ncat-reset', 'ncat-cancel',
@@ -2283,6 +2371,16 @@
     els.settingsSave.addEventListener('click', closeSettings);
     els.settingsModal.addEventListener('click', closeSettings);
     els.settingsPanel.addEventListener('click', function (e) { e.stopPropagation(); });
+    // backup / restore
+    if (els.setExportBtn) els.setExportBtn.addEventListener('click', exportData);
+    if (els.setImportBtn) els.setImportBtn.addEventListener('click', function () {
+      setBackupMsg(BACKUP_HINT, ''); if (els.setImportFile) els.setImportFile.click();
+    });
+    if (els.setImportFile) els.setImportFile.addEventListener('change', onImportFile);
+    if (els.setImportCancel) els.setImportCancel.addEventListener('click', function () {
+      hideImportConfirm(); setBackupMsg('بازیابی لغو شد.', '');
+    });
+    if (els.setImportApply) els.setImportApply.addEventListener('click', applyImport);
     els.setName.addEventListener('input', function (e) { state.name = e.target.value; renderTime(); persist(); });
     els.setEngine.addEventListener('change', function (e) { state.engine = e.target.value; setEngine(e.target.value); persist(); });
     els.setGrid.addEventListener('change', function (e) { state.showGrid = e.target.checked; applyGrid(); persist(); });

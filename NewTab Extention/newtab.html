@@ -573,6 +573,29 @@
               <div class="s-hint">افزودن، حذف و جابه‌جایی ارزهای کارت قیمت لحظه‌ای</div>
             </div>
 
+            <div class="s-section">
+              <div class="s-section-label">پشتیبان‌گیری و بازیابی</div>
+              <div class="s-backup-row">
+                <button class="s-open-btn s-backup-btn" id="set-export-btn">
+                  <span>دریافت فایل پشتیبان</span>
+                  <span class="s-open-btn-cta">دانلود</span>
+                </button>
+                <button class="s-open-btn s-backup-btn" id="set-import-btn">
+                  <span>بازیابی از فایل</span>
+                  <span class="s-open-btn-cta">انتخاب فایل</span>
+                </button>
+              </div>
+              <input type="file" id="set-import-file" accept="application/json,.json" hidden />
+              <div class="s-backup-confirm" id="set-import-confirm" hidden>
+                <span id="set-import-confirm-msg"></span>
+                <div class="s-backup-confirm-actions">
+                  <button class="s-backup-cancel" id="set-import-cancel">انصراف</button>
+                  <button class="s-backup-apply" id="set-import-apply">بازنشانی و بارگذاری مجدد</button>
+                </div>
+              </div>
+              <div class="s-hint" id="set-backup-msg">همهٔ داده‌های افزونه (تنظیمات، ژورنال، هاب، فوکوس…) در یک فایل JSON روی همین دستگاه ذخیره می‌شود؛ چیزی به سرور ارسال نمی‌شود.</div>
+            </div>
+
           </div>
 
         </div><!-- /modal-body -->
