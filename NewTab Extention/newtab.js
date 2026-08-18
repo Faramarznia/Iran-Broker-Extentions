@@ -928,7 +928,9 @@
       return '<div class="c-row' + (r.extra ? ' has-detail' : '') + (detail ? ' expanded' : '') + '" data-pxid="' + r.id + '"' + (r.extra ? ' title="جزئیات بیشتر"' : '') + '>' +
         '<div class="c-main">' +
           ava +
-          '<div class="c-id"><span class="c-sym">' + r.sym + '</span><span class="c-name">' + r.name + '</span></div>' +
+          (tab === 'iran'
+            ? '<div class="c-id"><span class="c-sym">' + r.name + '</span><span class="c-name">' + r.sym + '</span></div>'
+            : '<div class="c-id"><span class="c-sym">' + r.sym + '</span><span class="c-name">' + r.name + '</span></div>') +
           mid +
           '<div class="c-price-col">' +
             '<span class="c-price' + flash + '">' + fmtRowPrice(tab, r) + (r.unit ? ' <i class="c-unit">' + r.unit + '</i>' : '') + '</span>' +
