@@ -2030,7 +2030,8 @@
     }
     function draw(now) {
       rafId = requestAnimationFrame(draw);
-      var dt = lastTs ? (now - lastTs) : 16.6;
+      if (!lastTs) { lastTs = now; return; }
+      var dt = now - lastTs;
       if (dt < FRAME_MS) return;
       lastTs = now;
       /* stepScale نرمال‌سازی سرعت انیمیشن نسبت به زمان واقعی است، نه تعداد فریم،
@@ -2040,7 +2041,7 @@
 
     resize();
     if (reduceMotion) { render(1); }
-    else { draw(); }
+    else { rafId = requestAnimationFrame(draw); }
     window.addEventListener('resize', resize);
     document.addEventListener('visibilitychange', function () {
       if (document.hidden) cancelAnimationFrame(rafId);
